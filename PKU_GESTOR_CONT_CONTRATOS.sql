@@ -1,10 +1,9 @@
-set scan off
 CREATE OR REPLACE PACKAGE PKU_GESTOR_CONT_CONTRATOS
   IS
  
        --consultoria nube migracion
   url_azure_app    varchar2(250):= 'https://zonasegura2.seace.gob.pe/documentos/';
-  
+
   type ref_cursor is ref cursor;
   --------------------------------------------------
   pkname   varchar2(60) default 'PKU_SS_CONTRATOS2';
@@ -58,10 +57,10 @@ CREATE OR REPLACE PACKAGE PKU_GESTOR_CONT_CONTRATOS
        session__AG_N_CONVOCA    varchar2 ,
        session__AG_COD_CONTRATO varchar2 );
 
-  
 
- 
-  
+
+
+
 
   PROCEDURE uspManProItemDoInsert
      ( ag_id_usuario           varchar2,
@@ -193,7 +192,7 @@ CREATE OR REPLACE PACKAGE PKU_GESTOR_CONT_CONTRATOS
     session__IIS_REMOTE_ADDR       varchar2 default null,
     session__userid                varchar2,
     ag_cod_contrato                varchar2);
- 
+
 
   PROCEDURE uspTransferMefDoView (
     ag_n_convoca          varchar2,
@@ -217,8 +216,8 @@ CREATE OR REPLACE PACKAGE PKU_GESTOR_CONT_CONTRATOS
      ag_tipo_operacion         VARCHAR2 DEFAULT NULL,
      session__userid           varchar2
   );
-   
- 
+
+
   PROCEDURE uspResolucionDoCancel(
     ag_id_usuario           varchar2,
     ag_n_convoca            varchar2,
@@ -244,7 +243,7 @@ CREATE OR REPLACE PACKAGE PKU_GESTOR_CONT_CONTRATOS
     ag_anhoentidad        varchar2,
     ag_eue_codigo         varchar2,
     session__userid       varchar2);
-  
+
   PROCEDURE uspProItemDoInsert
      ( ag_id_usuario           varchar2,
        ag_n_convoca            varchar2,
@@ -275,7 +274,7 @@ CREATE OR REPLACE PACKAGE PKU_GESTOR_CONT_CONTRATOS
        ag_Item_Fin             varchar2,
        ag_next_url             varchar2,
        session__userid         varchar2);
-  
+
   PROCEDURE uspNewProItemDoInsert
      ( ag_id_usuario           varchar2,
        ag_n_convoca            varchar2,
@@ -367,14 +366,14 @@ CREATE OR REPLACE PACKAGE PKU_GESTOR_CONT_CONTRATOS
     panho                       varchar2,
     v_proc_sigla                    varchar2
 );
- 
-    
+
+
   PROCEDURE uspConOpeTituloDoView(
     ag_cod_contrato             varchar2 DEFAULT Null,
     ag_f_liquidacion            varchar2 DEFAULT Null);
-  
 
-       
+
+
   PROCEDURE uspProrrogaCodPresDoDelete
      (  session__AG_N_CONVOCA    varchar2 default null,
         session__AG_COD_CONTRATO varchar2 default null,
@@ -430,10 +429,11 @@ PROCEDURE uspNewIntervencionEconomica2(
       session__anhoentidad           varchar2 default null,
       session__PUBLICADO             varchar2      
 );
- 
+
   function f_get_tipo_proc_ent (pv_select varchar2,  gv_entidad VARCHAR2 , gv_evento varchar2,anho varchar2) 
     return varchar;
 END; -- Package spec
+
 /
 
 
@@ -485,7 +485,7 @@ IS
       WHERE 
             n_convoca   = convocatoria and
             n_propuesta = propuesta;
- 
+
 BEGIN
 
   if (session__userid is null) then
@@ -503,7 +503,7 @@ BEGIN
   monto          := ag_monto_codPre; 
   proc_item      := ag_proc_item;
   tipo_operacion := ag_tipo_operacion; 
-  
+
   /*usp_print('anhoentidad: '||anhoentidad||'<br>');
   usp_print('entidad    : '||entidad||'<br>');
   usp_print('editar     : '||editar||'<br>');
@@ -512,7 +512,7 @@ BEGIN
   usp_print('convoca: '||convoca||'<br>');
   usp_print('propuesta: '||propuesta||'<br>');
   return;*/
-  
+
   usp_print('
   <input type=hidden name=ag_tipo_operacion='||tipo_operacion||'>
   <input type=hidden name=ag_proc_item value='||proc_item||'>
@@ -523,7 +523,7 @@ BEGIN
   <input type=hidden name=codigo value="">
   <input type=hidden name=descripcion value="">
   ');
-  
+
   IF edicion IS NULL THEN
       usp_print('
       <table border="0" class=tableform cellpadding="3" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%">
@@ -554,22 +554,22 @@ BEGIN
         </tr>
       </table>
       ');
-      
+
   ELSE 
-  
+
       /*usp_print('anhoentidad: '||anhoentidad||'<br>');
       usp_print('entidad: '||entidad||'<br>');
       usp_print('editar: '||editar||'<br>');
       usp_print('codigo_pre: '||codigo_pre||'<br>');
       usp_print('descrip_pre: '||descrip_pre||'<br>');
       return;*/
-      
+
       SELECT proy_descripcion descripcion into descrip_pre
       FROM REG_PROCESOS.mef_proyectos 
       WHERE proy_codigo = to_number(codigo_pre)
         and proy_estado = 'A';
-        
-      
+
+
       IF edicion = '1' THEN
           usp_print('
           <table border="0" class=tableform cellpadding="3" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%">
@@ -606,14 +606,14 @@ BEGIN
             </tr>
           </table>
            ');
-          
+
        ELSE  
-       
+
           SELECT proy_descripcion descripcion into descrip_pre
           FROM REG_PROCESOS.mef_proyectos 
           WHERE proy_codigo = codigo_pre
             and proy_estado = 'A';
-        
+
           /*usp_print('anhoentidad: '||anhoentidad||'<br>');
           usp_print('entidad    : '||entidad||'<br>');
           usp_print('editar     : '||editar||'<br>');
@@ -625,7 +625,7 @@ BEGIN
           usp_print('proc_item  : '||proc_item||'<br>');
           usp_print('Hola..........!!!!');
           return;*/
-          
+
           INSERT INTO reg_procesos.tmp_contrato_op_cod_presu
           ( n_convoca      , anho_entidad  ,  cod_presupuestal, 
             descripcion    , monto_asignado,  proc_item,
@@ -635,7 +635,7 @@ BEGIN
             descrip_pre    , monto         ,  proc_item,
             tipo_operacion , propuesta );
           COMMIT;
-          
+
        usp_print('
        <script language=javascript>
            var wo = window.opener
@@ -645,7 +645,7 @@ BEGIN
        ');       
          --select * from reg_procesos.tmp_contrato_cod_presupuestal;
        END IF;   
-          
+
   END IF;    
 
   usp_print('
@@ -660,7 +660,7 @@ BEGIN
        thisform.scriptdo.value = "SearchCodPresupuestal";
        thisform.submit();
      }
-    
+
     function Agregar(codigo)
      {
        thisform.codigo.value=codigo;
@@ -730,7 +730,7 @@ BEGIN
   lv_ruta                 := WriteFileDirectoryDynamic||'/'||docname;
   ln_cod_tipo_doc         := gpk_coddoc_intervencion;
   ln_n_convoca            := session__N_CONVOCA;
-  
+
   select cod_tipo_file into lv_codtipofile from Reg_procesos.tipo_archivo where  ext_tipo_file = lvtipodocumento;
 
   begin
@@ -747,15 +747,15 @@ BEGIN
             ag_apeMatInertv, ag_nomInertv, ag_cargInertv,
             sysdate, ag_observInertv, session__maxMBUploadFileSize,ln_n_cod_contrato );
 
-  
+
   exception
    when others then
      nError := sqlcode;
      usp_print('ERROR:'||sqlerrm(nError));
    end;
-   
+
   commit;
-   
+
   update REG_PROCESOS.contrato set           
              fec_intervencion           =      ag_f_intervencion,
              FEC_RESOLUCION             =      ag_f_resolInertv,
@@ -766,7 +766,7 @@ BEGIN
              nom_interventor            =      ag_nomInertv,    
              cargo_interventor          =      ag_cargInertv          
        where n_cod_contrato             =      ln_n_cod_contrato;     
-            
+
 
    /*usp_print('
    session__AG_N_CONVOCA        : '||session__AG_N_CONVOCA||'<BR>
@@ -785,7 +785,7 @@ BEGIN
    lv_codtipofile               : '||lv_codtipofile||'<br>
            ');
   return;*/
-  
+
    usp_print('
    <script language=javascript>
      retorna();
@@ -842,7 +842,7 @@ BEGIN
   lvtipodocumento         := upper(substr(pfiletoupload_file1,length(pfiletoupload_file1)-2,length(pfiletoupload_file1)));
   ln_cod_tipo_doc         := gpk_coddoc_intervencion;
   ln_n_convoca            := session__N_CONVOCA;
-  
+
   select cod_tipo_file into lv_codtipofile from Reg_procesos.tipo_archivo where  ext_tipo_file = lvtipodocumento;
 
   begin
@@ -853,21 +853,21 @@ BEGIN
             ape_mat_aprobador, nom_aprobador, cargo_aprobador  , 
             fec_aprob        , doc_obs      , tamano_bytes, n_cod_contrato )
         values (
-            ln_n_convoca  , ln_cod_tipo_doc, pfiletoupload_file1,
+            ln_n_convoca  , ln_cod_tipo_doc, WriteFileDirectoryDynamic||'/'||pfiletoupload_file1,
             lv_codtipofile, pfiletoupload_file1        , session__userid, 
             iisenv__remote_host, lv_cod_doc_intervencion,ag_apePatInertv, 
             ag_apeMatInertv, ag_nomInertv, ag_cargInertv,
             sysdate, ag_observInertv, SizeFile,ln_n_cod_contrato );
 
-  
+
   exception
    when others then
      nError := sqlcode;
      usp_print('ERROR:'||sqlerrm(nError));
    end;
-   
+
   commit;
-   
+
   update REG_PROCESOS.contrato set           
              fec_intervencion           =      ag_f_intervencion,
              FEC_RESOLUCION             =      ag_f_resolInertv,
@@ -878,7 +878,7 @@ BEGIN
              nom_interventor            =      ag_nomInertv,    
              cargo_interventor          =      ag_cargInertv          
        where n_cod_contrato             =      ln_n_cod_contrato;     
-            
+
 
    /*usp_print('
    session__AG_N_CONVOCA        : '||session__AG_N_CONVOCA||'<BR>
@@ -897,7 +897,7 @@ BEGIN
    lv_codtipofile               : '||lv_codtipofile||'<br>
            ');
   return;*/
-  
+
    usp_print('
    <script language=javascript>
      retorna();
@@ -940,12 +940,12 @@ PROCEDURE uspNewIntervencionEconomica(
       session__PUBLICADO             varchar2      
 )
 IS
- 
+
  CURSOR cCausaIntervencion
  IS
  SELECT cod_tipo_intervencion, des_tipo_intervencion 
    FROM reg_procesos.t_tipo_intervencion;
-  
+
  lv_directorio            varchar2(50);
  lv_ruta                  varchar2(50);
  lv_anhoentidad           varchar2(4);
@@ -959,7 +959,7 @@ IS
  v_file                  reg_procesos.convocatoria_doc%rowtype;
  filaContrato            reg_procesos.contrato%rowtype;
  LN_CODOBJETO            NUMBER;
- 
+
 BEGIN
 
 
@@ -975,7 +975,7 @@ BEGIN
         );
         return;
    end if;
-   
+
    if( session__PUBLICADO <> 1 ) then
         usp_print(
             pku_procesos_comun.f_putMensaje(
@@ -984,27 +984,27 @@ BEGIN
      );
        return;    
     end if;
-       
+
 
    lv_anhoentidad := session__anhoentidad;
    lv_eue_codigo := session__EUE_CODIGO;    
    lv_directorio := gpk_directorio_intervencion;
    lv_ruta := lv_directorio||'\'||lv_anhoentidad||'\'||lpad(lv_eue_codigo,6,'0')||'\'||ln_n_convoca; 
-  
+
    usp_print('
      <input name=WriteFileDirectoryDynamic value="'||lv_ruta||'" type=hidden>
      <input name=WriteFileDirectory value="FileSinged" type=hidden>
    ');
 
    pku_procesos_comun.dojscript;
-   
-   
+
+
    LN_CODOBJETO:= PKU_SS_UTILES.f_getcodobjeto(ln_n_convoca);
-   
+
    select * into filaContrato
      from REG_PROCESOS.contrato 
     where n_cod_contrato = ln_n_cod_contrato; 
-   
+
 
     ------- Se valida si le corresponde una liquidacion -----
     IF LN_CODOBJETO <> 3 THEN
@@ -1016,31 +1016,31 @@ BEGIN
         RETURN;
     End If;
 
-   
+
    begin
-   
+
    select *  into v_file from (
         select * from reg_procesos.convocatoria_doc
          where n_cod_contrato = ln_n_cod_contrato
            and COD_TIPO_DOC = 800 
          order by fec_upload desc  
        )  where rownum = 1; 
-       
+
    select replace('bootstrap/'||archivo.icon_tipo_file, 'jpg', 'png') icon_tipo_file
    --archivo.icon_tipo_file 
    into ln_icon_tipo_file
      from REG_PROCESOS.tipo_archivo archivo 
     where archivo.cod_tipo_file = v_file.cod_tipo_file;
-        
+
    exception
         when no_data_found then
         v_file := null;
    end;
-   
-                 
+
+
   usp_print('
    <script language=javascript>
-         
+
     function enviar()
      {
          var extension = thisform.docname.value.substring(thisform.docname.value.length-4);
@@ -1089,18 +1089,18 @@ BEGIN
             thisform.extension.value = extension;
             thisform.scriptdo.value = "DoInsertIntervEco";
             thisform.submit();
-            
+
          }
      }
    </script>
-  
+
       <input type="hidden" value="" name="extension">
   ');
-  
+
     usp_print('
         <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>
         <tr>');
-        
+
     usp_print(
             PKU_SS_UTILES.f_get_titulo_contrato(session__COD_CONTRATO, 'Ingreso de Intervención Económica' )
     );
@@ -1162,7 +1162,7 @@ BEGIN
             usp_print('
               <input  class=CalSelect type=text size=50 name="ag_f_resolInertv" onclick="calendario(this);" value="">');
             end if;
-                        
+
             usp_print('</td>
             <td class=c3>Ingrese la Fecha de la Resolución de Intervención.</td>
         </tr>
@@ -1180,7 +1180,7 @@ BEGIN
                 usp_print('>'||xc.des_tipo_intervencion||'</option>');
                end if; 
             END LOOP;  
-           
+
             usp_print('
                </SELECT>  
             </td>
@@ -1207,7 +1207,7 @@ BEGIN
             </td>
             <td class=c3>Ingrese la Fecha de la Resolución de Intervención.</td>
         </tr>
-        
+
     </table>
     <br>
     <br>
@@ -1273,7 +1273,7 @@ BEGIN
         </tr>
     </table>    
     ');
-  
+
 END;
 
 
@@ -1293,12 +1293,12 @@ PROCEDURE uspNewIntervencionEconomica2(
       session__PUBLICADO             varchar2      
 )
 IS
- 
+
  CURSOR cCausaIntervencion
  IS
  SELECT cod_tipo_intervencion, des_tipo_intervencion 
    FROM reg_procesos.t_tipo_intervencion;
-  
+
  lv_directorio            varchar2(50);
  lv_ruta                  varchar2(50);
  lv_anhoentidad           varchar2(4);
@@ -1329,7 +1329,7 @@ BEGIN
         );
         return;
    end if;
-  
+
   -- (2/3) 12.09.2020, obtiene el indicador que verifica que las acciones esten habilitadas
   select F_CON_CONTRATO_MOD('DESACTIVAR', 'ACCIONES',sysdate, session__COD_CONTRATO  ) into ln_modulo from dual;
 
@@ -1342,28 +1342,28 @@ BEGIN
      );
        return;    
     end if;
-       
+
 
    lv_anhoentidad := session__anhoentidad;
    lv_eue_codigo := session__EUE_CODIGO;    
    lv_directorio := gpk_directorio_intervencion;
    lv_ruta := lv_directorio||'\'||lv_anhoentidad||'\'||lpad(lv_eue_codigo,6,'0')||'\'||ln_n_convoca; 
-  
+
    usp_print('
-     <input name=WriteFileDirectoryDynamic value="" type=hidden>
+     <input name=WriteFileDirectoryDynamic value="'||lv_ruta||'" type=hidden>
      <input name=WriteFileDirectory value="FileSinged" type=hidden>
      <input type="hidden" name="SizeFile">
    ');
 
    pku_procesos_comun.dojscript;
-   
-   
+
+
    LN_CODOBJETO:= PKU_SS_UTILES.f_getcodobjeto(ln_n_convoca);
-   
+
    select * into filaContrato
      from REG_PROCESOS.contrato 
     where n_cod_contrato = ln_n_cod_contrato; 
-   
+
 
     ------- Se valida si le corresponde una liquidacion -----
     IF LN_CODOBJETO <> 3 THEN
@@ -1375,31 +1375,31 @@ BEGIN
         RETURN;
     End If;
 
-   
+
    begin
-   
+
    select *  into v_file from (
         select * from reg_procesos.convocatoria_doc
          where n_cod_contrato = ln_n_cod_contrato
            and COD_TIPO_DOC = 800 
          order by fec_upload desc  
        )  where rownum = 1; 
-       
+
    select replace('bootstrap/'||archivo.icon_tipo_file, 'jpg', 'png') icon_tipo_file
    --archivo.icon_tipo_file 
    into ln_icon_tipo_file
      from REG_PROCESOS.tipo_archivo archivo 
     where archivo.cod_tipo_file = v_file.cod_tipo_file;
-        
+
    exception
         when no_data_found then
         v_file := null;
    end;
-   
-                 
+
+
   usp_print('
    <script language=javascript>
-         
+
     function enviar()
      {
        // alert("1");
@@ -1420,7 +1420,7 @@ BEGIN
          if (!ValidarBlanco(thisform.pfiletoupload1,"Seleccione un documento")){
               return false;
          }
-           
+
         if (!ValidarBlanco(thisform.ag_apePatInertv,"Apellido Paterno del Responsable")){
               return false;
          }
@@ -1453,18 +1453,18 @@ BEGIN
             thisform.pfiletoupload_file1.value =namearchive;
             thisform.scriptdo.value = "DoInsertIntervEco";
             thisform.submit();
-            
+
          }
      }
    </script>
-  
+
       <input type="hidden" value="" name="extension">
   ');
-  
+
     usp_print('
         <table border="0" width=100% align=center class=''table table-striped'' cellpadding=3 cellspacing=0>
         <tr>');
-        
+
     usp_print(
             PKU_SS_UTILES.f_get_titulo_contrato(session__COD_CONTRATO, 'Ingreso de Intervención Económica' )
     );
@@ -1489,7 +1489,7 @@ BEGIN
             <td class=c2><b>'||session__COD_CONTRATO||'</b></td>
             <td class=c3>Numero del Contrato</td>
         </tr>
-       
+
         <tr>
             <td class=c1>(*)Fecha de Intervenciónnn</td>
             <td class=c2>');
@@ -1502,8 +1502,8 @@ BEGIN
              <INPUT  type=text readonly style="width:70%" data-format="dd/MM/yyyy" class="form-control" id="ag_f_intervencion" name="ag_f_intervencion"  size="10"  value="'|| filacontrato.fec_intervencion ||'">
         </div>
              ');
-  
-      
+
+
 
             usp_print('  
             </td>
@@ -1512,7 +1512,7 @@ BEGIN
          <tr>   
             <td class=c1>(*)Resolucion de la Intervención</td>
             <td class=c2>');
-            
+
             usp_print('
             <input name=ag_resolInertv value="'||trim(filacontrato.cod_documento_intervencion)||'" size=54 maxlength=18>
             ');
@@ -1530,7 +1530,7 @@ BEGIN
 </div>
              <INPUT  type=text readonly style="width:70%" data-format="dd/MM/yyyy" class="form-control" id="ag_f_resolInertv" name="ag_f_resolInertv"  size="10"  value="'||filacontrato.fec_resolucion||'">
         </div>
-                      
+
         </td>
             <td class=c3>Ingrese la Fecha de la Resolución de Intervención.</td>
         </tr>
@@ -1548,8 +1548,8 @@ BEGIN
                 usp_print('>'||xc.des_tipo_intervencion||'</option>');
                end if; 
             END LOOP;  
-            
-            
+
+
             usp_print('
                </SELECT>  
             </td>
@@ -1577,7 +1577,7 @@ BEGIN
             </td>
             <td class=c3>Ingrese la Fecha de la Resolución de Intervención.</td>
         </tr>
-        
+
     </table>
     <br>
     <br>
@@ -1623,7 +1623,7 @@ BEGIN
         </tr>
     </table>    
     ');
-  
+
 END;
 
 /* TIPO DE PROCESOS*/
@@ -1633,11 +1633,11 @@ function f_get_tipo_proc_ent (pv_select varchar2,  gv_entidad VARCHAR2 , gv_even
 is
     lv_rtn varchar(32000):= '';
   cursor c_tipo_procesos is
-    
+
   select tp.proc_tipo, tp.proc_tipo_sigla,
            decode(pv_select, tp.proc_tipo, 1 ,0) actual
         from (
-        
+
         select distinct c.codconsucode, c.anhoentidad, tp.proc_tipo, tp.proc_tipo_sigla
           from reg_procesos.tipo_procesos tp, convocatorias c
           where tp.proc_tipo = c.proc_tipo
@@ -1649,7 +1649,7 @@ is
         ) tp
         where  tp.codconsucode   = lpad(gv_entidad,6,'0')
            and tp.anhoentidad    = anho;
-           
+
 /*    select tp.proc_tipo, tp.proc_tipo_sigla,
            decode(pv_select, tp.proc_tipo, 1 ,0) actual
         from reg_procesos.mvw_tipo_proceso_entidad tp
@@ -1663,7 +1663,7 @@ begin
       ||item.proc_tipo_sigla||'</option>';
      end loop;
      return lv_rtn||'</select>';
-     
+
 
 end;
 
@@ -1718,8 +1718,8 @@ IS
         p_eue_codigo in varchar2, p_anhoentidad in varchar2, p_proc_tipo   in varchar2,
         p_proc_sigla in varchar2, p_proc_desc   in varchar2, p_CurrentPage number,
         p_session_pagesize number ) is
-        
-        
+
+
     select * from (
         select rownum num, a.* from (    
         Select distinct
@@ -1757,7 +1757,7 @@ IS
                       a.ind_conv_ultimo_pub ind_estado,      
                       REG_PROCESOS.F_GET_NUM_GANADORES_BP(a.n_convoca_origen) buenapro,
                       REG_PROCESOS.F_GET_TIPO_PROC_DERIV(a.n_proceso) cant_deriv,
-                      
+
                       nvl(p.reg_codigo, 0) reg_codigo,
                       nvl(p.ley_codigo, 0) ley_codigo  
             from REG_PROCESOS.convocatorias a,
@@ -1789,14 +1789,14 @@ IS
                and ts.cod_tipo_subasta = a.cod_tipo_subasta
          and p.n_proceso = a.n_proceso
                order by a.anhoentidad, a.proc_num, a.proc_sigla
-               
+
                 ) a
      ) b
      where b.num between p_session_pagesize*(p_CurrentPage-1) + 1
      and p_session_pagesize*(p_CurrentPage);       
-               
-               
-                       
+
+
+
    /* select * from (
         select rownum num, a.* from (
             Select distinct 
@@ -1862,9 +1862,9 @@ IS
                and tp.tip_codigo = a.proc_tipo
                and ts.cod_tipo_subasta = a.cod_tipo_subasta
                and a.ind_conv_ultimo_pub = 1
-               
+
 union
-           
+
  select a.n_convoca_origen n_convoca,
         a.n_convoca n_convoca_ultimo,
         a.n_proceso,
@@ -1887,7 +1887,7 @@ union
         a.ind_conv_ultimo_pub ind_estado,
         REG_PROCESOS.F_GET_NUM_GANADORES_BP(a.n_convoca_origen) buenapro,
         REG_PROCESOS.F_GET_TIPO_PROC_DERIV(a.n_proceso) cant_deriv          
-                
+
          from
          VW_PROCESOSCONVO_CORPORATIVAS a
          inner join reg_procesos.t_tipo_subasta b on a.cod_tipo_subasta=b.cod_tipo_subasta
@@ -1909,7 +1909,7 @@ union
                                                        where i.n_convoca = ice.n_convoca
                                                        and i.proc_item = ice.proc_item)
                   )        
-                
+
 --               order by a.anhoentidad, a.proc_num, a.proc_sigla
         ) a
      ) b
@@ -1917,7 +1917,7 @@ union
      and p_session_pagesize*(p_CurrentPage);
 */
 
-    
+
     ------- Variables --------
     lv_eue_codigo       varchar2(6);
     lv_anhoentidad      varchar2(4);
@@ -1937,27 +1937,27 @@ BEGIN
 --usp_print('session__eue_codigo:'||length(trim(session__eue_codigo)||'.'));
 --return;
   if length(trim(session__eue_codigo)||'.') = 1 then
-  
+
   usp_print('<center>Para visualizar la Consola de Contratos debe seleccionar una Entidad</center>');
   return;
   end if;
     ---------- Script -------------
     usp_print('
     <script language="javascript">
-    
+
     function SinContrato()
     {
       alert("Antes de registrar en la ficha de Creacion de Contrato, deberá adjuntar el archivo del\n  contrato u orden de compra o servicio");
-    
+
     }
-    
+
     function EnviarResumen(convocatoria,tipodoc)
     { 
        var pag = window.open("ControllerServletOpen?portletid=mod_popup_contratos&scriptdo=doAddResumen&ag_n_convoca="+ convocatoria +"&ag_cod_tipo_doc="+ tipodoc,"Items","toolbar=no,Width=750,Height=220,scrollbars=yes,modal=yes,dependent,alwaysRaised");
        return pag;
     }
 
-   
+
     function EnviarDatos(jscriptdo)
     {
         thisform.ag_currentPage.value = 1;
@@ -1986,7 +1986,7 @@ BEGIN
     -------- Input Cabecera hidden -----------------
     lv_anhoentidad := nvl(panho,session__anhoentidad);
     lv_eue_codigo  := session__eue_codigo;
-    
+
     usp_print('
     <input type="hidden" name="ag_n_convoca"   value="">
     <input type="hidden" name="ag_proc_tipo"   value="'||v_proc_tipo||'">
@@ -2022,7 +2022,7 @@ BEGIN
     Select Count(1)
     Into ln_Cant_Procesos
     From (
-         
+
        Select distinct
                    a.n_convoca_origen n_convoca,
                    a.n_convoca n_convoca_ultimo,
@@ -2058,7 +2058,7 @@ BEGIN
                       a.ind_conv_ultimo_pub ind_estado,      
                       REG_PROCESOS.F_GET_NUM_GANADORES_BP(a.n_convoca_origen) buenapro,
                       REG_PROCESOS.F_GET_TIPO_PROC_DERIV(a.n_proceso) cant_deriv,
-                      
+
                       nvl(p.reg_codigo, 0) reg_codigo,
                       nvl(p.ley_codigo, 0) ley_codigo  
             from REG_PROCESOS.convocatorias a,
@@ -2090,8 +2090,8 @@ BEGIN
                and ts.cod_tipo_subasta = a.cod_tipo_subasta
          and p.n_proceso = a.n_proceso
                order by a.anhoentidad, a.proc_num, a.proc_sigla
-               
-    
+
+
     /*  Select distinct 
                    a.n_convoca_origen n_convoca,a.n_convoca n_convoca_ultimo,a.n_proceso,
                    decode (a.num_convoca,
@@ -2141,9 +2141,9 @@ BEGIN
                and tp.tip_codigo = a.proc_tipo
                and ts.cod_tipo_subasta = a.cod_tipo_subasta
 
-  
+
 union
-           
+
  select a.n_convoca_origen n_convoca,
         a.n_convoca n_convoca_ultimo,
         a.n_proceso,
@@ -2166,7 +2166,7 @@ union
         a.ind_conv_ultimo_pub ind_estado,
         REG_PROCESOS.F_GET_NUM_GANADORES_BP(a.n_convoca_origen) buenapro,
         REG_PROCESOS.F_GET_TIPO_PROC_DERIV(a.n_proceso) cant_deriv          
-                
+
          from
          VW_PROCESOSCONVO_CORPORATIVAS a
          inner join reg_procesos.t_tipo_subasta b on a.cod_tipo_subasta=b.cod_tipo_subasta
@@ -2187,18 +2187,18 @@ union
                       and f_registro               = (select max(f_registro) from REG_PROCESOS.item_convoca_estado i
                                                        where i.n_convoca = ice.n_convoca
                                                        and i.proc_item = ice.proc_item)
-                                                       
+
              )    */                                      
             );
 
- 
+
     usp_print('<table border="1" class="table table-striped table-bordered table-hover data Table no-footer" cellpadding="3" cellspacing="0" style="border-collapse: collapse" bordercolor="#111111" width="100%">
         <tr align="center" valign = "top">
             <th class="th1">N&uacute;mero<br/>de Convocatoria</th>
             <th class="th1">Proceso</th>
             <th class="th1">Valor Referencial</th>
        </tr>');
- 
+
     If (ln_Cant_Procesos > 0) Then
 
         For cv in c_convoca( lv_eue_codigo, lv_anhoentidad, v_proc_tipo, v_proc_sigla, ag_descripcion, lv_currentPage, lv_PageSize ) loop
@@ -2208,12 +2208,12 @@ union
             Else
                 ln_color := ''; 
             End if;
-            
+
             -- obtenemos la cantidad de cuadros resumen ya cargados en el proceso
             SELECT count(1) INTO ln_cant_doc
             from REG_PROCESOS.convocatoria_doc
             where cod_tipo_doc = 600 and n_convoca = cv.n_convoca;
-            
+
         ------ 1era Fila ----
             usp_print('
         <tr '||ln_color||' valign="top">
@@ -2229,7 +2229,7 @@ union
             </td>
             <td align="left" valign="top" nowrap="" colspan="3"> ');
                 usp_print('<b>'||makea('ag_n_convoca='||cv.n_convoca||'&ag_proc_tipo='||v_proc_tipo||'&ag_proc_desc=&ag_proc_sigla=&ag_currentPage='||ag_currentpage ||'&av_ind_resumen='||case when ln_cant_doc > 0 then '1' else '0' end ||'&scriptdo=doViewConsolaContratos',cv.tip_abrev||'-'||cv.proc_num||'-'||cv.anhoentidad||'-'||cv.proc_sigla)||'&#xa0;</b> ');
-                
+
             if (cv.cant_deriv is not null) then
                 usp_print('<img src="'||gpk_AdvancingR2||'" border="0" heigth="10" width="10"/>&#xa0; (<b>'||cv.cant_deriv||'</b>)&#xa0;');
             end if;
@@ -2249,7 +2249,7 @@ union
             usp_print('
             </td>');
 
-      
+
         usp_print('</tr>');
         ------ 2da Fila ----
         IF (cv.n_convoca != 0) THEN
@@ -2279,7 +2279,7 @@ union
     lv_numeropaginas := ceil(ln_Cant_Procesos/lv_PageSize);
     lv_iterador:=1;
     usp_print('<b>P&aacute;gina:</b>');
-    
+
     loop
         IF lv_iterador = lv_CurrentPage THEN
             usp_print('
@@ -2303,7 +2303,7 @@ union
             </td>
         </tr>
     </table>');
-    
+
     exception
         when e_ArgumentosMalos then
             raise_application_error(-20000,'Se detecto una incorrecta asignacion de valores en los argumentos');
@@ -2411,7 +2411,7 @@ Begin
     <input type="hidden" name="ag_proc_desc"            value="'||ag_proc_desc||'"/>
     <input type="hidden" name="ag_proc_sigla"           value="'||ag_proc_sigla||'"/>
     <input type="hidden" name="ag_currenpage"           value="'||ag_currenpage||'"/>
-    
+
     <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>
         <tr>');
     usp_print(
@@ -2475,7 +2475,7 @@ Begin
     end loop;
     usp_print('
     </table>');
-    
+
 exception
     when e_ArgumentosMalos then
         raise_application_error(-20000,'Se detecto una incorrecta asignacion de valores en los argumentos');
@@ -2493,21 +2493,21 @@ IS
 Begin
 
     usp_print('<script language="javascript">
-           
+
          function goSubmit(jscriptdo)
          {
            thisform.scriptdo.value = jscriptdo;
            thisform.submit();
          };
       </script>');
-      
- 
+
+
     -------- Titulos ------------
     usp_print('
     <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>
         <tr>');
     usp_print(
-    
+
             PKU_SS_UTILES.f_get_titulo_contrato ( ag_cod_contrato, 'Conformidad/Liquidación Consentida' )
     );
     usp_print('
@@ -2516,14 +2516,14 @@ Begin
                 <input type="button" value="Grabar" onclick="grabar(this,''doInsertarLiquidacionAmpliacion'')">
             </td>
         </tr>
-  
+
     </table>
     <br>');
 
     if ag_f_liquidacion is not null then
-    
+
      select COD_OPERACION_CONTRATO into ln_cod_operacion_contrato from contrato where n_cod_contrato =ag_cod_contrato;
-    
+
      IF ln_cod_operacion_contrato = 7 THEN
         usp_print(
             pku_procesos_comun.f_putMensaje(
@@ -2601,7 +2601,7 @@ BEGIN
         doc_obs,
         ag_cod_contrato,
         fec_aprob);
-        
+
     usp_print(
         '<br>'||
         pku_procesos_comun.f_putmensaje(
@@ -2773,7 +2773,7 @@ IS
     lv_id_usuario            varchar2(30);
     ln_icon_tipo_file        varchar2(100);
     row_documento_doc        reg_procesos.Convocatoria_Doc%rowtype;
-    
+
 Begin
 
     if (session__userid is null) then
@@ -2796,7 +2796,7 @@ Begin
        INNER JOIN CONVOCATORIA_DOC D
           ON R.COD_DOC = D.COD_DOC
        WHERE R.N_COD_RESOLUCION = ln_cod_resolucion;
-       
+
       select replace('bootstrap/'||archivo.icon_tipo_file, 'jpg', 'png') icon_tipo_file
       --archivo.icon_tipo_file 
       into ln_icon_tipo_file
@@ -2955,7 +2955,7 @@ Begin
                     </a>' end ||
                    case when row_documento_doc.fec_upload  is not null then
                    ' Registrado el '||row_documento_doc.fec_upload end  ,'.'));
-    
+
   usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('Fecha del Documento de Resoluci&oacute;n',
                 '<input type="text" name="fec_res" readonly style="width:98%" value="'||lv_fec_resolucion||'"/>',
@@ -2965,14 +2965,14 @@ Begin
             PKU_PROCESOS_COMUN.f_putRowForm('Alcance de la Resoluci&oacute;n',
                 '<input type="text" name="tipo_res" readonly style="width:98%" value="'||trim(lv_des_tipo_resolucion)||'"/>',
                 '.'));
-   
-  
+
+
      usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('Causal de la Resoluci&oacute;n',
                 '<input type="text" name="causa_res" readonly style="width:98%" value="'||trim(lv_des_causa_resolucion)||'"/>',
                 '.'));
 
-                      
+
     ---------- Calendario del Contrato ----------
     if (ln_ind_uso_siaf = 1) then
         ------- Total Pagos del Contrato----
@@ -3110,7 +3110,7 @@ Begin
         <th class="th1">Fecha de Registro</th>');
     ln_fila:= 1;
     -------- Items del Contrato --------
-    
+
     FOR ci in c_item_cont( ln_cod_contrato, ln_cod_resolucion) loop
         usp_print('
         <tr id="tr_'||ln_fila||'">
@@ -3129,10 +3129,10 @@ Begin
         </tr>');
         ln_fila:= ln_fila + 1;
     end loop;
-    
+
     usp_print('
     </table>');
-    
+
 End;
 
   /************************************************************************/
@@ -3154,12 +3154,12 @@ Begin
      usp_print('<h2>Su Sesion ha expirado... Por favor, vuelva a loguearse.</h2>');
      return;
     end if;
-    
+
     --------- Borrar tabla temporal ----
     delete from reg_procesos.tmp_contrato_operacion_cal
     where id_usuario = ag_id_usuario;
     commit;
-    
+
     ----------------------------------------------------
     usp_print('
     <input type="hidden"  name ="ag_id_usuario" value="'||ag_id_usuario||'"/>
@@ -3172,7 +3172,7 @@ Begin
     </script>');
 End;
 
- 
+
   /**********************************************************************/
   PROCEDURE uspProrrogaCodPresDoDelete
      (  session__AG_N_CONVOCA    varchar2 default null,
@@ -3191,16 +3191,16 @@ End;
      )
   IS
   BEGIN
-  
+
      delete from reg_procesos.tmp_contrato_op_cod_presu
      where n_convoca        = to_number(session__AG_N_CONVOCA) and
            n_cod_contrato   = to_number(session__AG_COD_CONTRATO) and
            proc_item        = to_number(ag_proc_item) and
            n_propuesta      = to_number(ag_n_propuesta) and
            cod_presupuestal = to_number(ag_cod_presu);
-           
+
      commit;
-     
+
      usp_print('
      <input type=hidden name=ag_eliminaCodPres           value=1>
      <input type=hidden name=ag_edicion                  value=1>
@@ -3215,9 +3215,9 @@ End;
      <input type=hidden name=ag_cod_moneda               value="'||ag_cod_moneda||'">
      <input type=hidden name=ag_Cod_Operacion            value="'||ag_cod_operacion||'">
      <script language=javascript>
-     
+
      retorna();
-     
+
      function retorna()
          {
            thisform.scriptdo.value="NewProrrogaDoEdit";
@@ -3225,7 +3225,7 @@ End;
          }  
      </script>
      ');  
-  
+
   END;
 
 
@@ -3240,22 +3240,22 @@ End;
        ag_cod_contrato     VARCHAR2,
        ag_n_contrato       VARCHAR2) 
  IS
-       
+
        lv_cod_contrato_ren   VARCHAR2(50);
        lv_ag_proc_item       VARCHAR2(50);
        usuario               VARCHAR2(50);  
 
  BEGIN
- 
+
       if (session__userid is null) then
        usp_print('<h2>Su Sesion ha expirado... Por favor, vuelva a loguearse.</h2>');
        return;
       end if;
- 
+
       lv_cod_contrato_ren := ag_cod_contrato_ren;
       lv_ag_proc_item     := ag_proc_item;
       usuario             := session__userid;
-      
+
       usp_print('
       <input type="hidden" name="ag_cod_contrato_ren" value="'||ag_cod_contrato_ren||'"/>
       <input type="hidden" name="ag_cod_contrato" value="'||ag_cod_contrato||'"/>
@@ -3269,22 +3269,22 @@ End;
       usp_print('lv_ag_proc_item: '||lv_ag_proc_item||'<br>');
       usp_print('usuario: '||usuario||'<br>');
       return;*/
-      
+
       DELETE reg_procesos.tmp_contrato_prorroga_item
        WHERE id_usuario     = usuario AND
              n_cod_contrato = lv_cod_contrato_ren  AND
              proc_item      = lv_ag_proc_item;
       COMMIT;
-      
+
       usp_print('
       <script language=javascript>
         thisform.scriptdo.value = "ManProrrogaDoEdit";
         thisform.submit();
       </script>
       ');          
-       
+
  END;         
-  
+
   /**************************************************************/ 
  PROCEDURE uspManProItemDoEdit
      ( ag_id_usuario            varchar2,
@@ -3368,12 +3368,12 @@ End;
    ln_cont_fila      number;
 
    Begin
-   
+
     if (session__userid is null) then
      usp_print('<h2>Su Sesion ha expirado... Por favor, vuelva a loguearse.</h2>');
      return;
     end if;
-   
+
     lv_procedure_main:= 'ManProItemDoEdit';
     ln_CantItems:= to_number(ag_cant_items);
     if (ag_cod_contrato is not null) then
@@ -3455,7 +3455,7 @@ End;
                      value="'||ln_Fila_Ini||'"/>
        <input type="hidden" name ="ag_Item_Fin"
                      value="'||ln_Fila_Fin||'"/>                                  
-       
+
     ');
 
     ----------- Tabla de resultados --------------------
@@ -3473,7 +3473,7 @@ End;
          </tr>
     </table>
     <br>');
-    
+
        --------- Paginacion ------------
        if (ln_CantItems > 0) then
           begin
@@ -3636,7 +3636,7 @@ End;
      <br> ');
 
      ------------- Botones Finales ---------------
-     
+
      usp_print('
         <table align="center" BORDER="0"
             CELLPADDING="0" CELLSPACING="0" WIDTH="100%" class="TabFilMan">
@@ -3650,8 +3650,8 @@ End;
                <td colspan = 6 align="right">
              </tr>
           </table>');
-     
-    
+
+
      ----------------- Java Script --------------
      usp_print('
        <script language="javascript">
@@ -3863,7 +3863,7 @@ End;
 
    )
    IS
-    
+
       ----------- Variables ---------
       ln_iterador         NUMBER;
       ln_numeropaginas    NUMBER;
@@ -3873,11 +3873,11 @@ End;
       ln_fila_fin         NUMBER;
       lv_trama_items      LONG;
       ln_ind_adred        number;
-      
+
    BEGIN
 
       IF (ag_cant_items IS NULL) THEN
-         
+
           SELECT COUNT(1) INTO ln_cantitems
            FROM reg_procesos.item_convoca ic,
                 reg_procesos.item_contrato i
@@ -3888,7 +3888,7 @@ End;
       ELSE
          ln_cantitems := 1;
       END IF;
-         
+
       IF (ag_currenpage IS NOT NULL) THEN
          ln_currentpage := TO_NUMBER (ag_currenpage);
       ELSE
@@ -3896,14 +3896,14 @@ End;
       END IF;
 
       ln_numeropaginas := CEIL (ln_cantitems / gn_pagesize_contratos);
-      
+
       ln_fila_ini := (gn_pagesize_contratos * (ln_currentpage - 1) + 1 * SIGN (ln_cantitems) );
       ln_fila_fin := (ln_fila_ini + gn_pagesize_contratos - 1);
 
       IF (ln_cantitems < ln_fila_fin) THEN
          ln_fila_fin := ln_cantitems;
       END IF;
-        
+
       ----------- Tabla de resultados --------------------
     usp_print('
     <table border="0" cellpadding="0" cellspacing="0" width="100%" class="tableform" >
@@ -3942,7 +3942,7 @@ End;
                    ('&nbsp;<a href="#" onclick="cambio_pagina(this,'
                     || ln_fila_ini || ',' || ln_fila_fin || ',' || ln_iterador || ')">'
                     || ln_iterador || '</a>');
-                      
+
              END IF;
              ln_iterador := ln_iterador + 1;
              EXIT WHEN (ln_numeropaginas < ln_iterador);
@@ -3953,7 +3953,7 @@ End;
       usp_print ('</td>
             </tr>
         </table>');
-               
+
    ----------------- Muestra los Items -----------------
 
    usp_print('<xml id="xmlActual"><root></root></xml>');
@@ -3970,7 +3970,7 @@ End;
    lv_trama_items := PKU_SS_UTILES.f_getXmlItemsAdionReducSel(session__ag_cod_contrato,ag_cod_entid_autoriza,ln_ind_adred);     
    usp_print(lv_trama_items);
 
-   
+
       ---------- Cabecera de los Items ---------------
    usp_print('<!-- datapagesize="1" -->
      <table datasrc="#xmlItems" id="tablaItems" pagesize="10" border="1" cellpadding="0" cellspacing="0" width="100%" class="tableform">
@@ -4002,14 +4002,14 @@ End;
           <td width="4%"><input type="text" datafld="monto" name="txtMontoxml" size="15" style="text-align:right" onKeyPress="f_validaCampoNumerico()"></input></td>
           </tr>
        </table>');
-       
+
     usp_print('<br><br>
     <input type="button" name="btnPrimero" value="|<" onclick="go(0)">
     <input type="button" name="btnAnterior" value="<" onclick="go(1)">
     <input type="button" name="btnSiguiente" value=">" onclick="go(2)">
     <input type="button" name="btnUltimo" value=">|" onclick="go(3)">
     ');
-    
+
     usp_print('
        </td>
      </tr>
@@ -4027,10 +4027,10 @@ End;
     ----------------- Java Script --------------
     PKU_SS_FUNCIONES_JS.fXmlAdicionalReduccion; 
     PKU_SS_FUNCIONES_JS.fNumeros;
-    
+
  END;      */
   /**********************************************************/
-  
+
   PROCEDURE uspProItemDoInsert
      ( ag_id_usuario           varchar2,
        ag_n_convoca            varchar2,
@@ -4063,7 +4063,7 @@ End;
        session__userid         varchar2) Is
 
       ---------- variables --------------
-      
+
        ln_cod_contrato         number;
        ln_cod_contrato_ren     number;
        ln_cod_tipo_prorroga    number;
@@ -4086,12 +4086,12 @@ End;
        ln_Item_Fin             number;
 
   Begin
-  
+
      if (session__userid is null) then
       usp_print('<h2>Su Sesion ha expirado... Por favor, vuelva a loguearse.</h2>');
       return;
      end if;  
-  
+
      ln_fila_inicio:= to_number(ag_fila_inicio);
      ln_fila_fin:= to_number(ag_fila_fin);
      ln_cod_contrato:= to_number(ag_cod_contrato);
@@ -4220,21 +4220,21 @@ End;
     ');
 
   End;
-  
+
   PROCEDURE uspNewProItemDoDelete
     ( session__userid             varchar2 default null,
       session__ag_n_convoca       varchar2 default null,
       session__AG_COD_CONTRATO    varchar2 default null,
       proc_item                   varchar2,
       ag_cod_operacion            varchar2 ) Is
-      
+
       lv_usuario        varchar2(50);
       lv_n_convoca      varchar2(50);
       lv_n_cod_contrato varchar2(50);
       lv_proc_item      varchar2(50);
-      
+
   begin
-  
+
      if (session__userid is null) then
         usp_print('<h2>Su Sesion ha expirado... Por favor, vuelva a loguearse.</h2>');
         return;
@@ -4244,14 +4244,14 @@ End;
      lv_n_convoca := session__ag_n_convoca;
      lv_n_cod_contrato := session__AG_COD_CONTRATO;
      lv_proc_item := proc_item;
-     
-     
+
+
      /*usp_print('lv_usuario: '||lv_usuario||'<br>');
      usp_print('lv_n_convoca: '||lv_n_convoca||'<br>');
      usp_print('lv_n_cod_contrato: '||lv_n_cod_contrato||'<br>');
      usp_print('lv_proc_item: '||lv_proc_item||'<br>');
      return;*/
-     
+
      if lv_n_cod_contrato is not null then
        delete from reg_procesos.tmp_contrato_prorroga_item
        where n_cod_contrato   = lv_n_cod_contrato and
@@ -4265,7 +4265,7 @@ End;
          usp_print('lv_proc_item: '||lv_proc_item||'<br>');
          return;*/
      end if;
-     
+
      usp_print('
      <input type="hidden" name="ag_id_usuario" value="'||session__userid||'">
      <input type="hidden" name="ag_cod_operacion" value="'||ag_cod_operacion||'">
@@ -4279,7 +4279,7 @@ End;
        ');
 
   end;
-  
+
   /***************************************************/
   PROCEDURE uspManProItemDoInsert
      ( ag_id_usuario           varchar2,
@@ -4338,7 +4338,7 @@ End;
     ln_cod_contrato_ren     varchar2(50);
 
   Begin
-  
+
      /*usp_print('ag_caditem_nreg: '||ag_caditem_nreg||'<br>');
      usp_print('ag_caditem_item: '||ag_caditem_item||'<br>');
      usp_print('ag_caditem_unid: '||ag_caditem_unid||'<br>');
@@ -4348,12 +4348,12 @@ End;
      usp_print('ag_Item_Ini: '||ag_Item_Ini||'<br>');
      usp_print('ag_Item_Fin: '||ag_Item_Fin||'<br>');
      return;*/
-     
+
      if (session__userid is null) then
         usp_print('<h2>Su Sesion ha expirado... Por favor, vuelva a loguearse.</h2>');
         return;
      end if;
-  
+
      ln_fila_inicio:= to_number(ag_fila_inicio);
      ln_fila_fin:= to_number(ag_fila_fin);
      ln_cod_contrato:= to_number(ag_cod_contrato);
@@ -4368,11 +4368,11 @@ End;
        and n_cod_contrato = ln_cod_contrato_ren
        and proc_item >= ln_Item_Ini
        and proc_item <= ln_Item_Fin;
-       
+
     /* Delete from reg_procesos.tmp_contrato_op_cod_presu
      where n_convoca = REG_PROCESOS.f_get_max_n_convoca(session__AG_N_CONVOCA) and
            n_cod_contrato = ln_cod_contrato;  */ 
-       
+
      commit;
      ---------- Grabar Items Seleccionados -------------
      if ((ag_caditem_nreg is not null) and
@@ -4432,21 +4432,21 @@ End;
                    to_number(lv_item),to_number(lv_unid),to_number(lv_cant),
                    to_number(lv_monto),sysdate,
                    1,1);
-                  
+
                   /*insert into reg_procesos.tmp_contrato_op_cod_presu(
                    n_convoca,proc_item,n_cod_contrato,userid,monto_asignado
                   ) values (
                    REG_PROCESOS.f_get_max_n_convoca(session__AG_N_CONVOCA),
                    to_number(lv_item),ln_cod_contrato_ren,session__userid,NULL);  */  
-                    
+
                  commit;
                end;
              END LOOP;
          end;
      end if;
-     
-     
-    
+
+
+
     ----------------------------------------------------
     usp_print('
         <input type="hidden"  name ="ag_id_usuario"
@@ -4554,12 +4554,12 @@ End;
     ln_Item_Fin             number;
 
   Begin
-  
+
      if (session__userid is null) then
         usp_print('<h2>Su Sesion ha expirado... Por favor, vuelva a loguearse.</h2>');
         return;
      end if;
-     
+
      ln_fila_inicio:= to_number(ag_fila_inicio);
      ln_fila_fin:= to_number(ag_fila_fin);
      ln_cod_contrato:= to_number(ag_cod_contrato);
@@ -4636,8 +4636,8 @@ End;
              END LOOP;
          end;
      end if;
-     
-     
+
+
     commit;
     ----------------------------------------------------
     usp_print('
@@ -4724,8 +4724,8 @@ BEGIN
     <script LANGUAGE="Javascript">
     function Guarda_envio()
     {
-       
-    
+
+
         var extension = thisform.pfiletoupload.value.substring(thisform.pfiletoupload.value.length-4);
         extension = extension.replace(".","");
         if (!ValidarBlanco(thisform.fec_aprob,"Fecha del Documento"))
@@ -4799,7 +4799,7 @@ BEGIN
     <input type="hidden" name="WriteFileDirectory" value="FileSinged" />
     <input type="hidden" name="extension" />
     <input type="hidden" name="WriteFileDirectoryDynamic" value="'||lv_ruta_file||'" />
-    
+
     <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>
         <tr>
             <td colspan="2">
@@ -4844,7 +4844,7 @@ BEGIN
         </tr>
     </table>');
 
-    
+
 END;
 
 /***************** Muestra las Transferencias al MEF ************/
@@ -4924,7 +4924,7 @@ Begin
     lv_anhoentidad              := trim(ag_anhoentidad);
     lv_eue_codigo               := trim(ag_eue_codigo);
     ld_fec_reqMEF               := to_date('20112015','ddmmyyyy');-- Jcerda req MEF 19/10/2015  
-    
+
 -- (2/3) 12.09.2020, obtiene el indicador que verifica que las acciones esten habilitadas
  select F_CON_CONTRATO_MOD('DESACTIVAR', 'ACCIONES',sysdate, ln_cod_contrato  ) into ln_modulo from dual;
 
@@ -4938,9 +4938,9 @@ Begin
     exception
        when no_data_found then lv_eue_desc:= null;
     end;
-    
+
     begin
-    
+
       SELECT tp.proc_tipo_sigla||'-'||cnv.proc_num||'-'||cnv.anhoentidad||'-'||cnv.proc_sigla id_proceso, 
              c.codconsucode||'-'||(case when PROC.N_ID_EXPEDE is not null and trunc(C.f_registro) >= ld_fec_reqMEF then lpad(PROC.N_ID_EXPEDE,8,'0') else lpad(c.n_convoca,8,'0') end)||'-'||lpad(c.n_cod_contrato,8,'0') id_contrato-- Jcerda req MEF 19/10/2015  
 --             c.codconsucode||'-'||lpad(c.n_convoca,8,'0')||'-'||lpad(c.n_cod_contrato,8,'0') id_contrato
@@ -5011,7 +5011,7 @@ Begin
         else
             usp_print('<font color="red"><b>'||cc.cod_estado_transferencia||'-'||cc.des_estado_transferencia||'</b></font>');
         end if;
-        
+
         if ( cc.cod_estado_transferencia = 0 ) then        
               usp_print('
                   <td valign="center" align="center">');       
@@ -5024,7 +5024,7 @@ Begin
                   <td valign="center" align="center">'||cc.valida_mef);
               end if; 
       end if;
-        
+
         usp_print('
             </td>
             <td valign="center" align="center">'||cc.fec_transferencia);
@@ -5251,22 +5251,22 @@ Begin
         <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>
             <tr>
                 <td align="center">');
-                
+
     if  (ln_cod_estado_transf = 3) then
           usp_print('
                         <h5><font color="red"> La entidad no se encuentra habilitada para registrar contratos <font></h4>');
     end if; 
-    
+
     usp_print('
                 </td>
             </tr>
             <tr>
                 <td align="center">
                     <br>');
-    
+
     select F_REPLACE_TILDES(valida_mef) into valida_mef from reg_procesos.contrato_operacion 
     where id_operacion=ln_id_operacion;
-    
+
     if (ln_cod_estado_transf = 10 and substr(valida_mef,1,1)='1') then
         usp_print('
                         <h5>Se Transfiri&oacute; correctamente.</h4>');
@@ -5301,7 +5301,7 @@ Begin
     */
     usp_print('<input type="button" name="h" value="Cerrar" onclick="window.close();thisform.scriptdo.value=''doViewTransferencias'';thisform.submit();f_return();">');  
     end if;
-    
+
         usp_print('
                 </td>
             </tr>
@@ -5363,12 +5363,12 @@ End;
       ls_result_valrnp  varchar2(2000);
 
     Begin
-    
+
     if (session__userid is null) then
      usp_print('<h2>Su Sesion ha expirado... Por favor, vuelva a loguearse.</h2>');
      return;
     end if;
-    
+
     ----------------------------------------------------
     usp_print('
         <input type="hidden"  name ="ag_n_contrato"

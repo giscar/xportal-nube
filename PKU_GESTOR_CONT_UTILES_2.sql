@@ -1,3 +1,4 @@
+set scan off;
 CREATE OR REPLACE PACKAGE                "PKU_GESTOR_CONT_UTILES_2" 
   IS
   type ref_cursor is ref cursor;

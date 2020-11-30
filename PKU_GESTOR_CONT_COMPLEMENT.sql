@@ -1,3 +1,4 @@
+set scan off;
 CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_COMPLEMENT" is
 
   -- Author  : GMILLONES

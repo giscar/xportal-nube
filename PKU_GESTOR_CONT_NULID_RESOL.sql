@@ -1,9 +1,8 @@
-set scan off
 CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_NULID_RESOL" is
 
 --consultoria nube migracion
   url_azure_app    varchar2(250):= 'https://zonasegura2.seace.gob.pe/documentos/';
-  
+
   type ref_cursor is ref cursor;
 
   gpk_directorio_resolucion       varchar2(50):= 'mon\docs\contratos';
@@ -32,8 +31,8 @@ PROCEDURE uspTmpContCalDoDelete(
     ag_currenpage           varchar2,
     session__userid         varchar2,
     av_envento              varchar2);
-    
-    
+
+
 PROCEDURE uspResolucionDoInsert(
     session__N_CONVOCA             varchar2,
     session__COD_CONTRATO          varchar2,
@@ -70,7 +69,7 @@ PROCEDURE uspTmpContCalDoUpdate(
       ag_cod_causa_resolucion varchar2,
       ag_reg_cal_modif        varchar2,
       ls_cod_tipo_operacion   varchar2);
-      
+
 FUNCTION f_contrato_transferido(
     ag_n_cod_contrato  varchar2
     ) return number ;
@@ -85,7 +84,7 @@ PROCEDURE uspNewAnulacionesDoEdit(
     ag_reg_cal_modif        varchar2 DEFAULT Null,
     ag_anhoentidad          varchar2 DEFAULT Null,
     session__userid         varchar2);
-    
+
 PROCEDURE uspNewResolucionDoEdit(
     ag_cod_tipo_resoucion       varchar2,
     ag_fec_resolucion           varchar2,
@@ -97,14 +96,14 @@ PROCEDURE uspNewResolucionDoEdit(
     session__userid             varchar2,    
     ag_doc_resolucion           varchar2,
     ls_cod_tipo_operacion       varchar2);
-    
+
 
  PROCEDURE uspLisResolucionDoView(
     session__userid             varchar2,
     session__N_CONVOCA          varchar2,
     session__COD_CONTRATO       varchar2,
     session__PUBLICADO          varchar2);
- 
+
 
   PROCEDURE uspManResolucionDoView(
       session__N_CONVOCA         varchar2,
@@ -117,8 +116,9 @@ PROCEDURE uspNewResolucionDoEdit(
 
   PROCEDURE uspResolucionDoCancel(
     session__userid         varchar2);
-    
+
 end PKU_GESTOR_CONT_NULID_RESOL;
+
 /
 
 
@@ -296,7 +296,7 @@ IS
         (c.n_cod_contrato = p_n_cod_contrato 
          /*or (c.n_cod_contrato_de_renovac = p_n_cod_contrato and c.cod_operacion_contrato = 6)*/
         );
-        
+
     ------- Variables ------
     e_ArgumentosMalos       exception;
     lv_eue_codigo           varchar2(6);
@@ -322,11 +322,11 @@ IS
     ln_cadena               varchar(5000);
     lvdirectorio            varchar2(50);
     lv_ruta_file            varchar2(250);   
-     
+
     lv_combo_tipoAlcance    varchar2(4000);
     lv_combo_tipoResolucion varchar2(4000);
     lv_combo_tipoResolucion2 varchar2(4000);  
-       
+
     ctipoAlcance            ref_cursor;
     ctipoResolucion         ref_cursor;
     ctipoResolucion2        ref_cursor;
@@ -338,13 +338,13 @@ BEGIN
     ctipoAlcance             :=  PKU_SS_UTILES.f_ctipo_causa(2);
     ctipoResolucion          :=  PKU_SS_UTILES.f_ctipo_resolucion(null);
     ctipoResolucion2         :=  PKU_SS_UTILES.f_ctipo_resolucion(2);
-    
+
     -- Inicializamos los combos
     lv_combo_tipoAlcance     := PKU_SS_UTILES.f_retorna_combo(ctipoAlcance, 'ag_cod_causa_resolucion', ag_cod_causa_resolucion,'Seleccione causal ...','style="width:99%"');
     lv_combo_tipoResolucion  := PKU_SS_UTILES.f_retorna_combo(ctipoResolucion, 'ag_cod_tipo_resoucion', ag_cod_tipo_resoucion,'Seleccione alcance ...','onchange="Refresh(this);" style="width:99%"');
     lv_combo_tipoResolucion2 := PKU_SS_UTILES.f_retorna_combo(ctipoResolucion2, 'ag_cod_tipo_resoucion', ag_cod_tipo_resoucion,'Seleccione alcance ...','onchange="Refresh(this);" style="width:99%"');
-           
-    
+
+
     ln_cod_contrato    := to_number(session__COD_CONTRATO);
     --MMAUTINO: Formato 1514_OP_SEACE2_CON - No se generaba la ruta correcta
     ln_n_convoca       := to_number(session__N_CONVOCA);
@@ -377,13 +377,13 @@ BEGIN
                 pku_ss_mod_contratos.f_msg_error('Error al intentar hallar los datos de la Convocatoria','''doViewNulidad''');
 
     END;
-   
+
     end if;
-    
+
     ----- Datos para subir el archivo
 
     lvdirectorio        := gpk_directorio_resolucion;
-    lv_ruta_file        := lvdirectorio||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca||'\';
+    lv_ruta_file        := lvdirectorio||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca;
 
     ----- Obtener Datos del Contrato ----
     BEGIN
@@ -411,28 +411,28 @@ BEGIN
     <input type="hidden" name="extension">
     <input type="hidden" name="WriteFileDirectoryDynamic" value="'||lv_ruta_file||'" />  
     <input type="hidden" name="av_envento"    id="av_envento"  value="doNewNulidad1"    />
-    
-        
+
+
     <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>
         <tr>');
     usp_print(
             PKU_SS_UTILES.f_get_titulo_contrato ( ln_cod_contrato, 'Nulidad / Resoluci&oacute;n del Contrato u Orden de Compra o Servicios ' ,'Nulidad / Resoluci&oacute;n del Contrato u Orden de Compra o Servicios '));
     usp_print('
             <td align="right" valign=top width="50%">');
-    
+
     IF ln_contr_trans = 0 THEN
         usp_print('
                 <input type="button" value="Grabar" OnClick="grabar(this,''doInsertNulidad'')"/>
         ');
     END IF;
-    
+
     usp_print('
                 <input type="button" value="Cancelar" OnClick="cancelar(this,''doCancelarRegistro'')"/>
             </td>
         </tr>
     </table>
     <br>');
-    
+
     ------- Mostrar Mensaje si tiene transferencias -----
     IF ln_contr_trans = 1 THEN
         usp_print(
@@ -456,7 +456,7 @@ BEGIN
                     <option value = "1" Selected>Nulidad de Contrato</option>
                 </SELECT>',
                 '.'));
-                
+
     --------------  Cantidad de Resoluciones ----------------
     Select count(cod_tipo_resolucion) into ln_cant_tipo from reg_procesos.contrato_resolucion where n_cod_contrato = ln_cod_contrato and cod_tipo_resolucion = 2;
 
@@ -482,7 +482,7 @@ BEGIN
             PKU_PROCESOS_COMUN.f_putRowForm('(*)Documento de Nulidad del Contrato',
                 '<input class="form-control" name="ag_doc_resolucion" value="">',
                 '.'));
-                
+
     usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('(*)Fecha del Documento de Nulidad',
                 '<div class="input-group datepicker" id="idDivTxtFechaIni">
@@ -497,17 +497,17 @@ BEGIN
         elsif ln_cant_tipo > 0 then
         ln_cadena := lv_combo_tipoResolucion2;
     END IF;
-                      
+
     usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('(*)Alcance de la Resoluci&oacute;n',
                 ln_cadena,
                 '.'));                
-                
+
     usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('(*)Causal de la Nulidad',
                 lv_combo_tipoAlcance,
                 '.'));
-                                
+
     usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('(*)Adjuntar Archivo',
                 '<input type="file"  name="pfiletoupload1" style="width:100%"  value="">
@@ -538,14 +538,14 @@ BEGIN
                     <th class="th1">Fecha Pago</th>
                     <th class="th1">Monto Pago<br/>Total:
                     <span id=lblMontoPago name=lblMontoPago>'||lv_total_pago_cont_src||'</span></th>');
-        
+
         IF ln_contr_trans = 0 THEN -- Contrato sin transferencias --
             usp_print('
                     <th class="th1">Operaci&oacute;n</th>');
         END IF;
-        
+
         ln_fila     := 1;
-        
+
         ------ Operaciones del contrato -----
         For co in c_oper(ln_cod_contrato) loop
         begin
@@ -628,7 +628,7 @@ BEGIN
                         else
                             usp_print('
                         <td align="left" width="18%">
-                        
+
                         <div class="input-group datepicker" id="idDivTxtFechaIni">
                 <div class="input-group-addon  add-on">
                      <span class="glyphicon glyphicon-calendar"></span>
@@ -676,11 +676,11 @@ BEGIN
         </tr>');
     end;
     end if;
-    
+
   ----------- Items para Resolucion Parcial ------------
     IF( ag_cod_tipo_resoucion is not null and ag_cod_tipo_resoucion = '2') THEN
         usp_print('
-        
+
         <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>');
             usp_print( PKU_PROCESOS_COMUN.f_get_subTitulo('Items del Contrato'));
             usp_print('
@@ -708,10 +708,10 @@ BEGIN
             End loop;
             usp_print('
         </table>');
-    
+
     End If;
 
-    
+
     usp_print('
     </table>
     <input type="hidden" name="cant_items" value="'||(ln_fila-1)||'"/>
@@ -754,7 +754,7 @@ BEGIN
         if ( !ValidarFecha(thisform.fec_pago_mod,"Fecha de Pago"))      return false;
         if ( !ValidarBlanco(thisform.monto_pago_mod,"Monto de Pago"))   return false;
         if ( !ValidarDecimal(thisform.monto_pago_mod,"Monto de Pago"))  return false;
-        
+
         thisform.ag_reg_cal_modif.value                     = "";
         thisform.ag_id_usuario.value                        = idusuario;
         thisform.ag_id_motivo.value                         = idmotivo;
@@ -827,7 +827,7 @@ BEGIN
             alert("Debe Ingresar la Causal de la Nulidad");
             return false;
         }
-        
+
         // Obtener los items seleccionados, pe: "1,2,3"
             if( thisform.ag_cod_tipo_resoucion.value == "2" )
             {
@@ -849,11 +849,11 @@ BEGIN
             }
             if ( !ValidarItems(obj) )
                 return false;
-                
+
             if(thisform.pfiletoupload1.value != null && thisform.pfiletoupload1.value != ""){
                extencion1 = thisform.pfiletoupload1.value
                extencion1 = extencion1.substring((extencion1.length)-4,extencion1.length)
-               
+
                if (extencion1 != ".doc" && extencion1 != ".zip" && extencion1 != ".pdf")
                  {
                   alert("El archivo de extensi\xf3n "+extencion1+" no est\xe1 permitido.");
@@ -866,7 +866,7 @@ BEGIN
                   alert("Debe de adjuntar el documento");                                
                   return false;
                }
-                        
+
         thisform.scriptdo.value = scrobj;
         thisform.ag_cadena_items.value = caditems;
         thisform.submit();
@@ -903,7 +903,7 @@ IS
     ln_existe_reg  number;
 
 BEGIN
-    
+
     reg_procesos.PKU_GESTOR_CONT_FUNCIONES_JS_3.js_script('var _error = 0;');
     Select count(1) into ln_existe_reg from reg_procesos.tmp_contrato_operacion_cal a  where a.id_usuario = trim(session__userid) and a.id_motivo = to_number(ag_id_motivo) and a.id_operacion = to_number(ag_id_operacion) and a.num_pago = to_number(ag_num_pago) and a.id_op = to_number(ag_id_op);
 
@@ -912,7 +912,7 @@ BEGIN
              SET fec_pago = ag_fec_pago, monto_pago = to_number(ag_monto_pago), d_fec_registro = sysdate
            WHERE id_usuario = trim(session__userid) and id_motivo = to_number(ag_id_motivo)and id_operacion = to_number(ag_id_operacion) and num_pago = to_number(ag_num_pago) and id_op = to_number(ag_id_op);
     ELSE
- 
+
       BEGIN
           INSERT INTO reg_procesos.tmp_contrato_operacion_cal(id_usuario,id_motivo,id_operacion,id_op, num_pago,fec_pago,monto_pago, d_fec_registro)
           VALUES (trim(session__userid),to_number(ag_id_motivo), to_number(ag_id_operacion), to_number(ag_id_op), to_number(ag_num_pago),ag_fec_pago,ag_monto_pago, sysdate);
@@ -920,7 +920,7 @@ BEGIN
           WHEN OTHERS THEN
            reg_procesos.pku_ss_mod_contratos.f_msg_error('Error al intentar Actualizar el Calendario de Pagos','''doViewNulidad''');
       END;
-    
+
     END IF;
 
     COMMIT;
@@ -934,7 +934,7 @@ BEGIN
     <input type="hidden" name ="ag_cod_causa_resolucion"    value="'||ag_cod_causa_resolucion||'"/>
     <input type="hidden" name ="ag_reg_cal_modif"           value="'||ag_reg_cal_modif||'"/>
     <input type="hidden" name ="ls_cod_tipo_operacion"      value="'||ls_cod_tipo_operacion||'"/>    
-    
+
 
     <script language="javascript">
         thisform.scriptdo.value = "doNewNulidad";
@@ -942,7 +942,7 @@ BEGIN
                 thisform.submit();
         }
     </script>');
-    
+
 END;
 
 
@@ -1016,7 +1016,7 @@ Is
     lv_ruta                 varchar2(350);  
     ln_cod_tipo_doc         number;
     ln_total_pago           NUMBER;
-        
+
 Begin
 
     ln_cod_contrato         := to_number(session__COD_CONTRATO);
@@ -1029,14 +1029,14 @@ Begin
    select REG_PROCESOS.s_contrato_resolucion.NEXTVAL into ln_cod_resolucion from dual;
 
    lvtipodocumento := upper(substr(pfiletoupload_file1,length(pfiletoupload_file1)-2,length(pfiletoupload_file1)));
-   
-   lv_ruta := WriteFileDirectoryDynamic||pfiletoupload_file1;
-  
+
+   lv_ruta := WriteFileDirectoryDynamic||'/'||pfiletoupload_file1;
+
    select cod_tipo_file into lv_codtipofile from Reg_procesos.tipo_archivo where  ext_tipo_file = lvtipodocumento;
 
    IF ag_operacion = 1 THEN
         ln_cod_tipo_doc := 610;
-   
+
         ---------- Ingresar la Resolucion ----------
         BEGIN        
           INSERT INTO REG_PROCESOS.contrato_resolucion (
@@ -1049,11 +1049,11 @@ Begin
                   reg_procesos.pku_ss_mod_contratos.f_msg_error('Error al intentar registrar los datos de la Resoluci&oacute;n','''doNewNulidad''');
 
         END;
-      
+
     ELSE
-    
+
         ln_cod_tipo_doc := 620;
-        
+
         ----------- Ingresar Anulacion --------------
         BEGIN
           INSERT INTO REG_PROCESOS.contrato_resolucion (
@@ -1065,28 +1065,28 @@ Begin
                   WHEN OTHERS THEN
                   reg_procesos.pku_ss_mod_contratos.f_msg_error('Error al intentar registrar los datos de la Nulidad','''doNewNulidad''');
         END;
-    
+
     END IF;
-    
-    
-   
+
+
+
    ------------ Ingresar el documento  ------------------------------
     BEGIN 
        INSERT INTO REG_PROCESOS.convocatoria_doc (
              cod_tipo_doc, doc_url, cod_tipo_file, doc_nombre, user_upload, ip_from_upload, nro_doc, FEC_UPLOAD, /*tamano_bytes,*/ n_cod_contrato, N_CONVOCA )
        VALUES(
-             ln_cod_tipo_doc, lv_ruta, lv_codtipofile, ag_doc_resolucion, session__userid, iisenv__remote_host, ag_doc_resolucion, sysdate,  /*ag_file__size,*/ln_cod_contrato, session__N_CONVOCA );
-             
+             ln_cod_tipo_doc, lv_ruta, lv_codtipofile, pfiletoupload_file1, session__userid, iisenv__remote_host, ag_doc_resolucion, sysdate,  /*ag_file__size,*/ln_cod_contrato, session__N_CONVOCA );
+
         UPDATE REG_PROCESOS.contrato_resolucion 
            SET cod_doc = pk_convocatoria.gn_cod_documento 
          WHERE n_cod_resolucion = ln_cod_resolucion;    
-             
+
        EXCEPTION
              WHEN OTHERS THEN
              reg_procesos.pku_ss_mod_contratos.f_msg_error('Error al intentar registrar el Archivo','''doNewNulidad''');
 
     END;
-            
+
 
     ------- Actualizar Campos del Contrato: Transferencia al MEF -------
     IF ln_ind_siaf = 1 THEN
@@ -1103,11 +1103,11 @@ Begin
          Where cal.id_operacion = ln_id_operacion 
          );
 
- 
+
       UPDATE reg_procesos.CONTRATO SET m_contratado = ln_total_pago,id_operacion_src = ln_id_operacion WHERE n_cod_contrato = ln_cod_contrato;
 
       INSERT INTO contrato_operacion (cod_operacion_contrato, n_cod_contrato, IND_MODIFICACION, cod_reduccion,USU_CREACION,ip_creacion) VALUES (1,ln_cod_contrato,2,ln_cod_resolucion,session__userid,iisenv__remote_host);
-             
+
       UPDATE reg_procesos.CONTRATO SET  id_operacion = PK_CONVOCATORIA.gn_id_operacion WHERE n_cod_contrato = ln_cod_contrato;
 
    IF ag_operacion = 1 THEN 
@@ -1115,7 +1115,7 @@ Begin
           BEGIN 
               INSERT INTO reg_procesos.CONTRATO_OPERACION_CALENDARIO (num_pago, fec_pago, codmoneda, monto_pago ) 
               VALUES (cmc.num_pago,nvl(cmc.fec_pago_tmp,cmc.fec_pago_cal), cmc.codmoneda, nvl(cmc.monto_pago_tmp,cmc.monto_pago_cal) );
-                    
+
               EXCEPTION
                  WHEN OTHERS THEN
                       reg_procesos.pku_ss_mod_contratos.f_msg_error('Error al intentar registrar el Calendario','''doNewNulidad''');
@@ -1123,12 +1123,12 @@ Begin
        END LOOP; 
    ELSE
        FOR cmc in c_modif_cal_NUL(ln_id_operacion,1) LOOP
-          
+
          IF CMC.IND_ELIMINAR <> 1 THEN 
              BEGIN
               INSERT INTO reg_procesos.CONTRATO_OPERACION_CALENDARIO (num_pago, fec_pago, codmoneda, monto_pago ) 
               VALUES (cmc.num_pago,nvl(cmc.fec_pago_tmp,cmc.fec_pago_cal), cmc.codmoneda, nvl(cmc.monto_pago_tmp,cmc.monto_pago_cal) );
-                    
+
               EXCEPTION
                  WHEN OTHERS THEN
                       reg_procesos.pku_ss_mod_contratos.f_msg_error('Error al intentar registrar el Calendario','''doNewNulidad''');
@@ -1136,17 +1136,17 @@ Begin
           END IF;   
         END LOOP; 
    END IF;
-      
 
-        
+
+
    END IF;
 
 
     --- Resolucion Total ---
     IF ln_cod_tipo_resoucion = 1 THEN
-        
+
         update REG_PROCESOS.item_contrato  set n_cod_resolucion = ln_cod_resolucion  where n_cod_contrato = ln_cod_contrato;
-    
+
     ELSE  
     --- Resolucion Parcial ---
 
@@ -1154,11 +1154,11 @@ Begin
 
             lv_cadena_items := TRIM(ag_cadena_items);
             lini            := 1;
-            
+
             WHILE ( length( lv_cadena_items ) > 0 ) LOOP
-            
+
                 lfin := instr(lv_cadena_items,',');
-                
+
                 IF lfin = 0 THEN
                     lfin := length(lv_cadena_items) + 1;
                 END IF;
@@ -1167,11 +1167,11 @@ Begin
                 lv_cadena_items := substr(lv_cadena_items,lfin + 1,length(lv_cadena_items));
 
                 update REG_PROCESOS.item_contrato set n_cod_resolucion = ln_cod_resolucion where n_cod_contrato = ln_cod_contrato and proc_item = to_number(lv_item);
-            
+
             END LOOP;
-        
+
         END IF;
-        
+
     END IF;
 
 
@@ -1191,7 +1191,7 @@ Begin
         thisform.scriptdo.value = "doViewNulidad";
         thisform.submit();
     </script>');
-    
+
 End;
 
 
@@ -1286,28 +1286,28 @@ IS
     ln_cadena                varchar(5000);
     lv_ruta_file             varchar2(250);    
     ln_id_operacion          NUMBER;
-      
+
     lv_combo_tipoAlcance     varchar2(4000);
     lv_combo_tipoResolucion  varchar2(4000);
     lv_combo_tipoResolucion2 varchar2(4000);  
-       
+
     ctipoAlcance            ref_cursor;
     ctipoResolucion         ref_cursor;
     ctipoResolucion2        ref_cursor;
-    
-           
+
+
 Begin
 
-   
+
     ctipoAlcance             :=  PKU_SS_UTILES.f_ctipo_causa(1);
     ctipoResolucion          :=  PKU_SS_UTILES.f_ctipo_resolucion(null);
     ctipoResolucion2         :=  PKU_SS_UTILES.f_ctipo_resolucion(2);
-    
+
     -- Inicializamos los combos
     lv_combo_tipoAlcance     := PKU_SS_UTILES.f_retorna_combo(ctipoAlcance, 'ag_cod_causa_resolucion', ag_cod_causa_resolucion,'Seleccione causal ...','style="width:99%"');
     lv_combo_tipoResolucion  := PKU_SS_UTILES.f_retorna_combo(ctipoResolucion, 'ag_cod_tipo_resoucion', ag_cod_tipo_resoucion,'Seleccione alcance ...','onchange="Refresh(this);" style="width:99%"');
     lv_combo_tipoResolucion2 := PKU_SS_UTILES.f_retorna_combo(ctipoResolucion2, 'ag_cod_tipo_resoucion', ag_cod_tipo_resoucion,'Seleccione alcance ...','onchange="Refresh(this);" style="width:99%"');
-      
+
     ln_cod_contrato          := to_number(session__COD_CONTRATO);
     ln_n_convoca             := to_number(session__N_CONVOCA);
 
@@ -1338,7 +1338,7 @@ Begin
 
     ----- Datos para subir el archivo
 
-    lv_ruta_file  := gpk_directorio_resolucion ||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca||'\';
+    lv_ruta_file  := gpk_directorio_resolucion ||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca;
 
     ----- Obtener Datos del Contrato ----
     BEGIN
@@ -1363,7 +1363,7 @@ Begin
     <input type="hidden" name="WriteFileDirectory"      value="FileSinged">
     <input type="hidden" name="WriteFileDirectoryDynamic" value="'||lv_ruta_file||'" />   
     <input type="hidden" name="av_envento"    id="av_envento"  value="doNewNulidad"    />
-        
+
     <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>
     <tr>');
 
@@ -1408,8 +1408,8 @@ Begin
                     <option value = "1">Nulidad de Contrato</option>
                 </SELECT>',
                 '.'));
-                
-                
+
+
     IF ls_cod_tipo_operacion  is NULL THEN 
        usp_print('</table>');
        return;
@@ -1427,19 +1427,19 @@ Begin
          reg_procesos.pku_ss_mod_contratos.f_msg_error('Error al intentar obtener informacion de Transferencia al SIAF','''doViewNulidad''');
          return;
    END;
-    
+
     -- Genera el combo, validando si ya se registro una  resolucion total del contrato
     IF not PKU_SS_UTILES.f_valida_resolucionTotal(ln_cod_contrato) THEN
         ln_cadena := lv_combo_tipoResolucion;
         ELSE
         ln_cadena := lv_combo_tipoResolucion2;
     END IF;
-    
+
     usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('(*)Documento de Resoluci&oacute;n del Contrato',
                 '<input class="form-control" name="ag_doc_resolucion" value="'||ag_doc_resolucion||'">',
                 '.'));
-                
+
     usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('(*)Fecha del Documento de Resoluci&oacute;n',
                 '<div class="input-group datepicker" id="idDivTxtFechaIni">
@@ -1454,7 +1454,7 @@ Begin
                 '<input type="hidden" name="ag_ind_siaf" value="'||ln_ind_uso_siaf||'"/>'
                 ||ln_cadena,
                 '.'));
-    
+
     usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('(*)Causal de la Resoluci&oacute;n',
                 lv_combo_tipoAlcance,
@@ -1477,7 +1477,7 @@ Begin
                Select id_operacion From reg_procesos.contrato c where c.n_cod_contrato = ln_cod_contrato
                       );
 
- 
+
         usp_print('
         <tr>
             <td class="c1">(*)Calendario<br/>( Indique como queda el calendario despues de esta resolución conserve los montos pagados y los que se pagarán ) </td>
@@ -1489,13 +1489,13 @@ Begin
                     <th class="th1">Monto Prog</th>
                     <th class="th1">Fecha Pago</th>
                     <th class="th1">Monto Pago</th>');
-                    
+
 
         IF ln_contr_trans = 0 then -- Contrato sin transferencias --
             usp_print('
                     <th class="th1">Operaci&oacute;n</th>');
         end if;
-        
+
         ln_fila:= 1;
         ------ Operaciones del contrato -----
         For co in c_oper(ln_cod_contrato) loop
@@ -1540,7 +1540,7 @@ Begin
                     </tr>');
 
             -------- Calendario por Operacion ---------
-            
+
             for cc in c_cal(co.id_operacion,co.id_op,co.id_motivo,session__userid) loop
             begin
                 if ag_reg_cal_modif is null then --- Muestra 'Modificar'
@@ -1579,7 +1579,7 @@ Begin
                 </div>
                <input type="text" name="fec_pago_mod" value="'||cc.fec_pago||'" style="width:98%" data-format="dd/MM/yyyy" class="form-control"/>
           </div>
-                        
+
                         </td>
                         <td align="left"><input name="monto_pago_mod" style="width:98%" align="right" value="'||cc.monto_pago||'"/></td>
                         <td align="center">
@@ -1612,11 +1612,11 @@ Begin
     end if;
     usp_print('
     </table>');
-    
+
     ----------- Items para Resolucion Parcial ------------
     IF( ag_cod_tipo_resoucion is not null and ag_cod_tipo_resoucion = '2') THEN
         usp_print('
-        
+
         <table width=100% class="table table-striped">');
             usp_print( PKU_PROCESOS_COMUN.f_get_subTitulo('Items del Contrato'));
             usp_print('
@@ -1644,7 +1644,7 @@ Begin
             End loop;
             usp_print('
         </table>');
-    
+
     End If;
 
 
@@ -1653,7 +1653,7 @@ Begin
     <br/>');
 
 
- 
+
   End;
 
 
@@ -1669,7 +1669,7 @@ IS
 
   --------- Operaciones --------------
   Cursor c_oper(p_n_cod_contrato in number) is
-    
+
             Select 1 id_motivo, 
                    'Contrato' des_motivo, 
                     to_char(c.f_contrato,'dd/mm/yyyy') f_operacion,
@@ -1678,14 +1678,14 @@ IS
                from reg_procesos.contrato c
             where c.n_cod_contrato = p_n_cod_contrato
             order by 1;
-            
+
 
     ------- Calendario de cada tipo operacion -------
     Cursor c_cal(p_id_operacion1 in number,p_id_operacion2 in number) is
-  
+
     Select a.num_pago, a.codmoneda, a.monto_pago monto_pago1,a.fec_pago fec_pago1, b.monto_pago monto_pago2, b.fec_pago fec_pago2
       from
-      
+
         (   Select a.num_pago, a.codmoneda, a.monto_pago,to_char(a.fec_pago,'dd/mm/yyyy') fec_pago
               from reg_procesos.contrato_operacion_calendario a
              where a.id_operacion = p_id_operacion1
@@ -1736,7 +1736,7 @@ IS
     lv_total_pago_op2        varchar2(20);
     ln_icon_tipo_file        varchar2(100);
     row_documento_doc        reg_procesos.Convocatoria_Doc%rowtype;
-    
+
 Begin
 
     ln_cod_resolucion  := to_number(ag_cod_resolucion);
@@ -1744,7 +1744,7 @@ Begin
 
     -------- Funciones Script -------
     REG_PROCESOS.PKU_GESTOR_CONT_FUNCIONES_JS_3.fValidaCadenas_JS;
-    
+
     ---------- Datos del documento de la Resolucion -----------  
     BEGIN 
 
@@ -1773,7 +1773,7 @@ Begin
     EXCEPTION
           WHEN OTHERS THEN
                 pku_ss_mod_contratos.f_msg_error('Error al intentar hallar los datos de la resolucion','''doViewNulidad''');
-    
+
     END;
 
     ----- Obtener Datos del Contrato ----
@@ -1853,13 +1853,13 @@ Begin
             PKU_PROCESOS_COMUN.f_putRowForm('Alcance de la Resoluci&oacute;n',
                 '<input type="text" name="tipo_res" readonly style="width:98%" value="'||trim(lv_des_tipo_resolucion)||'"/>',
                 '.'));
-   
+
    usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('Causal de la Resoluci&oacute;n',
                 '<input type="text" name="causa_res" readonly style="width:98%" value="'||trim(lv_des_causa_resolucion)||'"/>',
                 '.'));
 
-                      
+
     ---------- Calendario del Contrato ----------
     IF  ln_ind_uso_siaf = 1 THEN
         ------- Total Pagos del Contrato----
@@ -1897,7 +1897,7 @@ Begin
                     <th class="th1">Fecha Pago</th>
                     <th class="th1" align="center">Monto Pago</th>');
         ln_fila:= 1;
-        
+
         ------ Operaciones del contrato -----
         for co in c_oper( ln_cod_contrato ) loop
             ------- Total y Cantidad de Pagos del Contrato----
@@ -1931,9 +1931,9 @@ Begin
                         </td>
                     </tr>');
             -------- Calendario por Operacion ---------
-            
+
             for cc in c_cal(co.id_operacion1,co.id_operacion2) loop
-                
+
                 usp_print('
                     <tr>
                         <td align="center">'||cc.num_pago||'</td>
@@ -1983,10 +1983,10 @@ Begin
         </tr>');
         ln_fila:= ln_fila + 1;
     end loop;
-    
+
     usp_print('
     </table>');
-    
+
 End;
 
 
@@ -2023,16 +2023,16 @@ IS
 
     ln_n_convoca         number;
     ln_cod_contrato      number;
-    
+
     ln_Cont_Fila         number;
     ln_cant_res          number;
     ln_estado            number;
     ln_color             varchar2(5000);
-    
+
     ln_modulo number;        -- (1/3) 12.09.2020 , permite verificar si las acciones sobre el contrato deben estas habilitados
 
 BEGIN
-    
+
     if session__COD_CONTRATO is not null then
         ln_n_convoca     := session__N_CONVOCA;
         ln_cod_contrato  := session__COD_CONTRATO;
@@ -2044,7 +2044,7 @@ BEGIN
         );
         return;
     end if;
-    
+
   -- (2/3) 12.09.2020, obtiene el indicador que verifica que las acciones esten habilitadas
   select F_CON_CONTRATO_MOD('DESACTIVAR', 'ACCIONES',sysdate, session__COD_CONTRATO  ) into ln_modulo from dual;
 
@@ -2057,10 +2057,10 @@ BEGIN
      );
        return;    
     end if;
-    
+
     -------- Java Script -------
     REG_PROCESOS.PKU_GESTOR_CONT_FUNCIONES_JS_3.fEfecto_Imagenes_JS;
-   
+
     ---- obtenemos la cantidad de items sin resolver del contrato 
     BEGIN
         select count(proc_item) into ln_cant_res from reg_procesos.item_contrato where n_cod_resolucion is null and n_cod_contrato = ln_cod_contrato;
@@ -2069,14 +2069,14 @@ BEGIN
             reg_procesos.pku_ss_mod_contratos.f_msg_error('Error al intentar hallar la cantidad de items no resueltos del Contrato','''doViewNulidad''');
 
     END;
-    
+
     usp_print('
     <input type="hidden" name="ag_cod_resolucion"    value=""/>
 
-    
+
     <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>
     <tr>');
-        
+
     usp_print(
       PKU_SS_UTILES.f_get_titulo_contrato ( ln_cod_contrato, 'Nulidad / Resoluci&oacute;n del Contrato u Orden de Compra o Servicios' ,'Nulidad / Resoluci&oacute;n del Contrato u Orden de Compra o Servicios ')
       );    
@@ -2090,7 +2090,7 @@ BEGIN
                     <input type="button" value="Crear Nulidad / Resolución" OnClick="validaInsert()"/>');
         END IF;
     end if;
-    
+
     usp_print(' &nbsp;
             </td>
         </tr>
@@ -2102,40 +2102,40 @@ BEGIN
         <th class="th1">Tipo Resoluci&oacute;n / Anulaci&oacute;n</th>
         <th class="th1">Causal</th>  
         <th class="th1">Fecha de la Operaci&oacute;n</th>');
-    
+
     ------ Listado de Resoluciones ---
     ln_Cont_Fila:=1;
 
     FOR cr in c_resoluciones(ln_cod_contrato,ln_n_convoca) LOOP
-        
+
         IF mod(ln_Cont_Fila,2) = 0 THEN 
             ln_color := 'bgcolor="#ECE9D8"';
         ELSE
             ln_color := '';
         END IF;
-        
+
         usp_print('
         <tr '||ln_color||'>
             <td align="center">
                 <b>'||makea('ag_n_convoca='||ln_n_convoca||'&ag_cod_resolucion='||cr.n_cod_resolucion||'&ag_id_usuario='||session__userid||'&scriptdo=doViewNulidadDetalle',cr.n_cod_resolucion)||'<b>
             </td>');
-            
+
             IF cr.tipo = 1 THEN
                 usp_print('<td align="center">Resolucion</td>');
             ELSE
                 usp_print('<td align="center">Anulacion</td>');
             END IF;
-            
+
             usp_print('
             <td align="center">'||cr.des_tipo_resolucion||'</td>
             <td align="center">'||cr.des_causa_resolucion||'</td>
             <td align="center">'||cr.fec_resolucion||'</td>
         </tr>');
-        
+
         ln_Cont_Fila:= ln_Cont_Fila + 1;
-        
+
     END LOOP;
-    
+
     usp_print('</table>');
 
     ---------- Java Script ---------------
@@ -2181,7 +2181,7 @@ EXCEPTION
         raise_application_error(-20000,'Se detecto una incorrecta asignacion de valores en los argumentos');
 
 END;
-  
+
 PROCEDURE uspResolucionDoCancel(
     session__userid         varchar2)
 Is
@@ -2190,7 +2190,7 @@ Begin
     --------- Borrar tabla temporal ----
     delete from reg_procesos.tmp_contrato_operacion_cal where id_usuario = session__userid;
     commit;
-    
+
 
     usp_print('
     <script language="javascript">
