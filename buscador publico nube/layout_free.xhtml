@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+<f:view>
+<h:head>
+	<META httpequiv="ContentType" content="text/html; charset=UTF-8" />
+<title>
+	<ui:insert name="titulo">
+		<h:outputText value="#{msg['buscadorPublico.titulo']}" />
+	</ui:insert>
+</title>
+<link rel="shortcut icon" href="#{request.contextPath}/resources/img/lupaColor.ico" type="image/vnd.microsoft.icon" />
+<link href="#{request.contextPath}/resources/css/seaceStyle.css" rel="stylesheet" type="text/css" />
+<h:outputScript library="default" name="js/cmsSEACE.js" /><!-- ASANCHEZZ -->
+<script type="text/javascript">
+	//<![CDATA[  
+	           function newDoc() {
+				 	  window.location.assign("/seacebus-uiwd-pub/fichaSeleccion/fichaListaAccionesItemsDet.xhtml")
+				}
+	           function descargaDocGeneral(idDocumento, idSeaceVersion, ruta){
+	        	   console.log(1);
+					var url ='';
+					if(idSeaceVersion==2){						
+						/*url = 'http://zonasegura.seace.gob.pe'+ruta;
+						if(checkUrl(url)==false){
+							url = 'http://docs.seace.gob.pe'+ruta;
+						}*/
+						console.log(ruta);
+						url = ruta;
+						window.open(url,null,'location=no,height=50,width=50,resizable=yes,scrollbars=yes'); //ASANCHEZZ
+					}else if(idSeaceVersion==3){
+						jsCmsSeaceUtil.descargaPriv(idDocumento); //ASANCHEZZ
+					}
+				}
+	function abrirVentanRevisionApelacion(ruta){
+		var url =ruta;
+		window.open(url,null,'location=no,height=250,width=250,resizable=yes,scrollbars=yes');
+	}
+	function checkUrl(url) {
+	    var request = false;
+	    if (window.XMLHttpRequest) {
+	            request = new XMLHttpRequest;
+	    } else if (window.ActiveXObject) {
+	            request = new ActiveXObject("Microsoft.XMLHttp");
+	    }
+
+	    if (request) {
+	            request.open("GET", url);
+	            if (request.status == 200) { return true; }
+	    }
+
+	    return false;
+	}
+	//]]>
+</script>
+</h:head>
+<h:body style="background-color:white;">
+<div class="content">
+	<div id="SubContent">
+		<ui:insert name="content"></ui:insert>
+	</div>
+</div>
+</h:body>
+</f:view>
+</html>

@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<f:view contentType="text/html">
+		<h:head>
+		
+					<!-- SM-031-2020 -->
+					<!-- Google Analytics -->
+					<script>
+					(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+					(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+					m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+					})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+					
+					ga('create', 'UA-159927461-1', 'auto');
+					ga('send', 'pageview');
+					</script>
+					<!-- End Google Analytics -->
+		
+		
+					<!-- <meta http-equiv="refresh" content="${pageContext.session.maxInactiveInterval};url=buscadorPublico.xhtml" />	 -->
+					<META httpequiv="ContentType" content="text/html; charset=UTF-8" />	 
+					<title>
+						<ui:insert name="titulo">
+							<h:outputText value="#{msg['buscadorPublico.titulo']}" />
+						</ui:insert>
+					</title>
+					<link rel="shortcut icon" href="#{request.contextPath}/resources/img/lupaColor.ico" type="image/vnd.microsoft.icon" />
+					<link href="#{request.contextPath}/resources/css/seaceStyle.css" rel="stylesheet" type="text/css" />
+					<h:outputScript library="default" name="js/cmsSEACE.js" /><!-- ASANCHEZZ -->
+					
+		 	<script type="text/JavaScript">
+					if (parent.frames.length > 0) top.location.replace(document.location); 
+			</script>	 					
+					
+			<script type="text/javascript">
+				//<![CDATA[  
+				           
+				if (top != self) top.location.href = "http://prodapp2.seace.gob.pe/seacebus-uiwd-pub/buscadorPublico/copyright.xhtml";				           
+				           
+				function newDoc() {
+				 	  window.location.assign("http://www.w3schools.com")
+				}
+				function descargaDocGeneral(idDocumento, idSeaceVersion, ruta){
+					console.log(idSeaceVersion);
+					var url ='';
+					if(idSeaceVersion==3){
+						jsCmsSeaceUtil.descargaPriv(idDocumento); //ASANCHEZZ
+					}else{
+						console.log(ruta);
+						var n = ruta.search("particion1");
+						if(parseInt(n) > 0){
+							ruta = ruta.replace("documentos/", "");
+						}
+						console.log(n);
+						url = ruta;
+						window.open(url,null,'location=no,height=500,width=500,resizable=yes,scrollbars=yes'); //ASANCHEZZ
+					}
+					
+				}
+				
+
+				function descargaDocLaudos(idDocumento, idSeaceVersion, ruta){
+					var url ='';
+					if(idSeaceVersion==2){						
+						//url = 'http://zonasegura.seace.gob.pe'+ruta;
+						url = 'https://zonasegura2.seace.gob.pe/documentos/'+ruta;
+					}
+					window.open(url,null,'location=no,height=600,width=600,resizable=yes,scrollbars=yes');
+				}
+				
+				
+				function abrirVentanRevisionApelacion(ruta){
+					var url =ruta;
+					window.open(url,null,'location=no,height=500,width=500,resizable=yes,scrollbars=yes');
+				}
+				
+				//inicio incidencia 24 del 11/09/2014 rramos
+				//inicio mejora sobre cambio de servidor de tribunal del 16/03/2015 imendoza
+				function abrirVentanResolucionTribunal(doc_nombre,nro_doc){
+					var url ='http://prodapp1.osce.gob.pe/portaltribunal-uiwd-pub/ControllerServletOpen?portletid=usp_expediente_view_tm&scriptdo=usp_expediente_view_proveido_tm&idnotifica='+doc_nombre+'&annotifica='+nro_doc;
+					window.open(url,null,'location=no,height=500,width=500,resizable=yes,scrollbars=yes');
+				}
+				
+				function abrirVentanRecursoApelacionAnteTribunal(doc_url){
+					var url ='http://prodapp1.osce.gob.pe/portaltribunal-uiwd-pub/ControllerServletOpen?scriptdo=usp_expedientes_buscar_doview_tm_pub&idexpediente='+doc_url+'&portletid=usp_expedientes_buscar_doview_tm_pub';
+					window.open(url,null,'location=no,height=500,width=500,resizable=yes,scrollbars=yes');
+				}
+				//fin mejora sobre cambio de servidor de tribunal del 16/03/2015 imendoza
+				function descargaActaSubastaElectronica(doc_url){					
+					window.open(doc_url,null,'location=no,height=50,width=50,resizable=yes,scrollbars=yes');
+				}
+				function verDetalleNotificacion(numero,anho){
+					var url ='http://www2.seace.gob.pe/openasportlet.asp?_portletid_=47&scriptdo=pku_opnegocio.dodetallenotificacion&ag_notificacion='+numero+'&ag_anhonotificacion='+anho;
+					window.open(url,null,'location=no,height=500,width=500,resizable=yes,scrollbars=yes');
+				}				
+				//fin incidencia 24 del 11/09/2014 rramos				
+
+				function checkUrl(url) {
+				    var request = false;
+				    if (window.XMLHttpRequest) {
+				            request = new XMLHttpRequest;
+				    } else if (window.ActiveXObject) {
+				            request = new ActiveXObject("Microsoft.XMLHttp");
+				    }
+
+				    if (request) {
+				            request.open("GET", url);
+				            if (request.status == 200) { return true; }
+				    }
+				    return false;
+				}
+				
+				/** Inicio Reloj Digital	**/
+				function startTime() {
+					today = new Date();
+					h = today.getHours();
+					m = today.getMinutes();
+					s = today.getSeconds();
+					m = checkTime(m);
+					s = checkTime(s);
+					document.getElementById('reloj').innerHTML = h + ":" + m
+							+ ":" + s;
+					t = setTimeout('startTime()', 500);
+				}
+				function checkTime(i) {
+					if (i < 10) {
+						i = "0" + i;
+					}
+					return i;
+				}
+				window.onload = function() {
+					startTime();
+					
+					var months = new makeArray('Enero', 'Febrero', 'Marzo',
+							'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto',
+							'Septiembre', 'Octubre', 'Noviembre', 'Diciembre');
+					var date = new Date();
+					var day = date.getDate();
+					var month = date.getMonth() + 1;
+					var yy = date.getYear();
+					var year = (yy < 1000) ? yy + 1900 : yy;
+					
+					
+					var d=new Date();
+					var dia=new Array(7);
+					dia[0]="Domingo";
+					dia[1]="Lunes";
+					dia[2]="Martes";
+					dia[3]="Miercoles";
+					dia[4]="Jueves";
+					dia[5]="Viernes";
+					dia[6]="Sabado";
+										
+					document.getElementById('relojFecha').innerHTML = dia[d.getDay()] + ", "+ day + " de " + months[month]
+					+ " del " + year;
+				}
+				/** Inicio Reloj Digital	**/
+				/** Inicio cargar Dia */
+
+				function makeArray() {
+					for (i = 0; i < makeArray.arguments.length; i++)
+						this[i + 1] = makeArray.arguments[i];
+				}
+
+
+
+				/**Inicio: tchacon 21/10/2015 - Integrar Buscador Publico SEACE v3 - Google Analytics --Solicitado por mgarcia el 19/10/2015 **/
+				/* SM-031-2020 
+				(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+				})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+				ga('create', 'UA-69053812-1', 'auto');
+				ga('send', 'pageview');
+				*/
+
+				/**Fin: tchacon 21/10/2015 - Integrar Buscador Publico SEACE v3 - Google Analytics --Solicitado por mgarcia el 19/10/2015 **/
+				
+				/***/
+				//]]>
+			</script>
+	</h:head>
+	
+	<h:body>
+		<div class="default">
+			<div class="hdLeft">
+				<img src="#{request.contextPath}/resources/img/IzqSeacev3.png"
+					alt="Osce" class="imgHead" />
+			</div>
+			<div class="hdRight">
+				<div class="botonera">
+					<a target="_self" href="http://prodapp.seace.gob.pe/portal/"> <img
+						border="0"
+						src="#{request.contextPath}/resources/img/1405629656_home.png" />
+						<span style="font-size: 12px"> <span
+							style="font-family: arial, helvetica, sans-serif">#{msg['buscadorPublico.label.volver']}</span>
+					</span>
+					</a> | <a target="_self"
+						href="#{request.contextPath}/buscadorPublico/contact/contactenos.xhtml">
+						<img border="0"
+						src="#{request.contextPath}/resources/img/1405629675_contact.png" />
+						<span style="font-size: 12px"> <span
+							style="font-family: arial, helvetica, sans-serif">#{msg['buscadorPublico.label.contacto']}</span>
+					</span>
+					</a> | <a target="_self" href="https://www.gob.pe/institucion/osce/informes-publicaciones/437067-preguntas-frecuentes-seace"> <img border="0"
+						src="#{request.contextPath}/resources/img/1405629729_20-rss.png" />
+						<span style="font-size: 12px"> <span
+							style="font-family: arial, helvetica, sans-serif">#{msg['buscadorPublico.label.FAQ']}</span>
+					</span>
+					</a>
+				</div>
+				<!-- div id="menucentral">
+					    	<ul>
+								<li>
+									<a target="_self" href="http://portal.osce.gob.pe/osce/">
+										<img width="32" height="32" border="0" src="#{request.contextPath}/resources/img/icon_home.png" />
+										<span style="font-size: 12px">
+											<span style="font-family: arial, helvetica, sans-serif">#{msg['buscadorPublico.label.volver']}</span>
+										</span>	
+									</a>
+								</li>
+								<li>
+									<a target="_self" href="#{request.contextPath}/buscadorPublico/contact/contactenos.xhtml">
+										<img width="32" height="32" border="0" src="#{request.contextPath}/resources/img/icon2_email.png" />
+										<span style="font-size: 12px">
+											<span style="font-family: arial, helvetica, sans-serif">#{msg['buscadorPublico.label.contacto']}</span>
+										</span>	
+									</a>
+								</li>
+								<li>
+									<a target="_self" href="#">
+										<img width="32" height="32" border="0" src="#{request.contextPath}/resources/img/icon_feed.png" />
+										<span style="font-size: 12px">
+											<span style="font-family: arial, helvetica, sans-serif">#{msg['buscadorPublico.label.FAQ']}</span>
+										</span>	
+									</a>
+								</li>
+							</ul>
+					    
+					    </div-->
+				    </div>
+				</div>
+				<div style="width: 100%;background-color: #d2d2d2; color: #565353;font-weight: bold;">
+					<p:panel style="width: 100%;text-align:center;">
+						<h:outputText value="#{buscadorPublicoBean.txtCalendarioAnio}" />
+						<p:spacer width="25" height="1" />
+						<h:outputText id="relojFecha" />
+						<p:spacer width="5" height="1" />
+						<h:outputText id="reloj" />
+					</p:panel>			
+				</div>
+				<div class="content">
+					<div id="SubContent">
+						<ui:insert name="content"></ui:insert>
+					</div>
+				</div>
+				
+				<br />
+				<div id="footer">
+					<div id="contentFoot" class="claseLink" > <!--  001 - SM035-2018 SGFS (se agrego claseLink)-->
+							<h:outputText value="#{msg['buscadorPublico.footer']}" />
+							<!-- ASANCHEZZ - 046-2016 - INICIO -->
+							<br />
+							<!--  Inicio 001 - SM035-2018 SGFS-->
+							<!--a target="_self" href="http://192.168.4.129:7003/SeaceWeb-PRO/download?fileName=109b725c-142c-453d-b116-f3f2c5d4d9c5">
+								<h:outputText value="Trminos y Condiciones de Uso" />
+							</a-->
+							<a target="_self" href="http://prodapp.seace.gob.pe/SeaceWeb-PRO/download?fileName=8dfa8b70-c08d-4ae4-8662-3d4170ee58a1">
+								<h:outputText value="Trminos y Condiciones de Uso" />
+							</a>
+							<!--  Fin 001 - SM035-2018 SGFS-->
+							<!-- ASANCHEZZ - 046-2016 - FIN -->
+					</div>
+				</div>
+				
+		</h:body>
+</f:view>
+</html>

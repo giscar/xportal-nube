@@ -1,0 +1,622 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:seace-int="http://www.seace.gob.pe/seace-composite-comps/INT"
+	xmlns:seace-menu="http://www.seace.gob.pe/seace-composite-comps/MENU"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	<f:view locale="#{MenuBean.selectLocale}">
+	<ice:outputDeclaration doctypeRoot="html"
+		doctypePublic="-//W3C//DTD XHTML 1.0 Transitional//EN"
+		doctypeSystem="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" />
+		
+	<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+
+	<head>
+	<!-- Inicio (Mejoras SDD) 03.06.14 -->
+		<meta http-equiv="X-UA-Compatible" content="IE=9" />
+	<!-- Fin (Mejoras SDD) 03.06.14 -->	
+		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+		<link href="#{request.contextPath}/resources/images/banners/banner001.JPG" rel="icon" type="image/x-icon"/>
+		<ice:outputStyle href="/resources/css/superfish/superfish.css"  />
+		<ice:outputStyle href="/resources/css/xp-portlet.css"/>
+		
+		<ice:outputStyle href="/resources/css/main1.css"   />
+				
+		<ice:outputStyle href="/resources/resources/css/cssLayout.css"   />
+		<ice:outputStyle href="/resources/resources/css/default.css"   />
+		
+		<!-- validaciones y flujos -->
+		<ice:outputStyle href="/resources/css/jquery-ui.css"/>
+		
+		<!-- ASANCHEZZ - INICIO -->
+		<ice:outputStyle href="/resources/css/fwdForm.css"/>
+		<!-- ASANCHEZZ - FIN -->
+
+		<!-- validaciones y flujos -->
+		
+		<script type="text/javascript" src="#{request.contextPath}/resources/js/jquery/jquery.js"></script>
+		<script type="text/javascript" src="#{request.contextPath}/resources/js/jquery/jquery.maskedinput.js"></script>
+		<script type="text/javascript" src="#{request.contextPath}/resources/js/jquery/jquery-ui.js"></script>
+			
+			<!-- Scrips adicionales -->
+			<script type="text/javascript" src="#{request.contextPath}/resources/js/jscript.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/resources/js/jquery/json.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/resources/js/formValidation.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/resources/js/superfish/hoverIntent.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/resources/js/superfish/superfish.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/resources/js/menuNav.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/resources/js/seace4.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/resources/js/options.js"></script>
+			<!-- Inicio Incidencia Actos 29/11/2013 - - > 3  -->
+			<!-- Inicio Modif:OT-STI01_2016021 -->
+			<script type="text/javascript" src="#{request.contextPath}/resources/js/qunit-git.js"></script>
+			<!-- Final Modif:OT-STI01_2016021 -->
+			
+			<script type="text/javascript" charset="UTF-8" src="#{request.contextPath}/resources/js/bigdecimal/BigDecimal-all-last.min.js"></script>
+			<!-- Fin Incidencia Actos 29/11/2013 - - > 3  -->
+			
+			<!-- Inicio 15/06/2015 Domain Mejora Alfresco -->
+			<script type="text/javascript" src="#{request.contextPath}/resources/js/svcAlfresco.js"></script>
+			<script type="text/javascript" src="#{request.contextPath}/resources/js/cmsSEACE.js"></script>
+			<!-- Fin 15/06/2015 Domain Mejora Alfresco -->
+			<!-- IAN -->
+			<!-- JLSULCAG CALENDAR -->
+			<script type="text/javascript" src="#{request.contextPath}/resources/js/jquery/fwdUtil.js" />
+			<script type="text/javascript" src="#{request.contextPath}/resources/js/jquery/jquery.ui.datepicker-properties.js" />
+			
+			<script type="text/javascript">
+					/*<![CDATA[*/ 
+			//ASANCHEZZ - INICIO
+			// Inicio requ Incidencia -Cronogramas
+			/*
+			function contadorLetras(idFormOrigen, idFormDestino,cantidad){			
+				var valor = jsObjectUtils.getValue( idFormOrigen );			
+				document.getElementById(idFormDestino).innerHTML = valor.length+"/"+cantidad; 
+			}
+			*/
+			//ASANCHEZZ - FIN
+			// Fin requ Incidencia -Cronogramas		
+			
+			
+					/**Inicio 15/06/2015 Domain Mejora Alfresco **/
+					function descargaDocPrivada(idDocumento){
+			     	   jsCmsSeaceUtil.descargaPriv(idDocumento);
+			     	   return false;
+			       	}
+					
+					function descargaDocPublico(idDocumento){
+			     	   jsCmsSeaceUtil.descargaPub(idDocumento);
+			     	  return false;
+			       	}
+					/**Fin 15/06/2015 Domain Mejora Alfresco **/
+						
+					jQuery.fn.limpiaFecha = function(){
+						jQuery(this).parent().children('div').children('input[type=text]').val('');
+					};
+					
+				   function calcularSumaCantidadItem(ev) {
+		                jQuery('input[id$="buttonCalcularSumaCantidadItemTotal"]').click(); 
+		                
+		           }
+				   /**INICIO SM-204  **/
+				   function validarSumaCliente(){
+	        			jQuery('input[id$="buttonCalcularSumaCantidadItemTotal"]').click();
+	        			jQuery('input[id$="buttonCalcularSumaRefTotal"]').click(); 
+					}
+				   
+					function validarSumaValorReferencialCliente(){
+						jQuery('input[id$="buttonCalcularSumaRefTotal"]').click(); 
+					}
+					
+					function validarSumaCantidadCliente(){
+						jQuery('input[id$="buttonCalcularSumaCantidadItemTotal"]').click();
+					}
+					
+					/**FIN 204 **/
+	               function calcularValorReferencialTotal(ev) {
+	                   jQuery('input[id$="buttonCalcularRefTotal"]').click(); 
+	               }
+	               
+	               <!--Inicio SR-165-2018-->
+	               function calcularSumaValorReferencialTotal(ev) {
+	                   jQuery('input[id$="buttonCalcularSumaRefTotal"]').click(); 
+	               }
+	               <!--Fin SR-165-2018-->	
+	               
+	               function buttonPorDocumentoEtapa(ev) {
+	                   jQuery('input[id$="buttonPorDocumentoEtapa"]').click(); 
+	               }
+	               
+	               function buttonBuscarRUCParticipante(event) {
+	                   jQuery('input[id$="buttonBuscarRUCParticipante"]').click();
+	               }
+	               
+	                function buttonPlazoPerfeccionamiento(event) {
+	                   jQuery('input[id$="buttonPlazoPerfeccionamiento"]').click();
+	               }
+	               
+	               function buttonCambiarEstadoCalificacionPrevia(value) {
+	                     var  nombreBoton = value.id+'Boton';
+	                    jQuery('input[id$="'+nombreBoton+'"]').click();
+	               }
+	               
+	               function validarCambioSiglaEntidad(event) {
+	               			               			               		
+	               		jQuery('input[id$="valorSinglaEntidad"]').val(jQuery('input[id$="siglaEntidadNombre"]').val());
+	               
+	               		jQuery('input[id$="validarCambioSiglaEntidad"]').click();
+	               }
+	               	               	               
+	               function buttonObtenerParticipante(ev) {
+	               		jQuery('input[id$="obtenerParticipanteNew"]').click();
+	               }
+	               
+	               function obtenerNomenclaturaTipoSeleccion(ev) {
+	            	   jQuery('input[id$="buttonObtNomTipSelec"]').click(); 
+	               }
+	               
+	               function showConfirmSeace(form,element,event,id){
+	            	   new Ice.PanelConfirmation(
+	            			   element,
+	            			   event,
+	            			   id,
+	            			   false,
+	            			   false,
+	            			   false,
+	            			   '#{request.contextPath}/xmlhttp/blank',
+	            			   function(event)
+	            			   {
+	            				   iceSubmit(form,element,event);
+	            				   return false;
+								});
+	            	  	return false;
+	               }
+	               
+	               function validaPersonaJuridica(element){
+	            	   var command = jQuery(element).next();
+	            	   command.click();
+	               }
+	            
+	               function descargaDoc(idDocumento, nombreDocumento, extension){
+	                    var urlDescarga ='/SeaceWeb-PRO/SdescargarArchivoAlfresco';
+	            	    var url = urlDescarga + '?fileCode=' + idDocumento + '&fileName=' +nombreDocumento + '&fileExtension=' +extension;
+	            	    window.open(url,null,'location=no,height=50,width=50,resizable=yes,scrollbars=yes');
+	            	    
+	            	  
+	               } 
+	               function getDocument(idAlfresco){
+	            	   jQuery('body iframe').attr('src','#{request.contextPath}/SdescargarArchivoAlfresco?fileCode=' + idAlfresco);
+	               }
+	               
+	               /**Inicio 17/06/2015 Domain Mejora Alfresco **/
+	               
+	               function descargaDocGeneral(idDocumento){
+	            	   var url ='/SeaceWeb-PRO/SdescargarArchivoAlfresco?fileCode=' + idDocumento;
+	            	   window.open(url,null,'location=no,height=50,width=50,resizable=yes,scrollbars=yes');	            	
+	               }   
+	               
+	               /**Fin 17/06/2015 Domain Mejora Alfresco **/
+	               
+	               //Inicio - Incidencia 2012_OP_SEACE3_PRO (25-06-2015) jcarrillo
+	               function descargaDocNotificacion(idDocumento){
+	            	   if(idDocumento!=null){
+	            		   if(idDocumento.indexOf('/mon/docs/')==0){            	   
+		            		   //var url ='https://zonasegura.seace.gob.pe/documentos' + idDocumento;
+		            		   //Proyecto de migracion miguel chileno
+		            		   var url ='https://zonasegura2.seace.gob.pe/documentos' + idDocumento;
+			            	   window.open(url,null,'location=no,height=50,width=50,resizable=yes,scrollbars=yes');	   
+		            	   }else{
+		            		   var url ='/SeaceWeb-PRO/SdescargarArchivoAlfresco?fileCode=' + idDocumento;
+			            	   window.open(url,null,'location=no,height=50,width=50,resizable=yes,scrollbars=yes');
+		            	   }   
+	            	   }
+	               }
+	               //Fin - Incidencia 2012_OP_SEACE3_PRO
+	               
+	               function descargarArchivoAdjuntoServerWEB(codigo,nombreArchivo){
+	                // var url ='/SeaceWeb-PRO/SdescargarArchivoAlfresco?fileCode='+codigo+'&fileName='+nombreArchivo+'&serverContainer=WEB';
+	            	// window.open(url,null,'location=no,height=50,width=50,resizable=yes,scrollbars=yes');
+	            	jQuery('body iframe:first').attr('src','#{request.contextPath}/descargarArchivoAdjunto?fileCode='+codigo+'&fileName='+nombreArchivo+'&serverContainer=WEB');	            	
+	               }
+	               
+	               function descargarArchivoAdjuntoServerCMS(codigo,nombreArchivo){
+	                 var url ='/SeaceWeb-PRO/SdescargarArchivoAlfresco?fileCode='+codigo+'&fileName='+nombreArchivo+'&serverContainer=CMS';
+	            	 window.open(url,null,'location=no,height=50,width=50,resizable=yes,scrollbars=yes');
+	            	 // jQuery('body iframe:first').attr('src','#{request.contextPath}/descargarArchivoAdjunto?fileCode='+codigo+'&fileName='+nombreArchivo+'&serverContainer=CMS');
+	               }
+	            
+	               	//ASANCHEZZ - 042 - MR1 - INICIO
+	               	//Esta funcion es temporal hasta que la mejora OT-STI01_2016026 pase a produccion. El uso de este metodo evita conflictos de iframes en codigo de desarrollo y tambien falta de la mejora en codigo de produccion
+	               	function descargarArchivoTemporal(codigo) {
+	               		var url = '/SeaceWeb-PRO/SdescargarArchivoAlfresco?fileCode=' + codigo;
+	            		window.open(url,null,'location=no,height=50,width=50,resizable=yes,scrollbars=yes');
+	               	}
+	               	//ASANCHEZZ - 042 - MR1 - FIN
+	               
+	               function abrirVentana(url) {
+	            	   window.open(url, "nuevo", "directories=no, resizable=yes, location=no, menubar=no, scrollbars=yes, statusbar=no, tittlebar=no, width=500, height=500, left=400,top=100");
+	               }
+	               
+	               
+	               /**
+ 					 * <a href="javascript:void(0);" onclick="PopupCenter('http://www.nigraphic.com', 'myPop1',400,400);">CLICK TO OPEN POPUP</a>
+ 					 */
+					function PopupCenter(pageURL, title,w,h) {
+					    var left = (screen.width/2)-(w/2);
+					    var top = (screen.height/2)-(h/2);
+					    var targetWin = (window.open (pageURL, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left));
+					}
+					
+					function PopupCenterScroll(pageURL, title,w,h) {
+					    var left = (screen.width/2)-(w/2);
+					    var top = (screen.height/2)-(h/2);
+					    var targetWin = window.open (pageURL, title, 'toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=no, copyhistory=no, width='+w+', height='+h+', top='+top+', left='+left);
+					}
+
+	               
+	               
+	               function isNumberBlur(obj){
+	            	  if(isNaN(obj.value)){
+	                    	obj.value = "";
+	                  }
+	                    
+	               }
+	             
+	               function isRUCBlur(obj){	
+	            	  if (isNaN(obj.value)){
+	                        obj.value = "";
+	                  }			                   
+	            		
+	            	  if (obj.value.length < 11 ){
+	            		   obj.value = "";
+	                  }
+	               }
+	               
+	               function esEnteroFloat(obj){
+	            	   var temp = obj.value;
+		               try
+	  	               	  {
+	               			if (temp==null || temp==""){
+	               				obj.value="";
+	               			}else{
+	               			//Inicio Incidencia Actos 29/11/2013 --> 3  
+	               		    //obj.value = parseFloat(temp);
+	               			var bar = new BigDecimal(temp);
+	               			obj.value=bar;
+	               		//Fin Incidencia Actos 29/11/2013 --> 3 
+	               			}
+	     	  	       }catch(err){
+	  	               	  obj.value ="";
+	  	               }
+	     	  	         
+	               }
+				   // Funcion Formato Clasificador Gasto
+	               function formatarData(obj) {
+					    if (obj.value.length == 0){
+					    	obj.value += "2";
+					    }
+	            	   	if (obj.value.length == 1 
+					    		|| obj.value.length == 3
+					    		|| obj.value.length == 9) {
+					        obj.value += ".";
+					    }
+					    if (obj.value.length == 6 ||
+					    		obj.value.length == 12){
+					    	obj.value += " ";
+					    }
+					    return;
+					}
+	               
+	               function extractNumber(obj, decimalPlaces, allowNegative)
+	               {
+	               	var temp = obj.value;
+	               	
+	               	// avoid changing things if already formatted correctly
+	               	var reg0Str = '[0-9]*';
+	               	if (decimalPlaces > 0) {
+	               		reg0Str += '\\.?[0-9]{0,' + decimalPlaces + '}';
+	               	} else if (decimalPlaces < 0) {
+	               		reg0Str += '\\.?[0-9]*';
+	               	}
+	               	reg0Str = allowNegative ? '^-?' + reg0Str : '^' + reg0Str;
+	               	reg0Str = reg0Str + '$';
+	               	var reg0 = new RegExp(reg0Str);
+	               	if (reg0.test(temp)) return true;
+
+	               	// first replace all non numbers
+	               	var reg1Str = '[^0-9' + (decimalPlaces != 0 ? '.' : '') + (allowNegative ? '-' : '') + ']';
+	               	var reg1 = new RegExp(reg1Str, 'g');
+	               	temp = temp.replace(reg1, '');
+
+	               	if (allowNegative) {
+	               		// replace extra negative
+	               		var hasNegative = temp.length > 0 && temp.charAt(0) == '-';
+	               		var reg2 = /-/g;
+	               		temp = temp.replace(reg2, '');
+	               		if (hasNegative) temp = '-' + temp;
+	               	}
+	               	
+	               	if (decimalPlaces != 0) {
+	               		var reg3 = /\./g;
+	               		var reg3Array = reg3.exec(temp);
+	               		if (reg3Array != null) {
+	               			// keep only first occurrence of .
+	               			//  and the number of places specified by decimalPlaces or the entire string if decimalPlaces < 0
+	               			var reg3Right = temp.substring(reg3Array.index + reg3Array[0].length);
+	               			reg3Right = reg3Right.replace(reg3, '');
+	               			reg3Right = decimalPlaces > 0 ? reg3Right.substring(0, decimalPlaces) : reg3Right;
+	               			temp = temp.substring(0,reg3Array.index) + '.' + reg3Right;
+	               		}
+	               	}
+	               	
+	               	obj.value = temp;
+	               }
+
+					// gtintaya - Memo 813 - req 3    28.08: funcion -- borraCerosIzquierda--incio
+	               function borraCerosIzquierda(obj)
+	               {
+	               		var tempx = obj.value.replace(/^0*/, "");
+	               		obj.value = tempx;
+	               }
+					// gtintaya -  Memo 813 - req 3 fin
+
+	                //SR 194 ian inicio
+	                
+	                function validaPaste2(idFormOrigen, charlength) {
+					
+		            
+					var reftxt = jsObjectUtils.getValue( idFormOrigen );
+					
+					if (reftxt.length > charlength) {
+		            	 alert("Haz excedido la longitud de " + charlength + " caracteres\n La longitud actual del texto es: " + reftxt.length + ". Por favor verificar");
+		            	 
+		            	 
+		            	 reftxt = reftxt.substring(0, charlength);
+		                 
+		             }
+		         }
+					
+	                function contadorLetras2(idFormOrigen, idFormDestino,cantidad){			
+	        			
+	        			var valor = jsObjectUtils.getValue( idFormOrigen );			
+	        			document.getElementById(idFormDestino).innerHTML = valor.length+"/"+cantidad; 
+	        		}
+	                
+	                //SR 194 ian fin
+					
+					
+	               function blockNonNumbers(obj, e, allowDecimal, allowNegative)
+	               {
+	            	   
+	               	var key;
+	               	var isCtrl = false;
+	               	var keychar;
+	               	var reg;
+	               		
+	               	if(window.event) {
+	               		key = e.keyCode;
+	               		isCtrl = window.event.ctrlKey;
+	               	}
+	               	else if(e.which) {
+	               		key = e.which;
+	               		isCtrl = e.ctrlKey;
+	               	}
+	               	
+	               	if (isNaN(key)) return true;
+	               	
+	               	keychar = String.fromCharCode(key);
+	               	
+	               	// check for backspace or delete, or if Ctrl was pressed
+	               	if (key == 8 || isCtrl)
+	               	{
+	               		return true;
+	               	}
+
+	               	reg = /\d/;
+	               	var isFirstN = allowNegative ? keychar == '-' && obj.value.indexOf('-') == -1 : false;
+	               	var isFirstD = allowDecimal ? keychar == '.' && obj.value.indexOf('.') == -1 : false;
+	               
+	               	return isFirstN || isFirstD || reg.test(keychar);
+	               
+	               }
+	               /*]]>*/
+			</script>
+			<!-- SM OTI-002-2017 - INICIO  -->
+			<script>
+  				(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  				(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  				m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  				})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  				ga('create', 'UA-69053812-4', 'auto');
+  				ga('send', 'pageview');
+			</script>
+			<!-- SM OTI-002-2017 - FIN  -->
+			
+			
+			<script type="text/javascript">
+				/*<![CDATA[*/
+				function round(){
+					var roundAll = {
+				      tl: { radius: 10 },
+				      tr: { radius: 10 },
+				      bl: { radius: 10 },
+				      br: { radius: 10 },
+				      antiAlias: true
+			    	};
+				    
+				    var roundBottom = {
+				      tl: { radius: 0 },
+				      tr: { radius: 0 },
+				      bl: { radius: 10 },
+				      br: { radius: 10 },
+				      antiAlias: true
+			    	};
+				    
+				    var roundTop = {
+				      tl: { radius: 10 },
+				      tr: { radius: 10 },
+				      bl: { radius: 0 },
+				      br: { radius: 0 },
+				      antiAlias: true
+			    	};
+				    curvyCorners(roundBottom, "#bottom");
+				    curvyCorners(roundTop, "#top");
+				}
+				//Inicio rbardale 18/02/2015  1
+				function redefinirEventosInputFile(componente) {
+					//console.log("redefinirEventosInputFile - INICIO");
+					
+					var UUI = 'aa16cb7d-31a9-4c8b-9505-edd0a96cec05';
+					var ua = window.navigator.userAgent;
+				    var msie = ua.indexOf('MSIE ');
+				    var versionInternetExplorer = parseInt(ua.substring(msie + 5, ua.indexOf(".", msie)));				    
+				    				    
+					if( versionInternetExplorer === 7 || versionInternetExplorer === 8 ) {					
+						return;
+					}
+				   
+					var iframes = componente.getElementsByTagName('iframe');
+					var contenido = iframes[0].contentDocument;
+					var formularios = contenido.forms;
+				
+					var inputFile = formularios[0].elements[2];	
+					inputFile.onclick = function() {
+						this.value = null;
+					};
+					
+					inputFile.onchange = function() {
+ 						if(versionInternetExplorer === 9 || versionInternetExplorer === 10) {
+ 		 					validarTamanioArchivoInternetExplorer(this.value, formularios[0], UUI);					
+ 						} else { 	
+ 							validarTamanio(inputFile, formularios[0]);
+ 						}						
+					};
+					
+					//console.log("redefinirEventosInputFile - FIN");
+				}				
+				
+				function validarTamanio(inputFile, formulario) {
+					//console.log("validarTamanio - INICIO");
+					
+					if(inputFile.files.length != 0) {
+						var tamanio = inputFile.files[0].size;
+						if(tamanio > 367001600){
+							alert("El archivo supera los 350 MB");
+							formulario.reset();
+						}else{
+							formulario.submit();							
+						}
+					}else{
+						alert("Debe seleccionar un archivo");
+					}
+					
+					//console.log("validarTamanio - FIN");
+				}
+				
+				function validarTamanioArchivoInternetExplorer(rutaArchivo, formulario, UUI) {
+					//console.log("validarTamanioArchivoInternetExplorer - INICIO");
+					if(window.ActiveXObject) {
+						try{
+							var myFSO = new ActiveXObject("Scripting.FileSystemObject");
+							//console.log(myFSO);
+							var archivo = myFSO.getFile(rutaArchivo);
+							var tamanio = archivo.size;
+							if(tamanio > 367001600) {
+								alert("El archivo supera los 350 MB");
+								formulario.reset();
+							} else {
+								formulario.submit();
+							}							
+						}catch(e){
+							var msg = 'No se puede subir el archivo, si el error persiste \n'+
+									  'puede verificar los siguientes pasos descritos en el \n'+
+							       	  'manual de ayuda, desea descargarlo?';							
+							if(confirm(msg)) {
+								jsCmsSeaceUtil.descargaPriv(UUI);
+							}
+							//console.log(e);
+						}
+					}
+					//console.log("validarTamanioArchivoInternetExplorer - FIN");
+				}
+				
+				function validarTamanioInternetExplorer(rutaArchivo){
+					//console.log("validarTamanioInternetExplorer - INICIO");
+								
+					var list = document.getElementsByTagName("iframe");
+					var formularios = 	list[2].contentDocument.forms;
+					if(window.ActiveXObject) {
+						var myFSO = new ActiveXObject("Scripting.FileSystemObject");
+						var rutaArchivo = myFSO.path;
+						var archivo = myFSO.getFile(rutaArchivo);
+						var tamanio = archivo.size;
+						if(tamanio > 367001600) {
+							alert("El archivo supera los 350 MB");
+							formularios[0].reset();
+						} else {
+							formularios[0].submit();
+						}
+					}					
+					//console.log("validarTamanioInternetExplorer - FIN");
+				}
+				
+				//ASANCHEZZ - SR_056-2020 - INICIO
+				function descargarArchivoAdjunto(uuidCMS, rutaNombreArchivoURL, nombreArchivo) {
+					if (uuidCMS != null && uuidCMS != '') {
+				   		jsCmsSeaceUtil.descargaPriv(uuidCMS);
+					} else {
+						jQuery('body iframe:first').attr('src','#{request.contextPath}/descargarArchivoAdjunto?fileCode=' + rutaNombreArchivoURL + '&fileName=' + nombreArchivo + '&serverContainer=WEB');
+					}
+				}
+
+				function descargarArchivoCMS(uuidCMS) {
+					jsCmsSeaceUtil.descargaPriv(uuidCMS);
+				}
+				
+				function evaluarTipoDocIden(event, tipoDocIden) {
+					if (tipoDocIden == 1) {
+						return isNumberKey(event);
+					} else if (tipoDocIden == 2) {
+						return esAlfaNumericoPro(event);
+					}
+				}
+				//ASANCHEZZ - SR_056-2020 - FIN
+				
+				//SR 219-2020 - INICIO
+				function descargarArchivo() {
+					jQuery('body iframe:first').attr('src','#{request.contextPath}/descargaArchivo');
+				}
+				//SR 219-2020 - FIN
+
+				/*]]>*/
+			</script>
+	<!-- Fin rbardale 18/02/2015  1 -->
+		
+			
+			<script type="text/javascript">
+				/*<![CDATA[*/
+			jQuery(function() {
+				jQuery('ul.sf-menu').superfish();
+				
+			
+			});
+			/*]]>*/
+		</script>
+
+		<ui:insert name="codigojavascript" /><!-- ASANCHEZZ -->
+			<title>
+				<ui:insert name="titulo">
+					<h:outputText value="#{msg['portal.header.seace.title'] }" />
+				</ui:insert>
+			</title>
+		</head>
+		<body class="classbody">
+			<seace-menu:normal/>
+		</body>
+	</html>
+	</f:view>
+</ui:composition>

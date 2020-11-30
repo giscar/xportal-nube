@@ -1,0 +1,67 @@
+
+  CREATE OR REPLACE FORCE VIEW REG_PROCESOS.VW_INT_GARANTIA ("N_ID_CONTRATO", "C_NRO", "C_PRESENTADA", "C_CLASE", "C_TIPO", "C_TIPMON", "N_MONTO", "D_FECEMI", "D_FECVEN", "C_ENLACE") AS 
+  SELECT CONTRATO.N_COD_CONTRATO N_ID_CONTRATO,
+    CAST(GARANTIA.COD_GARANTIA AS VARCHAR2(20)) C_NRO,
+    CASE
+      WHEN -- GARANTIA.n_cod_contrato      = p_n_cod_contrato
+        --and
+        ( CONTRATO.ind_contrato_pub <> 1
+      OR ( CONTRATO.ind_contrato_pub = 1
+      AND GARANTIA.f_registra        < CONTRATO.f_publica
+      AND GARANTIA.f_registra       IS NOT NULL
+      AND CONTRATO.f_publica        IS NOT NULL ) )
+      THEN CAST('Suscripción del contrato' AS VARCHAR2(200))
+      WHEN
+        --GARANTIA.n_cod_contrato      = p_n_cod_contrato
+        --and
+        ( CONTRATO.ind_contrato_pub = 1
+      AND GARANTIA.f_registra      >= NVL(CONTRATO.f_publica,CONTRATO.f_registro) -- cuando no tiene fecha de pub toma la fecha de registro del contrato 11/03/2011 -- :)
+        /* casos anteriores f_publica y g.f_registra no existian */
+      OR ( CONTRATO.ind_contrato_pub = 1
+         and 
+         ( 
+                select count(1) 
+       from REG_PROCESOS.convocatorias c 
+       inner join REG_PROCESOS.convocatoria_pub o on c.n_convoca = o.n_convoca
+       where c.n_convoca = 
+       
+           (select a.n_convoca_origen from REG_PROCESOS.convocatorias a where a.n_convoca   = convocatorias.n_convoca)
+        
+      -- reg_procesos.f_get_min_n_convoca(convocatorias.n_convoca)
+/*       and IND_CONV_ULTIMO_PUB = 1 */
+       and trunc(c.f_publica) >= trunc(to_date('21/10/2010','dd/mm/yyyy'))
+         ) = 0
+        ) )
+      THEN CAST('Ejecución contractual' AS VARCHAR2(200))
+    END C_PRESENTADA,
+    CASE
+      WHEN GARANTIA.IND_FIEL_CUMPLI = 1
+      THEN CAST('GARANTIA DE FIEL CUMPLIMENTO' AS VARCHAR2(200))
+      WHEN GARANTIA.IND_FIEL_CUMPLI_PA = 1
+      THEN CAST('GARANTIA DE FIEL CUMPLIMIENTO POR PRESTACIONES ACCESORIAS' AS VARCHAR2(200))
+      WHEN GARANTIA.IND_MONTO_DIF = 1
+      THEN CAST('GARANTIA POR MONTO DIFERENCIAL DE PROPUESTA' AS VARCHAR2(200))
+      WHEN GARANTIA.IND_ADELANTO = 1
+      THEN CAST('GARANTIA POR ADELANTO' AS VARCHAR2(200))
+      WHEN GARANTIA.IND_BUEN_RENDIMIENTO = 1
+      THEN CAST('GARANTIA POR BUEN RENDIMIENTO' AS VARCHAR2(200))
+    END C_CLASE,
+    CAST (T_TIPO_GARANTIA.DES_TIPO_GARANTIA AS VARCHAR2(200)) C_TIPO,
+    MONEDA.MON_DESC C_TIPMON,
+    CAST (GARANTIA.MONTO_GARANTIA AS NUMBER(16,2)) N_MONTO,
+    GARANTIA.FEC_EMISION D_FECEMI,
+    Garantia.Fec_Vencimiento D_Fecven,
+    CAST (DECODE(CONVOCATORIA_DOC.DOC_URL,NULL,NULL,'https://zonasegura2.seace.gob.pe/documentos/'                       
+    || CONVOCATORIA_DOC.DOC_URL) AS VARCHAR(1000)) C_ENLACE
+  From Reg_Procesos.Contrato Contrato
+  left outer JOIN REG_PROCESOS.CONVOCATORIAS CONVOCATORIAS
+  ON CONTRATO.N_CONVOCA = CONVOCATORIAS.N_CONVOCA
+  INNER JOIN REG_PROCESOS.GARANTIA GARANTIA
+  ON CONTRATO.N_COD_CONTRATO = GARANTIA.N_COD_CONTRATO
+  LEFT OUTER JOIN REG_PROCESOS.T_TIPO_GARANTIA T_TIPO_GARANTIA
+  ON GARANTIA.COD_TIPO_GARANTIA = T_TIPO_GARANTIA.COD_TIPO_GARANTIA
+  LEFT OUTER JOIN SEASE.MONEDA MONEDA
+  ON GARANTIA.COD_MONEDA = MONEDA.MON_CODIGO
+  LEFT OUTER JOIN REG_PROCESOS.CONVOCATORIA_DOC CONVOCATORIA_DOC
+  On Garantia.Cod_Doc = Convocatoria_Doc.Cod_Doc
+  AND CONVOCATORIA_DOC.COD_TIPO_DOC = 2450;
