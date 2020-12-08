@@ -651,7 +651,7 @@ Begin
 
    --lvdirectorio := gpk_directorio_liquidacion;
    --lv_ruta_file := '\'||lvdirectorio||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca;
-   lv_ruta_file :=  '\'||gpk_directorio_liquidacion||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca||'\';
+   lv_ruta_file :=  gpk_directorio_liquidacion||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca;
 
 
    ------- Convenio Marco -------
@@ -879,7 +879,7 @@ Begin
                 <input type="hidden" name="pfiletoupload_file1" value="" />'||
                 case when ln_doc_url is not null then
                 '<br>
-                <a target=_blank  href="'||url_azure_app||session__FileSingedHTTP||replace(ln_doc_url,'\','/')||'">
+                <a target=_blank  href="'||url_azure_app||'/'||session__FileSingedHTTP||replace(ln_doc_url,'\','/')||'">
                     <img src="bootstrap/'||replace(ln_icon_tipo_file, 'jpg', 'png')||'" border="0" width="25" height="25"/>
                 </a>' end ||
                 case when ln_fec_upload is not null then
@@ -1207,7 +1207,7 @@ BEGIN
 
 --    lvdirectorio := gpk_directorio_liquidacion;
 --    lv_ruta_file := lvdirectorio||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca;
-    lv_ruta_file := '\'||gpk_directorio_liquidacion||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca||'\';    
+    lv_ruta_file := gpk_directorio_liquidacion||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca;    
 
 
     -------- Funciones Script para Validaciones -------

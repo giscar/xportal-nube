@@ -2790,7 +2790,7 @@ begin
     where icd.n_convoca = ag_n_convoca and icd.proc_item=ag_proc_item and icd.nivel5 not in (
     select nvl(nivel5,0) from reg_procesos.item_contrato where n_convoca = ag_n_convoca and proc_item=ag_proc_item); 
 */
-    select count(1) into montovalida from pro.tbl_act_item@aixseace i
+    select count(1) into montovalida from pro.tbl_act_item@AIXSEACE i
     where n_id_padre in (select n_id_item from reg_procesos.item_convoca where n_convoca in (ag_n_convoca) and proc_item=ag_proc_item)
     and i.n_id_item not in (select nvl(ic.n_id_item,0) from reg_procesos.item_contrato ic where ic.n_convoca = ag_n_convoca and ic.proc_item=ag_proc_item);
 
@@ -3711,8 +3711,8 @@ IS
        
        LEFT JOIN  
           (select distinct nvl(i.c_dsitem,i.c_dcubso) item_paq_desc ,i.n_id_item cod_item,trim(substr(i.c_ccubso,9, 8)) nivel5
-          from pro.tbl_act_item@aixseace i
-          inner join pro.tbl_act_expediente@aixseace e on i.n_id_expede=e.n_id_expede
+          from pro.tbl_act_item@AIXSEACE i
+          inner join pro.tbl_act_expediente@AIXSEACE e on i.n_id_expede=e.n_id_expede
           where i.n_id_item in (select n_id_item from reg_procesos.item_contrato where n_cod_contrato in (p_n_cod_contrato)) and e.c_tipobj=64 and i.n_id_padre is not null) ipaq
           ON IPAQ.cod_item=ict.n_id_item,
        
@@ -4366,15 +4366,15 @@ is
   
 begin
 
-  select count(1) into esCompraCorp from pro.tbl_act_expediente@aixseace 
-  where n_id_expede in (select n_id_expede from pro.tbl_act_item@aixseace 
+  select count(1) into esCompraCorp from pro.tbl_act_expediente@AIXSEACE 
+  where n_id_expede in (select n_id_expede from pro.tbl_act_item@AIXSEACE 
   where n_id_item = item) and c_tipcom = 51; --(51 = Compra corporativa facultativa)
   
   if escompracorp > 0 then
   
         select n_id_item into nro_item
-        from pro.tbl_act_item@aixseace e
-        inner join adm.tbl_adm_integracion_ent@aixseace i on e.n_id_organ = i.n_id_organ
+        from pro.tbl_act_item@AIXSEACE e
+        inner join adm.tbl_adm_integracion_ent@AIXSEACE i on e.n_id_organ = i.n_id_organ
         where I.N_Id_Int_Entidad = lpad(trim(organ),6,'0') and e.n_id_grupo = item;
         
         if tipo = 0 and nro_item is not null then
@@ -4384,17 +4384,17 @@ begin
         select cv.ruc_postor, cv.cod_consorcio, cv.ind_consorcio into nro_ruc, nro_consorcio, id_consorcio from reg_procesos.convocatoria_propuesta cv where cv.n_propuesta = propuesta;
 
         if id_consorcio = 1 then
-           select DISTINCT(rp.c_ruc) into nro_ruc from pro.tbl_sel_reg_par@aixseace rp 
-           inner join pro.tbl_sel_propuesta@aixseace p on p.n_id_reg_par = rp.n_id_reg_par and p.c_indcon='S'
+           select DISTINCT(rp.c_ruc) into nro_ruc from pro.tbl_sel_reg_par@AIXSEACE rp 
+           inner join pro.tbl_sel_propuesta@AIXSEACE p on p.n_id_reg_par = rp.n_id_reg_par and p.c_indcon='S'
            where rp.c_ruc in (select ruc_miembro from reg_procesos.consorcio_miembro cm where cm.cod_consorcio = nro_consorcio) and rp.n_id_pub_con =convocatoria and rp.c_intcon='N';
         end if;
         
         select to_number(replace(di.c_canadj,'.',',')),to_number(replace(di.c_monadj,'.',',')) into cantadj, montadj from 
-        pro.tbl_sel_reg_par@aixseace rp 
-        inner join pro.tbl_sel_propuesta@aixseace p on rp.n_id_reg_par = p.n_id_reg_par
-        inner join pro.det_sel_propuesta@aixseace dp on dp.n_id_propuesta = p.n_id_propuesta
-        left join pro.tbl_sel_otor_item@aixseace o on dp.n_id_det_prop = o.n_id_det_prop
-        inner join pro.det_sel_de_corp@aixseace di on di.n_id_otor_item = o.n_id_otor_item or di.n_id_bpro is not null   
+        pro.tbl_sel_reg_par@AIXSEACE rp 
+        inner join pro.tbl_sel_propuesta@AIXSEACE p on rp.n_id_reg_par = p.n_id_reg_par
+        inner join pro.det_sel_propuesta@AIXSEACE dp on dp.n_id_propuesta = p.n_id_propuesta
+        left join pro.tbl_sel_otor_item@AIXSEACE o on dp.n_id_det_prop = o.n_id_det_prop
+        inner join pro.det_sel_de_corp@AIXSEACE di on di.n_id_otor_item = o.n_id_otor_item or di.n_id_bpro is not null   
         where
         rp.c_ruc=trim(nro_ruc) and rp.n_id_pub_con=convocatoria and dp.n_id_item=item and (o.c_estado='V' or di.n_id_bpro is not null)
         and di.n_id_item =nro_item;

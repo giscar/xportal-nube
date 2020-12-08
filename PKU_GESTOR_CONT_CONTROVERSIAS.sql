@@ -1,15 +1,14 @@
-set scan off
 CREATE OR REPLACE PACKAGE                "PKU_GESTOR_CONT_CONTROVERSIAS" IS
 
     --consultoria nube migracion
   url_azure_app    varchar2(250):= 'https://zonasegura2.seace.gob.pe/documentos/';
-  
+
  TYPE ref_cursor IS REF CURSOR;
- 
- 
+
+
   PROCEDURE dojscript;
- 
- 
+
+
 
 PROCEDURE uspHistorialDetalle (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
@@ -24,8 +23,8 @@ PROCEDURE uspHistorialDetalle (
     ag_f_autoriza                           VARCHAR2,
     ag_num                                  VARCHAR2
   );
-    
- 
+
+
   PROCEDURE uspHistorial (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
@@ -38,8 +37,8 @@ PROCEDURE uspHistorialDetalle (
     ag_cod                                VARCHAR2,
     ag_f_autoriza                           VARCHAR2
   )  ;
- 
- 
+
+
  PROCEDURE uspArbitrajeEdit( 
    session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
@@ -87,22 +86,22 @@ ag_motivo_secretario      varchar2,
 --Fin mlaura Req 55
 ag_tipo_seleccion                number -- ddrodriguez Req 55
  );
- 
+
  PROCEDURE uspLisControversiasdoview ( 
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL, 
   session__user_id  VARCHAR2 DEFAULT NULL 
   );
-  
+
    PROCEDURE uspCreaControversias (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
   ag_tipo_demandante                 VARCHAR2,
   ag_mecanismo                       VARCHAR2  
   );
-  
-  
- 
+
+
+
  PROCEDURE uspCreaArbitraje (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
@@ -113,9 +112,9 @@ ag_tipo_seleccion                number -- ddrodriguez Req 55
   sunat                                VARCHAR2,
   ag_f_autoriza                          VARCHAR2
   )  ;
-  
-  
-  
+
+
+
   PROCEDURE uspArbitrajeInsert( 
    session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
@@ -159,9 +158,9 @@ ag_sunat_secretario       varchar2,
 ag_motivo_secretario      varchar2
 --Fin mlaura Req 55
  );
- 
- 
- 
+
+
+
   PROCEDURE uspCreaConciliacion(
    session__eue_codigo      VARCHAR2,
     session__anhoentidad     VARCHAR2,
@@ -176,9 +175,9 @@ ag_motivo_secretario      varchar2
     docname__mime                  varchar2 default null,
     session__FileSinged            varchar2 default null  
   )   ;
- 
 
- 
+
+
 PROCEDURE uspConciliacionInsert( 
    session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
@@ -199,10 +198,10 @@ ag_c_conciliacion         number,
             session__maxMBUploadFileSize            varchar2,
             docname_mimetype                        varchar2,
             iisenv__remote_host                varchar
-   
+
  );  
- 
-  
+
+
    PROCEDURE uspEditArbitraje (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
@@ -215,10 +214,10 @@ ag_c_conciliacion         number,
     ag_f_autoriza                         VARCHAR2 ,
   sunat                                VARCHAR2,
 	ag_tipo_seleccion                number -- manuel Req 55
-    
+
   )  ;
- 
- 
+
+
 PROCEDURE uspEditArbitro (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
@@ -228,11 +227,11 @@ PROCEDURE uspEditArbitro (
   ag_motivo                     VARCHAR2 DEFAULT NULL,
   sunat                     VARCHAR2 DEFAULT NULL
 
- 
+
   )  ;
-  
-  
-   
+
+
+
   PROCEDURE uspNuevoArbitro (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
@@ -241,16 +240,16 @@ PROCEDURE uspEditArbitro (
   cod                        VARCHAR2 DEFAULT NULL,
   ag_motivo                     VARCHAR2 DEFAULT NULL,
   sunat                        VARCHAR2 DEFAULT NULL
- 
+
   ) ;
-  
+
     PROCEDURE uspBuscaCentro (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL, 
   ag_departamento         VARCHAR2 DEFAULT NULL,
   ag_centro               VARCHAR2 DEFAULT NULL
 
- 
+
   ) ;
    PROCEDURE usp_ValidarRUC (
    session__cod_contrato    VARCHAR2 DEFAULT NULL,
@@ -260,9 +259,9 @@ PROCEDURE uspEditArbitro (
   cod                      VARCHAR2 DEFAULT NULL,
   ag_motivo                VARCHAR2 DEFAULT NULL,
   ventana                  VARCHAR2 DEFAULT NULL 
-  
+
   )    ; 
-  
+
 
  PROCEDURE uspNuevoCentro (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
@@ -270,18 +269,19 @@ PROCEDURE uspEditArbitro (
   ag_departamento         VARCHAR2 DEFAULT NULL,
   ag_centro               VARCHAR2 DEFAULT NULL
   ) ;
-  
-  
+
+
   PROCEDURE uspNuevoCentroInsert( 
  session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
   ag_departamento         VARCHAR2 DEFAULT NULL,
   ag_centro               VARCHAR2 DEFAULT NULL
-   
+
  );
-  
-  
+
+
 end PKU_GESTOR_CONT_CONTROVERSIAS;
+
 /
 
 
@@ -305,14 +305,14 @@ CREATE OR REPLACE PACKAGE BODY                "PKU_GESTOR_CONT_CONTROVERSIAS" IS
     return patron.test(te); 
     }  
   <!--FIN  -->     
-    
-    
+
+
 function trim(stringToTrim) {
     return stringToTrim.replace(/\s/g,"");
 }
 
-    
-    
+
+
        </script> 
   ');
 
@@ -331,7 +331,7 @@ PROCEDURE uspHistorialDetalle (
     ag_f_autoriza                           VARCHAR2,
     ag_num                                  VARCHAR2
   )    
-    
+
  IS 
  lv_codtipofile                VARCHAR2(100); 
  lvtipodocumento               VARCHAR2(100); 
@@ -365,7 +365,7 @@ PROCEDURE uspHistorialDetalle (
 
 
    ------- Cursores -------
-   
+
     Cursor c_cursor( p_n_cod_contrato in number , p_n_num_registro in varchar2) is
     SELECT N_COD_CONTRATO,
     NUMERO_REGISTRO,
@@ -385,10 +385,10 @@ PROCEDURE uspHistorialDetalle (
 	NOMBRE_SECRETARIO -- ddrodriguez req 55
     --from reg_procesos.contrato_arbitraje where n_cod_contrato =  p_n_cod_contrato and  NUMERO = p_n_num_registro ;
 	from reg_procesos.contrato_arbitraje_hist where n_cod_contrato =  p_n_cod_contrato and  COD_HISTORIAL = p_n_num_registro ;
-    
-     
 
-   
+
+
+
    ------- Listado de Prorrogas ------  
  BEGIN PKU_SS_CONTROVERSIAS.dojscript  ;
    IF (session__cod_contrato IS NULL) THEN
@@ -397,7 +397,7 @@ PROCEDURE uspHistorialDetalle (
             ('Visualice el contrato antes de seleccionar la acci&oacute;n.<br>Retorne a la Consola de Contratos ...', ''));
      RETURN;
   END IF;
-  
+
   select  n_contrato into ln_num_contrato  from reg_procesos.contrato where N_COD_CONTRATO = session__cod_contrato  ; 
 
 
@@ -414,28 +414,28 @@ PROCEDURE uspHistorialDetalle (
     open ctipoarbitro for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 23;
-    
-    
+
+
    /*Falta en el maestro de arbitraje*/
     open ctipodemandante for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 12;
-   
- 
+
+
     /*Falta en el maestro de Arbitraje*/ 
     open ctipomecanismo for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 30;
-     
-  
- 
-       
-     
-         
+
+
+
+
+
+
          for xrow in c_cursor(session__cod_contrato,ag_num) loop
       begin
 
-         
+
               ln_fecha :=   xrow.FECHA_INSTALACION  ;
               ln_tipoArbitraje := xrow.TIPO_ARBITRAJE;
               ln_tipoarbitro   :=   xrow.TIPO_ARBITRO;
@@ -451,34 +451,34 @@ PROCEDURE uspHistorialDetalle (
               ln_NUMERO_REGISTRO := xrow.NUMERO_REGISTRO;
 			  ln_RUC_SECRETARIO  :=xrow.RUC_SECRETARIO; -- ddrodriguez req 55
 			  ln_NOMBRE_SECRETARIO :=  xrow.NOMBRE_SECRETARIO; -- ddrodriguez req 55
-              
+
        end;
    end loop;  
-   
-   
-        
-               
+
+
+
+
        if  ag_f_autoriza is not null  then
           ln_fecha := ag_f_autoriza; 
        end if;
-      
+
        if  ag_tipo_arbitraje is not null  then
            ln_tipoArbitraje := ag_tipo_arbitraje; 
        end if;
-       
+
           if  ag_tipo_arbitro is not null  then
            ln_tipoarbitro := ag_tipo_arbitro;     
          end if;
-     
-       
+
+
     lv_combo_demandante  := PKU_SS_UTILES.f_retorna_combo(ctipodemandante, 'ag_tipo_demandante', ag_tipo_demandante,'Seleccione...','style="width:260px" disabled = "disabled"');
-     
+
     lv_combo_mecanismo   := PKU_SS_UTILES.f_retorna_combo(ctipomecanismo, 'ag_mecanismo', '316','Seleccione...','style="width:260px" onchange="arbitraje();"  disabled = "true"'); 
-    
+
     lv_combo_arbitraje  := PKU_SS_UTILES.f_retorna_combo(ctipoArbitraje, 'ag_tipo_arbitraje', ln_tipoArbitraje,'Seleccione...','style="width:260px"  disabled = "true" ' );
-     
+
     lv_combo_arbitro :=   PKU_SS_UTILES.f_retorna_combo(ctipoarbitro, 'ag_tipo_arbitro', ln_tipoarbitro,'Seleccione...','style="width:260px" onchange="arbitraje();" disabled = "true"'); 
-  
+
 
 ----------- CABECERA --------------------
  USP_PRINT('
@@ -498,68 +498,68 @@ PROCEDURE uspHistorialDetalle (
 
  usp_print('
   <table class="table table-striped">');    
- 
+
  usp_print(' <td align = "center" colspan = 3><h3>Ficha Electr&oacute;nica</h3></td>');
 
   usp_print(' <td align = "center" colspan = 3><br></td>'
   );
-  
+
     usp_print(' <tr><td align = "center" colspan = 3><h3>Detalle Historial de Ficha Electr&oacute;nica</h3></td></tr>');
 
-      
-      
+
+
          usp_print('
     <tr>
       <td class=c1>(*)Motivo</td>
     <td class=c2>'||lv_combo_mecanismo||'</td>
     </tr>
     ');  
-    
+
         usp_print('
     <tr>
-        
+
         <td class=c1>(*)Nro. de Registro de Proceso Arbitral </td>
         <td class=c2><input type="text" name="ag_cod" value="'|| ag_cod  ||'" size=54 readonly ></td>
     </tr>
   '); 
-  
+
     usp_print('
     <tr>
         <td class=c1>(*)Fecha en la que se llev&oacute; a cabo la Audiencia de  Instalaci&oacute;n</td>
         <td class=c2><input  type="text" name="ag_f_autoriza"  value="'||  to_char(ln_fecha, 'dd/mm/yyyy')  ||'" size=30 readonly></td>
     </tr>
   '); 
-  
+
 
     usp_print('
     <tr>
       <td class=c1>(*)Tipo de Arbitraje</td>
     <td class=c2>'||lv_combo_arbitraje||'</td>
     </tr>'); 
-      
-      
+
+
          usp_print('
     <tr>
       <td class=c1>(*)Tipo de &Aacute;rbitro</td>
     <td class=c2>'||lv_combo_arbitro||'</td>
     </tr>');   
 
-    
+
    if   ln_tipoarbitro = 221  then
-    
+
       usp_print('<tr><td><h3>Identificaci&oacute;n de los miembros del Tribunal Arbitral <br></h3></td></tr>');
-    
+
       usp_print('
       <tr> <td><h4>Presidente del Tribunal Arbitral</h4></td></tr>
-   
+
     <tr>
-        
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input type="text" name="ag_ruc_presidente" value="'|| ln_RUC_PRESIDENTE ||'" size=54 readonly></td>
     </tr>
   '); 
-  
-  
+
+
         usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
@@ -567,19 +567,19 @@ PROCEDURE uspHistorialDetalle (
     </tr>
     <tr> <td><br><input  type="hidden" name="ag_motivo_presidente" value="'|| ln_MOTIVO_PRESIDENTE ||'" size=54></td></tr>
   '); 
-  
-  
+
+
         usp_print('
 <tr><td></td></tr>
    <tr> <td><h4>Arbitro designado por la Entidad</h4></td></tr>
     <tr>
-       
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input  type="text" name="ag_ruc_arbitro_ent" value="'|| ln_RUC_ARBITRO_ENTIDAD  ||'" size=54 readonly ></td>
     </tr>
   '); 
-  
-  
+
+
         usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
@@ -587,17 +587,17 @@ PROCEDURE uspHistorialDetalle (
     </tr>
     <tr> <td><br><input  type="hidden" name="ag_motivo_arbitro_ent" value="'||ln_MOTIVO_ARBITRO_ENTIDAD||'" size=54></td></tr>
   '); 
-  
+
           usp_print('
        <tr> <td><h4>Atbitro designado por el contratista</h4></td></tr>
     <tr>
-       
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input  type="text" name="ag_ruc_arbitro_cont" value="'|| ln_RUC_ARBITRO_CONTRATISTA  ||'" size=54 readonly></td>
     </tr>
   '); 
-  
-  
+
+
         usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
@@ -605,20 +605,20 @@ PROCEDURE uspHistorialDetalle (
     </tr>
      <tr> <td><br><input  type="hidden" name="ag_motivo_arbitro_cont" value="'|| ln_MOTIVO_ARBITRO_CONTRATISTA ||'" size=54></td></tr>
   ');
-  
+
  end if;
-  
+
   if  ln_tipoarbitro = 220 then
         usp_print('
         <tr><td><h3>Identificaci&oacute;n del &Aacute;rbitro &Uacute;nico</h3></td></tr>
     <tr>
-        
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input  type="text" name="ag_ruc_presidente" value="'|| ln_RUC_PRESIDENTE ||'" size=54 readonly = "true"></td>
     </tr>
   '); 
-  
-  
+
+
         usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
@@ -626,16 +626,16 @@ PROCEDURE uspHistorialDetalle (
     </tr>
 
   '); 
-  
+
   end if;
-  
+
   usp_print('
 	<tr>
 		<td colspan= "3" ><h3>Identificaci&oacute;n del Secretario Arbitral</h3></td>
 	</tr>
-	  
+
     <tr>
-        
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input  type="text" class="form-control" name="ag_ruc_secretario" value="'|| ln_RUC_SECRETARIO ||'" size=54 readonly class="InpReadOnly"></td>
     </tr>
@@ -644,15 +644,15 @@ PROCEDURE uspHistorialDetalle (
         <td class=c1>(*)Apellidos y Nombres</td>
         <td class=c2><input  type="text" class="form-control" name="ag_nombre_secretario" value="'|| ln_NOMBRE_SECRETARIO ||'" size=54 readonly class="InpReadOnly"></td>
     </tr>
-	
+
 	</table>');  
 
  usp_print(' </table><br><tr><td><input type = "hidden" value = "'|| ag_cod ||'" name = "ag_cod" ></td></tr>
             <tr><td><input type = "hidden" value = "'|| ln_NUMERO_REGISTRO ||'" name = "ag_num_reg" ></td></tr> 
- 
-  
-  
-  
+
+
+
+
   </table><br>');
 
    usp_print('
@@ -661,7 +661,7 @@ PROCEDURE uspHistorialDetalle (
         <br/>
         <br/>
         ');
-        
+
  END;
 
 
@@ -678,7 +678,7 @@ PROCEDURE uspHistorialDetalle (
   ag_cod                             VARCHAR2,
   ag_f_autoriza                      VARCHAR2
   )   
-    
+
  IS
  lv_combo_arbitraje           varchar2(4000);  
  lv_combo_arbitro             varchar2(4000);
@@ -709,7 +709,7 @@ PROCEDURE uspHistorialDetalle (
   ln_NOMBRE_SECRETARIO            VARCHAR2(200 BYTE);
  --FINAL ddrodriguez req 55
    ------- Cursores -------
-   
+
     Cursor c_cursor( p_n_cod_contrato in number , p_n_num_registro in varchar2) is
     SELECT N_COD_CONTRATO,
     NUMERO_REGISTRO,
@@ -728,8 +728,8 @@ PROCEDURE uspHistorialDetalle (
 	RUC_SECRETARIO, -- ddrodriguez req 55
 	NOMBRE_SECRETARIO -- ddrodriguez req 55
     from reg_procesos.contrato_arbitraje where n_cod_contrato =  p_n_cod_contrato and  NUMERO_REGISTRO = p_n_num_registro and ind_ultimo = 1 ;
-    
-    
+
+
         Cursor c_cursor_historico( p_n_cod_contrato in number , p_n_num_registro in varchar2, p_n_tipo_grupo in number) is
     SELECT N_COD_CONTRATO,
     COD_HISTORIAL,--NUMERO, ddrodriguez req 55
@@ -752,7 +752,7 @@ PROCEDURE uspHistorialDetalle (
     --from reg_procesos.contrato_arbitraje where n_cod_contrato =  p_n_cod_contrato and  NUMERO_REGISTRO = p_n_num_registro  order by  FECHA_PUBLICA  asc;  ddrodriguez req 55
 	from reg_procesos.contrato_arbitraje_hist where n_cod_contrato =  p_n_cod_contrato and  NUMERO_REGISTRO = p_n_num_registro and tipo_grupo_hist in (0,p_n_tipo_grupo)  order by  FECHA_PUBLICA  asc;
 
-   
+
    ------- Listado de Prorrogas ------  
  BEGIN
   PKU_SS_CONTROVERSIAS.dojscript  ;
@@ -766,31 +766,31 @@ PROCEDURE uspHistorialDetalle (
     open ctipoarbitraje for
     select n_id_maestro,c_descripcion
     from  ARBITRAJE.TBL_ARB_MAESTRO  where n_id_tipomaestro = 6;   
-   
-     
+
+
     open ctipoarbitro for
     select n_id_maestro,c_descripcion
     from  ARBITRAJE.tbl_arb_maestro  where n_id_tipomaestro = 23;
-    
-      
-    
+
+
+
     open ctipodemandante for
     select n_id_maestro,c_descripcion
     from  ARBITRAJE.tbl_arb_maestro  where n_id_tipomaestro = 12;
-    
-    
+
+
     open ctipomecanismo for
     select n_id_maestro,c_descripcion
     from  ARBITRAJE.tbl_arb_maestro  where n_id_tipomaestro = 30;
-     
-  
-       
-     
-         
+
+
+
+
+
          for xrow in c_cursor(session__cod_contrato,ag_cod) loop
       begin
 
-         
+
               ln_fecha :=   xrow.FECHA_INSTALACION  ;
               ln_tipoArbitraje := xrow.TIPO_ARBITRAJE;
               ln_tipoarbitro   :=   xrow.TIPO_ARBITRO;
@@ -806,49 +806,49 @@ PROCEDURE uspHistorialDetalle (
               ln_NUMERO_REGISTRO := xrow.NUMERO_REGISTRO;
               ln_RUC_SECRETARIO  :=xrow.RUC_SECRETARIO; -- ddrodriguez req 55
 			  ln_NOMBRE_SECRETARIO :=  xrow.NOMBRE_SECRETARIO; -- ddrodriguez req 55
-              
+
        end;
    end loop;  
-   
-   
-        
-               
+
+
+
+
        if  ag_f_autoriza is not null  then
           ln_fecha := ag_f_autoriza; 
        end if;
-      
+
        if  ag_tipo_arbitraje is not null  then
            ln_tipoArbitraje := ag_tipo_arbitraje; 
        end if;
-       
+
           if  ag_tipo_arbitro is not null  then
            ln_tipoarbitro := ag_tipo_arbitro;     
          end if;
-     
-       
+
+
     lv_combo_demandante  := PKU_SS_UTILES.f_retorna_combo(ctipodemandante, 'ag_tipo_demandante', ag_tipo_demandante,'Seleccione...','style="width:260px" disabled = "disabled"');
-     
+
     lv_combo_mecanismo   := PKU_SS_UTILES.f_retorna_combo(ctipomecanismo, 'ag_mecanismo', '316','Seleccione...','style="width:260px" onchange="arbitraje();"  disabled = "true"'); 
-    
+
     lv_combo_arbitraje  := PKU_SS_UTILES.f_retorna_combo(ctipoArbitraje, 'ag_tipo_arbitraje', ln_tipoArbitraje,'Seleccione...','style="width:260px"  disabled = "true" ' );
-     
+
     lv_combo_arbitro :=   PKU_SS_UTILES.f_retorna_combo(ctipoarbitro, 'ag_tipo_arbitro', ln_tipoarbitro,'Seleccione...','style="width:260px" onchange="arbitraje();" disabled = "true"'); 
-          
-          
+
+
 
 		  usp_print('
     <script language="javascript"> 
-	
+
 	function HistorialDetalle(cod) {
- 
+
          thisform.ag_num.value =  cod
          thisform.scriptdo.value = "HistorialDetalle";
          thisform.submit();
 	}
 
     </script>');   
- 
- 
+
+
 ----------- CABECERA --------------------
  USP_PRINT('
     <table border="0" cellpadding="0" cellspacing="0" width="100%" class="tableform" >
@@ -867,56 +867,56 @@ PROCEDURE uspHistorialDetalle (
 
  usp_print('
   <table class="table table-striped">');    
- 
+
  usp_print(' <td align = "center" colspan = 3><h3>Ficha Electr&oacute;nica</h3></td>');
 
   usp_print(' <td align = "center" colspan = 3><br></td>');
-  
+
     usp_print(' <tr><td align = "center" colspan = 3><h3>Historial de Ficha Electr&oacute;nica</h3></td></tr>');
-  
-  
+
+
   usp_print(' <tr><td align = "left" colspan = 3><h3>Declaraci&oacute;n de Arbitraje</h3></td></tr>');
-      
-      
+
+
          usp_print('
     <tr>
       <td class=c1>(*)Tipo de mecanismo de soluci&oacute;n de Controversia</td>
     <td class=c2>'||lv_combo_mecanismo||'</td>
 	</tr>
     ');  
-    
+
         usp_print('
     <tr>
-        
+
         <td class=c1>(*)Nro. de Registro de Proceso Arbitral </td>
         <td class=c2><input type="text" name="ag_cod" value="'|| ag_cod  ||'" size=54 readonly ></td>
     </tr>
   '); 
-  
+
     usp_print('
     <tr>
         <td class=c1>(*)Fecha de la Audiencia de Instalaci&oacute;n</td>
         <td class=c2><input  type="text" name="ag_f_autoriza"  value="'||  to_char(ln_fecha, 'dd/mm/yyyy')  ||'" size=30 readonly></td>
     </tr>
   '); 
-  
+
 
     usp_print('
     <tr>
       <td class=c1>(*)Tipo de Arbitraje</td>
     <td class=c2>'||lv_combo_arbitraje||'</td>
     </tr>'); 
-      
-      
+
+
          usp_print('
     <tr>
       <td class=c1>(*)Tipo de &Aacute;rbitro</td>
     <td class=c2>'||lv_combo_arbitro||'</td>
     </tr>');  
-    
+
 	usp_print('</table><table align = "center" class="table table-hover" style="width:800px" ><tr><td align = "center" colspan = 4>Historial Declaraci&oacute;n de Arbitraje</td></tr>
             <tr><td><b>Nro.</b></td><td><b>Fecha de publicaci&oacute;n</b></td><td><b>Usuario que public&oacute;</b></td><td><b>IP</b></td></tr> ');
-  
+
 	  num_hist := 0;
 		for xrow1 in c_cursor_historico(session__cod_contrato,ag_cod,1) loop
 		  begin
@@ -925,74 +925,74 @@ PROCEDURE uspHistorialDetalle (
 		   end;
 	   end loop; 
     usp_print('</table><br><table class="table table-striped">');
-	
-    
+
+
    if   ln_tipoarbitro = 221  then
-    
+
     usp_print('<tr><td align = "left" colspan = 3 ><h3>Identificaci&oacute;n de los miembros del Tribunal Arbitral</h3></td></tr>');
     usp_print('
         <tr> <td align = "left" colspan = 3 ><br><h4>Presidente del Tribunal Arbitral</h4></td></tr>
-   
+
     <tr>
-        
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input type="text" name="ag_ruc_presidente" value="'|| ln_RUC_PRESIDENTE ||'" readonly></td>
     </tr>
   '); 
-  
-  
+
+
         usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
         <td class=c2><input  type="text" name="ag_nombre_presidente" value="'|| ln_NOMBRE_PRESIDENTE ||'" readonly></td>
     </tr>
   '); 
-  
-  
+
+
         usp_print('
     <tr> <td align = "left" colspan = 3 ><br><h4>Arbitro designado por la Entidad</h4></td></tr>
     <tr>
-       
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input  type="text" name="ag_ruc_arbitro_ent" value="'|| ln_RUC_ARBITRO_ENTIDAD  ||'" readonly ></td>
     </tr>
   '); 
-  
-  
+
+
         usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
         <td class=c2><input  type="text" name="ag_mom_arbitro_ent" value="'|| ln_NOMBRE_ARBITRO_ENTIDAD  ||'" readonly ></td>
     </tr>
   '); 
-  
+
           usp_print('
       <tr> <td align = "left" colspan = 3 ><br><h4>Arbitro designado por el contratista</h4></td></tr>
     <tr>
-       
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input  type="text" name="ag_ruc_arbitro_cont" value="'|| ln_RUC_ARBITRO_CONTRATISTA  ||'"  readonly></td>
     </tr>
   '); 
-  
-  
+
+
         usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
         <td class=c2><input type="text" name="ag_nombre_arbitro_cont" value="'|| ln_NOMBRE_ARBITRO_CONTRATISTA  ||'"  readonly></td>
     </tr>
   ');
-  
+
  end if;
-  
+
   if  ln_tipoarbitro = 220 then
         usp_print('
 	<tr>
 		<td align = "left" colspan = 3 ><h3>Identificaci&oacute;n del &Aacute;rbitro &Uacute;nico</h3></td>
 	</tr>
-	  
+
     <tr>
-        
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input  type="text" class="form-control" name="ag_ruc_presidente" value="'|| ln_RUC_PRESIDENTE ||'"  readonly ></td>
     </tr>
@@ -1002,12 +1002,12 @@ PROCEDURE uspHistorialDetalle (
         <td class=c2><input  type="text" class="form-control" name="ag_nombre_presidente" value="'|| ln_NOMBRE_PRESIDENTE ||'" readonly ></td>
     </tr>
 	');
-	
+
 	end if;
-	
+
 	usp_print('</table><table align = "center" class="table table-hover" style="width:800px" ><tr><td align = "center" colspan = 4>Historial Arbitro</td></tr>
             <tr><td><b>Nro.</b></td><td><b>Fecha de publicaci&oacute;n</b></td><td><b>Usuario que public&oacute;</b></td><td><b>IP</b></td></tr> ');
-  
+
 	  num_hist := 0;
 		for xrow2 in c_cursor_historico(session__cod_contrato,ag_cod,2) loop
 		  begin
@@ -1016,15 +1016,15 @@ PROCEDURE uspHistorialDetalle (
 		   end;
 	   end loop; 
 	usp_print('</table><br><table class="table table-striped">');
-	
-	
+
+
 	usp_print('
 	<tr>
 		<td align = "left" colspan = 3 ><h3>Identificaci&oacute;n del Secretario Arbitral</h3></td>
 	</tr>
-	  
+
     <tr>
-        
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input  type="text" class="form-control" name="ag_ruc_secretario" value="'|| ln_RUC_SECRETARIO ||'"  readonly class="InpReadOnly"></td>
     </tr>
@@ -1033,14 +1033,14 @@ PROCEDURE uspHistorialDetalle (
         <td class=c1>(*)Apellidos y Nombres</td>
         <td class=c2><input  type="text" class="form-control" name="ag_nombre_secretario" value="'|| ln_NOMBRE_SECRETARIO ||'" readonly class="InpReadOnly"></td>
     </tr>
-	
+
 	</table>');
-  
-  
-  
+
+
+
    usp_print('<table align = "center" class="table table-hover" style="width:800px" ><tr><td align = "center" colspan = 4>Historial Secretario Arbitral</td></tr>
             <tr><td><b>Nro.</b></td><td><b>Fecha de publicaci&oacute;n</b></td><td><b>Usuario que public&oacute;</b></td><td><b>IP</b></td></tr> ');
-  
+
 	  num_hist := 0;
 		for xrow3 in c_cursor_historico(session__cod_contrato,ag_cod,3) loop
 		  begin
@@ -1051,11 +1051,11 @@ PROCEDURE uspHistorialDetalle (
   usp_print('</table><br>');
 
 
-  
+
  usp_print('<tr><td><input type = "hidden" value = "'|| ag_cod ||'" name = "ag_cod" ></td></tr>
             <tr><td><input type = "hidden" value = "'|| ln_NUMERO_REGISTRO ||'" name = "ag_num_reg" ></td></tr> 
 			<tr><td><input type = "hidden" value = "" name = "ag_num" ></td></tr>
-          
+
 
   </table><br>');
 
@@ -1065,10 +1065,10 @@ PROCEDURE uspHistorialDetalle (
         <br/>
         <br/>
         ');
-        
+
  END;
 
-   
+
 
 PROCEDURE uspArbitrajeEdit( 
    session__cod_contrato   VARCHAR2 DEFAULT NULL,
@@ -1120,7 +1120,7 @@ ag_tipo_seleccion                number
 
 idnumero                  number ;
 idnumeroArbitro           number ;
-   
+
   LN_NUMERO NUMBER;
     LN_NUMERO_REGISTRO NUMBER ;
     LN_TIPO_DEMANDANTE NUMBER;
@@ -1202,10 +1202,10 @@ idnumeroArbitro           number ;
       NOMBRES_SECRETARIO,
       APEPAT_SECRETARIO,
       APEMAT_SECRETARIO
-      
+
  ---Adicionando campos de secretario al cursor Req 55    
-      
-      
+
+
     from reg_procesos.contrato_arbitraje where n_cod_contrato =  p_n_cod_contrato and  NUMERO_REGISTRO = p_n_num_registro and ind_ultimo = 1 ;
 
 
@@ -1216,19 +1216,19 @@ idnumeroArbitro           number ;
             Union   
             select numero  from   reg_procesos.contrato_conciliacion
        );
- 
+
         if idnumero is null then
           idnumero := 1;
        else
           idnumero := idnumero + 1 ;
        end if;
 */
-       
 
 
 
-        
-        
+
+
+
              for xrow in c_cursor(session__cod_contrato,ag_num_reg) loop
       begin
 
@@ -1270,10 +1270,10 @@ idnumeroArbitro           number ;
             ln_APEPAT_SECRETARIO              := xrow.APEPAT_SECRETARIO;
             ln_APEMAT_SECRETARIO              := xrow.APEMAT_SECRETARIO;
  ----mlaura Req 55
-              
+
        end;
    end loop;  
-        
+
     /*          update reg_procesos.contrato_arbitraje 
       set
         MOTIVO_SECRETARIO = ag_motivo_secretario,
@@ -1289,7 +1289,7 @@ idnumeroArbitro           number ;
               ln_tipo_arbitraje     :=    ag_tipo_arbitraje;
               ln_tipo_arbitro       :=    ag_tipo_arbitro;
             end if;
-            
+
             if (ag_tipo_seleccion=1 or ag_tipo_seleccion=2) then
               ln_nombres_presidente :=    ag_nombres_presidente;
               ln_apePat_presidente  :=    ag_apePat_presidente;
@@ -1301,40 +1301,40 @@ idnumeroArbitro           number ;
               ln_apepat_cont        :=    ag_apepat_cont;
               ln_apemat_cont        :=    ag_apemat_cont;
             end if;
-            
+
             if (ag_tipo_seleccion=3) then
             ln_nombres_secretario :=    ag_nombres_secretario;            
             ln_apepat_secretario  :=    ag_apepat_secretario;            
             ln_apemat_secretario  :=    ag_apemat_secretario;           
             end if;
-       
-        
+
+
         if ag_motivo_secretario is not null then
             ln_RUC_SECRETARIO     :=    ag_ruc_secretario ;
             ln_NOMBRE_SECRETARIO  :=    ag_nombre_secretario ;
             ln_SUNAT_SECRETARIO   :=    ag_sunat_secretario ;
         end if;
-            
+
         if ag_motivo_presidente is not null then
             LN_RUC_PRESIDENTE     :=    ag_ruc_presidente   ;       
             LN_NOMBRE_PRESIDENTE  :=    ag_nombre_presidente  ;  
             LN_SUNAT_PRESIDENTE   :=    ag_sunat_presidente ;
         end if;
-        
+
         if ag_motivo_arbitro_ent is not null then
             LN_RUC_ARBITRO_ENTIDAD    :=    ag_ruc_arbitro_ent   ;       
             LN_NOMBRE_ARBITRO_ENTIDAD :=    ag_mom_arbitro_ent  ;   
             LN_SUNAT_ARBITRO_ENT :=         ag_sunat_arbitro_ent;
         end if;
-        
+
         if ag_motivo_arbitro_cont is not null then
-          
+
             LN_RUC_ARBITRO_CONTRATISTA    :=  ag_ruc_arbitro_cont    ;
             LN_NOMBRE_ARBITRO_CONTRATISTA :=   ag_nombre_arbitro_cont ; 
             LN_SUNAT_ARBITRO_CONT  :=         ag_sunat_arbitro_cont ;
-        
+
         end if;
-         
+
       update reg_procesos.contrato_arbitraje 
       set
       tipo_demandante = ln_tipo_demandante,
@@ -1372,7 +1372,7 @@ idnumeroArbitro           number ;
       where 
         numero_registro = ag_num_reg  
         and IND_ULTIMO = 1;
-      
+
      update reg_procesos.contrato_arbitraje_hist 
       set
         MOTIVO_SECRETARIO = ag_motivo_secretario,
@@ -1383,7 +1383,7 @@ idnumeroArbitro           number ;
       where 
         numero_registro = ag_num_reg  
         and IND_ULTIMO = 1;
-        
+
        commit;
 
       insert into contrato_arbitraje_hist
@@ -1471,11 +1471,11 @@ idnumeroArbitro           number ;
       APEPAT_SECRETARIO,
       APEMAT_SECRETARIO
 
-      
+
        )
        values 
        (
-       
+
                   LN_NUMERO                   ,
             LN_NUMERO_REGISTRO              ,
             LN_TIPO_DEMANDANTE                ,
@@ -1513,16 +1513,16 @@ idnumeroArbitro           number ;
             ln_NOMBRES_SECRETARIO,
             ln_APEPAT_SECRETARIO,
             ln_APEMAT_SECRETARIO
-            
-            
+
+
             );
-        
+
        commit;*/
-        
+
 
     usp_print('
     <script language=javascript>
- 
+
        thisform.scriptdo.value="doView";
        thisform.submit();
     </script>
@@ -1532,7 +1532,7 @@ idnumeroArbitro           number ;
 
 
 
- 
+
 
  PROCEDURE uspArbitrajeInsert( 
    session__cod_contrato   VARCHAR2 DEFAULT NULL,
@@ -1577,7 +1577,7 @@ ag_sunat_secretario       varchar2,
 ag_motivo_secretario      varchar2
 --vpt
  ) Is  
- 
+
 idnumero                  number ;
 idnumeroArbitro           number ;
 
@@ -1588,7 +1588,7 @@ idnumeroArbitro           number ;
             Union   
             select numero  from   reg_procesos.contrato_conciliacion
        );
- 
+
         if idnumero is null then
           idnumero := 1;
        else
@@ -1597,7 +1597,7 @@ idnumeroArbitro           number ;
 
 
         select  max(NUMERO_REGISTRO) into idnumeroArbitro  from   reg_procesos.contrato_arbitraje;
-     
+
        if idnumeroArbitro is null then
           idnumeroArbitro := 1;
        else
@@ -1607,7 +1607,7 @@ idnumeroArbitro           number ;
 
 
 
-      
+
        insert into  reg_procesos.contrato_arbitraje 
        (numero,
        NUMERO_REGISTRO,
@@ -1648,8 +1648,8 @@ idnumeroArbitro           number ;
       APEMAT_SECRETARIO
        --vpt
 
-       
-       
+
+
        )
        values
        (idnumero,
@@ -1672,7 +1672,7 @@ idnumeroArbitro           number ;
         ag_sunat_presidente ,
         ag_sunat_arbitro_ent ,
         ag_sunat_arbitro_cont,
-      
+
         ag_nombres_presidente,
         ag_apePat_presidente,
         ag_apeMat_presidente,
@@ -1682,7 +1682,7 @@ idnumeroArbitro           number ;
         ag_nombres_cont,
         ag_apePat_cont,
         ag_apeMat_cont,
-        
+
         --
         ag_ruc_secretario,
         ag_nombre_secretario,
@@ -1692,12 +1692,12 @@ idnumeroArbitro           number ;
         ag_apepat_secretario,
         ag_apemat_secretario
         --
-        
-        
+
+
        )
        ;
-        
-        
+
+
       INSERT INTO CONTRATO_ARBITRAJE_HIST
       (SELECT REG_PROCESOS.SQ_ID_HIST_ARB.NEXTVAL,
       0, -- INDICADOR QUE ES NUEVO REGISTRO
@@ -1742,11 +1742,11 @@ idnumeroArbitro           number ;
       APEPAT_SECRETARIO,
       APEMAT_SECRETARIO FROM REG_PROCESOS.CONTRATO_ARBITRAJE WHERE NUMERO=IDNUMERO AND NUMERO_REGISTRO=IDNUMEROARBITRO);
       COMMIT;
-    
+
 
     usp_print('
     <script language=javascript>
- 
+
        thisform.scriptdo.value="doView";
        thisform.submit();
     </script>
@@ -1754,7 +1754,7 @@ idnumeroArbitro           number ;
 
  END; 
 
- 
+
 
 PROCEDURE uspConciliacionInsert( 
 session__cod_contrato   VARCHAR2 DEFAULT NULL,
@@ -1777,21 +1777,21 @@ ag_c_conciliacion         number,
             session__maxMBUploadFileSize            varchar2,
             docname_mimetype                        varchar2,
             iisenv__remote_host                varchar
-   
+
  ) Is 
 
 idnumero                  number ;
 idnumeroConciliacion           number ;
 
  BEGIN
-  
+
    PKU_SS_CONTROVERSIAS.dojscript  ;
         select max(numero) into idnumero  from (
             select  numero  from   reg_procesos.contrato_arbitraje 
             Union   
             select numero  from   reg_procesos.contrato_conciliacion
        );
- 
+
         if idnumero is null then
           idnumero := 1;
        else
@@ -1800,16 +1800,16 @@ idnumeroConciliacion           number ;
 
 
         select  max(NUM_REGISTRO) into idnumeroConciliacion  from   reg_procesos.contrato_conciliacion;
-     
+
        if idnumeroConciliacion is null then
           idnumeroConciliacion := 1;
        else
           idnumeroConciliacion := idnumeroConciliacion + 1 ;
        end if;
-       
+
 
       --insert into reg_procesos.contrato_conciliacion (numero,num_registro,tipo_demandante,cod_centro_conciliacion,ruc_conciliador,nombre_conciliador,fecha_audiencia,nombre_doc_acta,tipo_estado_conciliacion,n_cod_contrato,url_doc_acta)
- 
+
       insert into reg_procesos.contrato_conciliacion (
       numero,
       num_registro,
@@ -1840,12 +1840,12 @@ idnumeroConciliacion           number ;
        pfiletoupload_file1  ,
        ag_c_conciliacion
       );
-          
+
   commit;
 
     usp_print('
     <script language=javascript>
-    
+
        thisform.scriptdo.value="doView";
        thisform.submit();
     </script>
@@ -1861,7 +1861,7 @@ PROCEDURE uspLisControversiasdoview (
   session__filesingedhttp VARCHAR2 DEFAULT NULL, 
   session__user_id  VARCHAR2 DEFAULT NULL  
   )  
-  
+
  IS
  lv_codtipofile     VARCHAR2(100); 
   lvtipodocumento    VARCHAR2(100); 
@@ -1870,9 +1870,9 @@ PROCEDURE uspLisControversiasdoview (
   num_arb             number;
   num_cons            number; 
    impedimento varchar2 (150);
-  
+
    ------- Cursores -------
-   
+
 Cursor c_cursor( p_n_cod_contrato in number) is
 SELECT  c.numero, c.NUM_REGISTRO,
 c.RUC_CONCILIADOR,
@@ -1892,7 +1892,7 @@ reg_procesos.centros_conciliacion cc on c.COD_CENTRO_CONCILIACION = cc.COD_CENTR
 WHERE c.N_COD_CONTRATO = p_n_cod_contrato
 order by  c.NUM_REGISTRO asc
 ;
-    
+
 
 
 Cursor c_cursor_arbitraje( p_n_cod_contrato in number) is
@@ -1907,7 +1907,7 @@ nombre_presidente,
 to_char(fecha_instalacion, 'dd/mm/yyyy')  fecha_instalacion,
 to_char(l.d_registro_laudo_SEACE, 'dd/mm/yyyy') fecha_publica 
 
- 
+
 from  contrato_arbitraje a left join (
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 12) td on a.tipo_demandante = td.n_id_maestro 
@@ -1915,11 +1915,11 @@ left join (    select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 6) taa on  a.tipo_arbitraje = taa.n_id_maestro
 left join (    select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 23) tab on a.tipo_arbitro = tab.n_id_maestro
-    
+
 left join tbl_arb_laudo_local l on  a.numero_registro = l.CODIGO_CONTROVERSIA_SEACE    
- 
-   
-    
+
+
+
 WHERE a.N_COD_CONTRATO = p_n_cod_contrato and a.ind_ultimo = '1'
 AND (l.C_ESTADO_REGISTRO IS NULL
     OR l.C_ESTADO_REGISTRO = 1 or l.C_ESTADO_REGISTRO =  2 or l.C_ESTADO_REGISTRO = 3 or l.C_ESTADO_REGISTRO = 4 ) --Deacuerdo al Sistema de Arbitraje: 0=Cancelado, 1=Nuevo, 2=Borrador, 3=Mofificado, 4=Publicado
@@ -1927,23 +1927,23 @@ order by numero_registro asc
 ;
 
 
-      
+
  BEGIN
 
- 
+
    IF (session__cod_contrato IS NULL) THEN
      usp_print
         (pku_procesos_comun.f_putmensaje
             ('Visualice el contrato antes de seleccionar la acci&oacute;n.<br>Retorne a la Consola de Contratos ...', ''));
      RETURN;
   END IF;
-  
 
 
 
-          
+
+
  PKU_SS_FUNCIONES_JS.js_script('
- 
+
  function detalle(cod,tipoSel) 
  {
       thisform.ag_tipo_seleccion.value = tipoSel ;
@@ -1951,24 +1951,24 @@ order by numero_registro asc
       thisform.scriptdo.value = "EditArbitraje"   ;
       thisform.submit();
  }
- 
- 
+
+
   function historial(cod)
  {
      thisform.ag_cod.value = cod ;
       thisform.scriptdo.value = "Historial"   ;
       thisform.submit();
  }
- 
- 
+
+
  function Crear()
     {
       thisform.scriptdo.value = "creaControversia";
       thisform.submit();
     }
  ');   
- 
- 
+
+
 
 ----------- CABECERA --------------------
  USP_PRINT('
@@ -2006,23 +2006,23 @@ order by numero_registro asc
   num_cons := 0;
    for xrow in c_cursor(session__cod_contrato) loop
       begin
-      
+
       num_cons := num_cons + 1;
   /*    
     if  (xrow.tipo_reajuste  = 1) then
        montoTotal := montoTotal +  xrow.monto_reajuste ;
     end if;
-    
+
     if (xrow.tipo_reajuste  =  2) then
        montoTotal := montoTotal -  xrow.monto_reajuste ; 
     end if ; 
-    
-   
+
+
          */
-            
+
     lvtipodocumento:=upper(substr(xrow.nombre_doc_acta,length(xrow.nombre_doc_acta)-2,length(xrow.nombre_doc_acta)));
 
-    
+
     begin
         select replace(icon_tipo_file, 'jpg', 'png') into lv_codtipofile
         from Reg_procesos.tipo_archivo
@@ -2031,11 +2031,11 @@ order by numero_registro asc
         when no_data_found then
             lv_codtipofile:= Null; 
     end;
-   
+
 
          usp_print('
          <tr>
-        
+
             <td align="center">'||num_cons||'</td>
             <td align="center" class="hide">'||xrow.NUM_REGISTRO||'</td>
             <td align="center">'||xrow.demandante||'</td>
@@ -2043,7 +2043,7 @@ order by numero_registro asc
             <td align="center">'||xrow.NOMBRE_CONCILIADOR||  '</td>
             <td align="center">'||xrow.FECHA_AUDIENCIA||'</td>
             <td align="center">
-            <a href="'||url_azure_app||xrow.url_doc_acta|| xrow.nombre_doc_acta ||'" target="_BLANK"> 
+            <a href="'||url_azure_app||xrow.url_doc_acta|| '/'||xrow.nombre_doc_acta ||'" target="_BLANK"> 
               <img width="30" height="30" src="bootstrap/'|| lv_codtipofile  ||'" border="0" style="cursor:hand" /><br></a>        
             ');
             -->inicio vpt 13-05-2016
@@ -2058,19 +2058,19 @@ order by numero_registro asc
 
            </tr>  
             ');
-            
-            
-            
-            
-            
-         
+
+
+
+
+
+
        end;
    end loop;
-   
+
    usp_print('</table>');
-   
-   
-   
+
+
+
     ------ Cabecera de Columnas --------
     usp_print('
     <h3>Arbitraje</h3>
@@ -2095,11 +2095,11 @@ order by numero_registro asc
   num_arb :=  0;
    for xrow1 in c_cursor_arbitraje(session__cod_contrato) loop
       begin
-      
-      num_arb := num_arb + 1;
-      
 
-      
+      num_arb := num_arb + 1;
+
+
+
          usp_print('
          <tr>
             <td align="center">'||num_arb||'</td>
@@ -2115,22 +2115,22 @@ order by numero_registro asc
                 <td align="center"> <input type=button value="..." onclick="detalle('||xrow1.numero_registro||',3);"> </td>
                 <td align="center"> <input type=button value="..."  onclick="historial('||xrow1.numero_registro||');"></td>
             </tr>  
-           
- 
+
+
             ');
-            
-             
-            
-            
-            
-         
+
+
+
+
+
+
        end;
    end loop;
-   
-   
-   
-   
-  
+
+
+
+
+
    usp_print('
         </table><table>          <tr><td>
            <input type = "hidden" name = "ag_cod">
@@ -2140,14 +2140,14 @@ order by numero_registro asc
         <br/>
         <br/>
         ');
-        
+
  END;
- 
- 
-  
-   
-      
- 
+
+
+
+
+
+
   PROCEDURE uspCreaConciliacion(
    session__eue_codigo      VARCHAR2,
     session__anhoentidad     VARCHAR2,
@@ -2162,7 +2162,7 @@ order by numero_registro asc
     docname__mime                  varchar2 default null,
     session__FileSinged            varchar2 default null  
   )   
-     
+
  IS
  lv_codtipofile                VARCHAR2(100); 
  lvtipodocumento               VARCHAR2(100); 
@@ -2186,42 +2186,42 @@ order by numero_registro asc
             ('Visualice el contrato antes de seleccionar la acci&oacute;n.<br>Retorne a la Consola de Contratos ...', ''));
      RETURN;
   END IF;
-  
+
   select  n_contrato into ln_num_contrato  from reg_procesos.contrato where N_COD_CONTRATO = session__cod_contrato  ; 
 
 
- 
-    
+
+
     open ctipodemandante for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 12;
-     
-     
+
+
     open ctipomecanismo for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 30;
-    
-    
+
+
     open ctipoestado for
     select cod_estado_conciliacion,descripcion
     from reg_procesos.estado_conciliacion; 
-     
-       
+
+
 
         lv_combo_demandante  := PKU_SS_UTILES.f_retorna_combo(ctipodemandante, 'ag_tipo_demandante', ag_tipo_demandante,'Seleccione...','style="width:260px"');
-     
+
     lv_combo_mecanismo   :=     PKU_SS_UTILES.f_retorna_combo(ctipomecanismo, 'ag_mecanismo', ag_mecanismo,'Seleccione...','style="width:260px" onchange="arbitraje();"'); 
-    
+
      lv_combo_estado :=   PKU_SS_UTILES.f_retorna_combo(ctipoestado, 'ag_tipo_estado', ag_tipo_estado,'Seleccione...','style="width:260px" '); 
-    
-          
+
+
  PKU_SS_FUNCIONES_JS.js_script('
- 
+
  function ValidaRuc1(obj){
 SoloNumerosNoDec();
                     if  (obj.value.length >= 11)
                     {
-                    
+
                         window.event.keyCode = 0;
                     }   
                     else
@@ -2243,7 +2243,7 @@ function busquedacentroConc()
 }
 
  function RtnCodSniop(codigo,descripcion){
-             
+
     thisform.ag_c_conciliacion.value = codigo;              
     thisform.ag_c_conciliacion_desc.value  =   descripcion;
 }
@@ -2272,16 +2272,16 @@ function SoloNumerosNoDec(){
     }
 }
 
- 
+
  function Crear()
  {
-    
+
       thisform.scriptdo.value = "doNewControversia";
       thisform.submit();
-    
-    
+
+
  }   
-    
+
      function arbitraje()
     {
       if (thisform.ag_mecanismo.value == 316)
@@ -2289,22 +2289,22 @@ function SoloNumerosNoDec(){
           thisform.scriptdo.value = "creaArbitraje";
           thisform.submit();
         }
-        
+
       if (thisform.ag_mecanismo.value == 315)  
        { 
           thisform.scriptdo.value = "creaConciliacion";
           thisform.submit();
       }
-      
+
     }
-    
-    
-    
-    
+
+
+
+
     function  publicar()
-    
+
     {
-    
+
 
            if (thisform.ag_tipo_demandante.value == ""  )
         {
@@ -2317,69 +2317,69 @@ function SoloNumerosNoDec(){
               alert("Ingrese el mecanismo de solución de Controversia");
               return;
         }
-    
+
             if (thisform.ag_f_audiencia.value == ""  )
         {
               alert("Seleccione la fecha en que se llevó a cabo la audiencia");
               return;
         }
-        
-        
+
+
         if (thisform.ag_fs_acta_conciliacion.value == ""  )
         {
               alert("Seleccione la fecha en la que suscribio el acta de conciliacion");
               return;
         }
-        
-        
+
+
             if (thisform.ag_c_conciliacion.value == ""  )
         {
               alert("Seleccione el Centro de Conciliación autorizado por el Ministerio de Justicia");
               return;
         } 
-        
+
             if (thisform.ag_c_conciliacion.value == ""  )
         {
               alert("Seleccione el Centro de Conciliación autorizado por el Ministerio de Justicia");
               return;
         } 
-        
-        
+
+
           if (thisform.ag_ruc_conciliador.value == ""  )
         {
               alert("Ingrese el número de RUC del Conciliador");
               return;
         }
-        
-      
+
+
            if (thisform.ag_nombre_conciliador.value == ""  )
         {
               alert("Ingrese los Apellidos y Nombres  del Conciliador");
               return;
         }
-        
- 
+
+
             if (thisform.pfiletoupload1.value == ""  )
         {
               alert("Ingrese el archivo");
               return;
         }
-        
+
             if (thisform.ag_tipo_estado.value == ""  )
         {
               alert("Seleccione el estado de la Conciliación");
               return;
         }
-        
-        
-        
-        
+
+
+
+
             if(thisform.pfiletoupload1.value != ""){
-    
+
       extencion1 = thisform.pfiletoupload1.value
-      
+
       extencion1 = extencion1.substring((extencion1.length)-4,extencion1.length)
-      
+
       if (extencion1 != ".doc" && extencion1 != ".zip" && extencion1 != ".pdf")
             {
                alert("El archivo de extensi\xf3n "+extencion1+" no est\xe1 permitido.");
@@ -2389,24 +2389,24 @@ function SoloNumerosNoDec(){
               var namearchive = "'||to_char(sysdate, 'ddmmyyyyHH24MISS')||'"+extencion1;
               thisform.pfiletoupload_file1.value = namearchive;
       }
- 
- 
+
+
           thisform.scriptdo.value = "conciliacionInsert";
-          
+
                  if ( confirm("¿Esta Ud. seguro de publicar los cambios realizados?") )
         {
              thisform.submit();
         }
-    
-    
+
+
     }
 
-   
-   
-    
-    
+
+
+
+
  ');   
- 
+
 
 ----------- CABECERA --------------------
  USP_PRINT('
@@ -2426,32 +2426,32 @@ function SoloNumerosNoDec(){
 
  usp_print('
   <table class="table table-striped">');    
- 
+
  usp_print(' <td align = "center" colspan = 3><h3>Ficha Electr&oacute;nica</h3></td>');
   usp_print(' <td align = "center" colspan = 3><br></td>');
-  
-  
-  
+
+
+
       usp_print('
     <tr>
       <td class=c1>(*)Solicitante</td>
     <td class=c2>'||lv_combo_demandante||'</td>
     <td class=c3>Seleccione al Solicitante.</td>
     </tr>'); 
-      
-      
+
+
          usp_print('
     <tr>
       <td class=c1>(*)Tipo de mecanismo de soluci&oacute;n de Controversia</td>
     <td class=c2>'||lv_combo_mecanismo||'</td>
     <td class=c3>Seleccione el tipo de mecanismo de soluci&oacute;n de Controversia.</td>
     </tr> <tr><td> <br></td></tr>'
-    
-    
+
+
     );  
-    
-  
-  
+
+
+
     usp_print('
     <tr>
         <td class=c1>(*)Fecha en que se llev&oacute; a cabo la Audiencia de Instalaci&oacute;n</td>
@@ -2466,43 +2466,43 @@ function SoloNumerosNoDec(){
         <td class=c3>Seleccione la fecha en que se llev&oacute; a cabo la audiencia </td>
     </tr>
   '); 
-  
+
         usp_print('
 
     <tr>
-        
+
         <td class=c1>(*)Centro de Conciliaci&oacute;n</td>
         <td class=c2><input type="text" name="ag_c_conciliacion_desc" style="width:85%" value="" readonly = "true"><input type=button value="..." onclick="busquedacentroConc();"><input type="hidden" name="ag_c_conciliacion" value="'||  ag_c_conciliacion ||'" ></td>
         <td class=c3>Seleccione  el Centro de Conciliaci&oacute;n  autorizado por el Ministerio de Justicia</td>
     </tr>
   '); 
-  
+
       usp_print('
 
       <tr><td><h4>Identificaci&oacute;n del Conciliador</h4></td>
       <td></td><td></td></tr>
     <tr>
-        
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input type="text" name="ag_ruc_conciliador" value="" size=54 onkeypress = "ValidaRuc1(thisform.ag_ruc_conciliador)" ></td>
         <td class=c3>Ingrese el número de RUC del Conciliador</td>
     </tr>
   ');
-   
+
            usp_print('
-     
+
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
         <td class=c2><input  type="text" name="ag_nombre_conciliador" value="" size=54 
 onkeypress= "return alpha(event)"></td>
         <td class=c3>Muestra los Apellidos y Nombres del Presidente del Conciliador</td>
-       
+
     </tr>
-    
+
           <tr><td colspan = 3><h4>Acta de Conciliaci&oacute;n</h4></td></tr>
-          
+
   ');
- 
+
   usp_print('
     <tr>
         <td class=c1>(*)Fecha de suscripción del Acta de Conciliación</td>
@@ -2524,17 +2524,17 @@ onkeypress= "return alpha(event)"></td>
                 <input type="hidden" name="pfiletoupload_file1" value="" />
                 <br>  Tipos de archivo permitidos: *.doc, *.pdf, *.zip ',
                 'Seleccione el Archivo a Adjuntar'));
-       
-                                                                           
+
+
            usp_print('
-    
+
       <tr><td colspan=3><h4>Estado</h4></td></tr>
     <tr>
       <td class=c1>(*)Estado de la Conciliaci&oacute;n</td>
     <td class=c2>'||lv_combo_estado||'</td>
     <td class=c3>Seleccione el estado de la Conciliaci&oacute;n</td>
     </tr>'); 
-   
+
   usp_print('</table><br>');
 
    usp_print('
@@ -2542,8 +2542,8 @@ onkeypress= "return alpha(event)"></td>
         <br/>
         <br/>
         ');   
-    lv_ruta_file    := 'mon/docs/contratos/reajustes/'  || session__anhoentidad||'/'||session__eue_codigo||'/';      
-        
+    lv_ruta_file    := 'mon/docs/contratos/reajustes/'  || session__anhoentidad||'/'||session__eue_codigo;      
+
 
   usp_print('<input type="hidden" name="WriteFileDirectory"          value="FileSinged">');
   usp_print('<input type="hidden" name="WriteFileDirectoryDynamic"   value="'||lv_ruta_file||'"></input>');   
@@ -2551,13 +2551,13 @@ onkeypress= "return alpha(event)"></td>
              (   '<input name="session__FileSingedHTTP" type="hidden" value="'
               || session__filesingedhttp
               || '"></input>'   );
-      
+
     usp_print('<input type="hidden"  value="'||ag_archivo||'"  id="ag_archivo" name="ag_archivo">');
-    
+
  END;
-  
-   
- 
+
+
+
   PROCEDURE uspEditArbitraje (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
@@ -2571,7 +2571,7 @@ onkeypress= "return alpha(event)"></td>
   sunat                                varchar2,
   ag_tipo_seleccion                number -- manuel
   )    
-    
+
  IS
  lv_codtipofile                VARCHAR2(100); 
  lvtipodocumento               VARCHAR2(100); 
@@ -2618,10 +2618,10 @@ onkeypress= "return alpha(event)"></td>
   ln_APEPAT_SECRETARIO            VARCHAR2(200 BYTE);
   ln_APEMAT_SECRETARIO           VARCHAR2(200 BYTE);
   ln_campotitulo                 varchar2 (800); --ddrodriguez Req 55
- 
+
 
    ------- Cursores -------
-   
+
     Cursor c_cursor( p_n_cod_contrato in number , p_n_num_registro in varchar2) is
     SELECT N_COD_CONTRATO,
     NUMERO_REGISTRO,
@@ -2654,10 +2654,10 @@ onkeypress= "return alpha(event)"></td>
     NOMBRES_SECRETARIO,
     APEPAT_SECRETARIO,
     APEMAT_SECRETARIO
-    
+
     from reg_procesos.contrato_arbitraje where n_cod_contrato =  p_n_cod_contrato and  NUMERO_REGISTRO = p_n_num_registro and ind_ultimo = 1 ;
 
-   
+
    ------- Listado de Prorrogas ------  
  BEGIN
   PKU_SS_CONTROVERSIAS.dojscript  ;
@@ -2667,7 +2667,7 @@ onkeypress= "return alpha(event)"></td>
             ('Visualice el contrato antes de seleccionar la acci&oacute;n.<br>Retorne a la Consola de Contratos ...', ''));
      RETURN;
   END IF;
-  
+
   select  n_contrato into ln_num_contrato  from reg_procesos.contrato where N_COD_CONTRATO = session__cod_contrato  ; 
 
    usp_print('<body onload="init('||ag_tipo_seleccion||')">');
@@ -2684,7 +2684,7 @@ onkeypress= "return alpha(event)"></td>
    end if;
    ------- Tablero titulo -------
 
-   
+
     open ctipoarbitraje for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 6;
@@ -2692,24 +2692,24 @@ onkeypress= "return alpha(event)"></td>
     open ctipoarbitro for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 23;
-    
-    
+
+
     open ctipodemandante for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 12;
-     
-     
+
+
     open ctipomecanismo for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 30;
-     
-  
-       
-     
-         
+
+
+
+
+
          for xrow in c_cursor(session__cod_contrato,ag_cod) loop
       begin
-      
+
               LN_FECHA :=   XROW.FECHA_INSTALACION  ;
               LN_TIPOARBITRAJE := XROW.TIPO_ARBITRAJE;
               LN_TIPOARBITRO   :=   XROW.TIPO_ARBITRO;
@@ -2744,38 +2744,38 @@ onkeypress= "return alpha(event)"></td>
 
        end;
    end loop;  
-   
-   
-        
-               
+
+
+
+
        if  ag_f_autoriza is not null  then
           ln_fecha := ag_f_autoriza; 
        end if;
-      
+
        if  ag_tipo_arbitraje is not null  then
            ln_tipoArbitraje := ag_tipo_arbitraje; 
        end if;
-       
+
           if  ag_tipo_arbitro is not null  then
            ln_tipoarbitro := ag_tipo_arbitro;     
          end if;
 
     lv_combo_demandante  := PKU_SS_UTILES.f_retorna_combo(ctipodemandante, 'ag_tipo_demandante', ag_tipo_demandante,'Seleccione...','style="width:260px" disabled = "disabled"');
-     
+
     lv_combo_mecanismo   := PKU_SS_UTILES.f_retorna_combo(ctipomecanismo, 'ag_mecanismo', '316','Seleccione...','style="width:260px" onchange="arbitraje();"  disabled = "true"'); 
-    
+
     lv_combo_arbitraje  := PKU_SS_UTILES.f_retorna_combo(ctipoArbitraje, 'ag_tipo_arbitraje', ln_tipoArbitraje,'Seleccione...','style="width:260px"  disabled = "true" ' );
-     
+
     lv_combo_arbitro :=   PKU_SS_UTILES.f_retorna_combo(ctipoarbitro, 'ag_tipo_arbitro', ln_tipoarbitro,'Seleccione...','style="width:260px" onchange="arbitraje();" disabled = "true"'); 
-    
-         
-   
-          
-          
+
+
+
+
+
  pku_ss_funciones_js.js_script('
   // inicio ddrodriguez req 55
   function verificar_cambios(){
-  
+
     if (thisform.ag_tipo_arbitraje.value != thisform.nh_ag_tipo_arbitraje.value) {
         return false;
     }
@@ -2783,7 +2783,7 @@ onkeypress= "return alpha(event)"></td>
     if (thisform.ag_tipo_arbitro.value != thisform.nh_ag_tipo_arbitro.value) {
         return false;
     }
-    
+
     var sAux1=""; var name_hidden="";
     var frm = document.getElementById("thisform");
     for (i=0;i<frm.elements.length;i++)  
@@ -2800,7 +2800,7 @@ onkeypress= "return alpha(event)"></td>
     alert("Para grabar debe realizar una modificación");
     return true;
   }
-  
+
   function crear_hidden(){
     var sAux="";
     var frm = document.getElementById("thisform");
@@ -2812,7 +2812,7 @@ onkeypress= "return alpha(event)"></td>
       }
     }
   }
-  
+
   function addHidden(key, value) {
       // Create a hidden input element, and append it to the form:
       var input = document.createElement("input");
@@ -2823,11 +2823,11 @@ onkeypress= "return alpha(event)"></td>
       thisform.appendChild(input);
   } 
   // fin ddrodriguez req 55
-  
+
  function RtnArbitro(nombre,ruc,tipo,motivo,pub,sunat)
  {
- 
-  
+
+
      if (tipo == 1)      
         { 
           thisform.ag_ruc_presidente.value=ruc;
@@ -2847,9 +2847,9 @@ onkeypress= "return alpha(event)"></td>
           thisform.ag_nombres_ent.value = "" ;
           thisform.ag_apePat_ent.value = "" ;
           thisform.ag_apeMat_ent.value = "" ;
-          
-          
-          
+
+
+
         }
      if (tipo == 3)
         {
@@ -2871,20 +2871,20 @@ onkeypress= "return alpha(event)"></td>
           thisform.ag_apemat_secretario.value = "";
           thisform.ag_apepat_secretario.value = "";
         }
-        
+
     if (pub == 1)
-     
+
      {
      div = document.getElementById("div_pub");
 
 
      div.style.display = ""; 
-     
+
      }
-        
+
  }
- 
- 
+
+
  function modArbitro(cod)
  {
         if (cod == 1)
@@ -2911,30 +2911,30 @@ onkeypress= "return alpha(event)"></td>
           nombre = thisform.ag_nombre_secretario.value
           motivo = thisform.ag_motivo_secretario.value
         }
- 
- 
- 
+
+
+
 //       ventanaHija =   window.open(''portlet5open.asp?_portletid_=mod_controversia&scriptdo=uspEditArbitro'' +''&motivo=''+ motivo + ''&cod=''+cod,'''',''toolbar=no,Width=700,Height=400,scrollbars=yes,modal=yes,dependent,alwaysRaised'')
        ventanaHija =   window.open(''ControllerServletOpen?portletid=mod_controversia&scriptdo=uspEditArbitro'' +''&motivo=''+ motivo + ''&cod=''+cod,'''',''toolbar=no,Width=700,Height=400,scrollbars=yes,modal=yes,dependent,alwaysRaised'')       
  }
 
 
- 
+
      function RtnCodSniop(ruc,nombre,motivo,tipo,pub){
-             
+
      if (pub == 1)
-     
+
      {
      div = document.getElementById("div_pub");
 
 
      div.style.display = ""; 
-     
+
      }
-     
-  
-     
-          
+
+
+
+
     if (tipo == 1)      
         {
           thisform.ag_ruc_presidente.value=ruc;
@@ -2959,25 +2959,25 @@ onkeypress= "return alpha(event)"></td>
           thisform.ag_nombre_secretario.value=nombre;
           thisform.ag_motivo_secretario.value=motivo;
         }
-        
+
           ventanaHija.close();
-         
+
     }
 
 function init(cod){
-            
-            
+
+
             if( cod == 1 )
             { 
                 thisform.ag_tipo_arbitraje.disabled = false;
                 thisform.ag_tipo_arbitro.disabled = false;
-                
+
                   var frm = document.getElementById("thisform");
                   for (i=0;i<frm.elements.length;i++)
                   {
                     if(frm.elements[i].type == "text") {
                         if (frm.elements[i].name != "ag_cod" && frm.elements[i].name != "ag_f_autoriza") {
-                        
+
                             if (thisform.ag_tipo_arbitro.value == thisform.nh_ag_tipo_arbitro.value) {
                                 frm.elements[i].readOnly = true;
                                 frm.elements[i].className = "form-control";
@@ -2988,20 +2988,20 @@ function init(cod){
                     }
                   }
             }
-           
+
             crear_hidden(); // creando campos ocultos para text
             addHidden("nh_ag_tipo_arbitraje", thisform.ag_tipo_arbitraje.value); // Para Tipo de Arbitraje
 
 }
- 
 
- 
+
+
  function Crear()
     {
       thisform.scriptdo.value = "doNewControversia";
       thisform.submit();
     }
-    
+
      function arbitraje()
     {
       if (thisform.ag_mecanismo.value == 316)
@@ -3009,16 +3009,16 @@ function init(cod){
         thisform.scriptdo.value = "editArbitraje";
         thisform.submit();
       }
-      
 
-    
+
+
     }
-    
-    
-    
-    
+
+
+
+
     function  publicar()
-    
+
     {
         if (verificar_cambios()) {
             return;
@@ -3041,20 +3041,20 @@ function init(cod){
                    return;
               }
         }
-        
-        
-        
+
+
+
                 if (document.getElementById("ag_apePat_presidente") )
         {
               if (thisform.ag_apePat_presidente.value == null || thisform.ag_apePat_presidente.value == "")
               {
                   alert("Ingrese el apellido paterno del Presidente del Tribunal Arbitral");
                   thisform.ag_apePat_presidente.focus ();
-                  
+
                    return;
               }
         }
-        
+
                 if (document.getElementById("ag_apeMat_presidente") )
         {
               if (thisform.ag_apeMat_presidente.value == null || thisform.ag_apeMat_presidente.value == "")
@@ -3064,40 +3064,40 @@ function init(cod){
                    return;
               }
         }
-        
-        
+
+
                 if (document.getElementById("ag_nombres_presidente") )
         {
               if (thisform.ag_nombres_presidente.value == null || thisform.ag_nombres_presidente.value == "")
               {
                   alert("Ingrese los nombres del Presidente del Tribunal Arbitral");
                    thisform.ag_nombres_presidente.focus();
-                  
+
                    return;
               }
         }
-        
-     
+
+
               if(document.getElementById("ag_nombre_presidente"))
-        
+
         {
-     
+
         nombreCompleto =  trim(thisform.ag_nombre_presidente.value);
         concatenacion  =  trim(thisform.ag_apePat_presidente.value + thisform.ag_apeMat_presidente.value  + thisform.ag_nombres_presidente.value);    
         nombreCompleto = nombreCompleto.toUpperCase();
         concatenacion = concatenacion.toUpperCase();
-  
+
              if ( nombreCompleto != concatenacion    )
-        
+
               {
-              
+
                     alert("Ingrese correctamente los Apellidos y Nombres del Presidente del Tribunal Arbitral");
 
                     return;
-              
+
               }
         }
-        
+
 
 
                 if (document.getElementById("ag_ruc_arbitro_ent") )
@@ -3108,9 +3108,9 @@ function init(cod){
                    return;
               }
         }
-    
-        
-        
+
+
+
                         if (document.getElementById("ag_mom_arbitro_ent") )
         {
               if (thisform.ag_mom_arbitro_ent.value == null || thisform.ag_mom_arbitro_ent.value == "")
@@ -3119,20 +3119,20 @@ function init(cod){
                    return;
               }
         }
-        
-        
-                
+
+
+
                 if (document.getElementById("ag_apePat_ent") )
         {
               if (thisform.ag_apePat_ent.value == null || thisform.ag_apePat_ent.value == "")
               {
                   alert("Ingrese el apellido paterno del Arbitro designado por la entidad");
                   thisform.ag_apePat_ent.focus ();
-                  
+
                    return;
               }
         }
-        
+
                 if (document.getElementById("ag_apeMat_ent") )
         {
               if (thisform.ag_apeMat_ent.value == null || thisform.ag_apeMat_ent.value == "")
@@ -3142,43 +3142,43 @@ function init(cod){
                    return;
               }
         }
-        
-        
+
+
                 if (document.getElementById("ag_nombres_ent") )
         {
               if (thisform.ag_nombres_ent.value == null || thisform.ag_nombres_ent.value == "")
               {
                   alert("Ingrese los nombres del Arbitro designado por la entidad");
                    thisform.ag_nombres_ent.focus();
-                  
+
                    return;
               }
         }
-        
-        
-        
-        
+
+
+
+
          if(document.getElementById("ag_mom_arbitro_ent"))  
         {
-        
+
             nombreCompleto =  trim(thisform.ag_mom_arbitro_ent.value);
             concatenacion  =  trim(thisform.ag_apePat_ent.value + thisform.ag_apeMat_ent.value  + thisform.ag_nombres_ent.value);    
             nombreCompleto = nombreCompleto.toUpperCase();
             concatenacion = concatenacion.toUpperCase();
-      
+
                  if ( nombreCompleto != concatenacion    )
-            
+
                   {
-                  
+
                         alert("Ingrese correctamente los Apellidos y Nombres del Arbitro designado por la Entidad");
-    
+
                         return;
-                  
+
                   }
-         
+
        }
-              
-        
+
+
                                 if (document.getElementById("ag_ruc_arbitro_cont") )
         {
               if (thisform.ag_ruc_arbitro_cont.value == null || thisform.ag_ruc_arbitro_cont.value == "")
@@ -3187,8 +3187,8 @@ function init(cod){
                    return;
               }
         }
-        
-        
+
+
                                 if (document.getElementById("ag_nombre_arbitro_cont") )
         {
               if (thisform.ag_nombre_arbitro_cont.value == null || thisform.ag_nombre_arbitro_cont.value == "")
@@ -3197,21 +3197,21 @@ function init(cod){
                    return;
               }
         }
-        
-      
-        
-                      
+
+
+
+
                 if (document.getElementById("ag_apePat_cont") )
         {
               if (thisform.ag_apePat_cont.value == null || thisform.ag_apePat_cont.value == "")
               {
                   alert("Ingrese el apellido paterno del Arbitro designado por el Contratista");
                   thisform.ag_apePat_cont.focus ();
-                  
+
                    return;
               }
         }
-        
+
                 if (document.getElementById("ag_apeMat_cont") )
         {
               if (thisform.ag_apeMat_cont.value == null || thisform.ag_apeMat_cont.value == "")
@@ -3221,43 +3221,43 @@ function init(cod){
                    return;
               }
         }
-        
-        
+
+
                 if (document.getElementById("ag_nombres_cont") )
         {
               if (thisform.ag_nombres_cont.value == null || thisform.ag_nombres_cont.value == "")
               {
                   alert("Ingrese los nombres del Arbitro designado por el Contratista");
                    thisform.ag_nombres_cont.focus();
-                  
+
                    return;
               }
         }
-        
-        
+
+
             if(document.getElementById("ag_nombre_arbitro_cont"))  
-        
+
             {
               nombreCompleto =  trim(thisform.ag_nombre_arbitro_cont.value);
               concatenacion  =  trim(thisform.ag_apePat_cont.value + thisform.ag_apeMat_cont.value  + thisform.ag_nombres_cont.value);    
               nombreCompleto = nombreCompleto.toUpperCase();
               concatenacion = concatenacion.toUpperCase();
-              
+
                    if ( nombreCompleto != concatenacion    )
-              
+
                     {
-                    
+
                           alert("Ingrese correctamente los Apellidos y Nombres del Arbitro designado por el Contratista");
-      
+
                           return;
-                    
+
                     }
-                  
-        
+
+
             } 
-        
+
         <!--Inicio mlaura Req 55 -->
-        
+
             if (document.getElementById("ag_ruc_secretario") )
         {
               if (thisform.ag_ruc_secretario.value == null || thisform.ag_ruc_secretario.value == "")
@@ -3275,20 +3275,20 @@ function init(cod){
                    return;
               }
         }
-        
-        
-        
+
+
+
                 if (document.getElementById("ag_apepat_secretario") )
         {
               if (thisform.ag_apepat_secretario.value == null || thisform.ag_apepat_secretario.value == "")
               {
                   alert("Ingrese el apellido paterno del Secretario Arbitral");
                   thisform.ag_apepat_secretario.focus ();
-                  
+
                    return;
               }
         }
-        
+
                 if (document.getElementById("ag_apemat_secretario") )
         {
               if (thisform.ag_apemat_secretario.value == null || thisform.ag_apemat_secretario.value == "")
@@ -3298,55 +3298,55 @@ function init(cod){
                    return;
               }
         }
-        
-        
+
+
                 if (document.getElementById("ag_nombres_secretario") )
         {
               if (thisform.ag_nombres_secretario.value == null || thisform.ag_nombres_secretario.value == "")
               {
                   alert("Ingrese los nombres del Secretario Arbitral");
                    thisform.ag_nombres_secretario.focus();
-                  
+
                    return;
               }
         }
-        
-     
+
+
               if(document.getElementById("ag_nombre_secretario"))
-        
+
         {
-     
+
         nombreCompleto =  trim(thisform.ag_nombre_secretario.value);
         concatenacion  =  trim(thisform.ag_apepat_secretario.value + thisform.ag_apemat_secretario.value  + thisform.ag_nombres_secretario.value);    
         nombreCompleto = nombreCompleto.toUpperCase();
         concatenacion = concatenacion.toUpperCase();
-  
+
              if ( nombreCompleto != concatenacion    )
-        
+
               {
-              
+
                     alert("Ingrese correctamente los Apellidos y Nombres del Secretario Arbitral");
 
                     return;
-              
+
               }
         }
-        
+
           thisform.scriptdo.value = "arbitrajeEdit";
- 
+
                   if ( confirm("¿Esta Ud. seguro de publicar los cambios realizados?") )
         {
              thisform.submit();
         }
-    
+
     }
 
-   
-    
-    
+
+
+
  ');   
- 
- 
+
+
 
 ----------- CABECERA --------------------
  USP_PRINT('
@@ -3370,14 +3370,14 @@ function init(cod){
 
  usp_print('
   <table class="table table-striped">');    
- 
+
  usp_print(' <td align = "center" colspan = 3><h3>Ficha Electr&oacute;nica</h3></td>');
 
   usp_print(' <td align = "center" colspan = 3><br></td>');
-  
+
   usp_print(' <tr><td align = "center" colspan = 3><h3>'||ln_campotitulo||'<br></h3></td></tr>');
-      
-      
+
+
          usp_print('
     <tr>
       <td class=c1>(*)Tipo de mecanismo de soluci&oacute;n de Controversia</td>
@@ -3385,16 +3385,16 @@ function init(cod){
     <td class=c3>Muestra el tipo de  soluci&oacute;n de Controversia.</td>
     '
     );  
-    
+
         usp_print('
     <tr>
-        
+
         <td class=c1>(*)Nro. de Registro de Proceso Arbitral </td>
         <td class=c2><input type="text" name="ag_cod" value="'|| ag_cod  ||'" size=54 readonly ></td>
         <td class=c3>Muestra el n&uacute;mero de Registro de Proceso Arbitral</td>
     </tr>
   '); 
-  
+
     usp_print('
     <tr>
         <td class=c1>(*)Fecha en la que se llev&oacute; acabo la Audiencia de Instalaci&oacute;n</td>
@@ -3402,7 +3402,7 @@ function init(cod){
         <td class=c3>Muestra la fecha en que se llev&oacute; a cabo la instalaci&oacute;n</td>
     </tr>
   '); 
-  
+
 
     usp_print('
     <tr>
@@ -3410,8 +3410,8 @@ function init(cod){
       <td class=c2>'||lv_combo_arbitraje||'</td>
       <td class=c3>Muestra el tipo de Arbitraje.</td>
     </tr>'); 
-      
-      
+
+
          usp_print('
     <tr>
       <td class=c1>(*)Tipo de &Aacute;rbitro</td>
@@ -3421,201 +3421,201 @@ function init(cod){
 
   if   (ag_tipo_seleccion = 1 or ag_tipo_seleccion = 2)   then
        if   ln_tipoarbitro = 221  then
-        
+
         usp_print ('<tr><td colspan = 3 align = center ><h3>Identificaci&oacute;n de los miembros del Tribunal Arbitral</h3></td></tr>');
           usp_print('
           <tr><td><h4>Presidente del Tribunal Arbitral</h4></td><td colspan = 2 ><input type=button name="idTipoArbitro" value="..." onclick="modArbitro(1);" /></td></tr>
         <tr>
-            
+
             <td class=c1>RUC Nro.</td>
             <td class=c2><input type="text" class="form-control" id="ag_ruc_presidente" name="ag_ruc_presidente" value="'|| ln_RUC_PRESIDENTE ||'" size=54 readonly class="InpReadOnly" /><input type="hidden" name="ag_sunat_presidente" value="'|| sunat ||'" size=54 readonly></td>
             <td class=c3>Ingrese el número de RUC del Presidente del Tribunal Arbitral</td>
         </tr>
       '); 
-      
-      
+
+
             usp_print('
         <tr>
             <td class=c1>(*)Apellidos y Nombres</td>
             <td class=c2><input  type="text" class="form-control"  id="ag_nombre_presidente" name="ag_nombre_presidente" value="'|| ln_NOMBRE_PRESIDENTE ||'" size=54 readonly class="InpReadOnly" /></td>
             <td class=c3>Muestra los Apellidos y Nombres del Presidente del Tribunal Arbitral</td>
-           
+
         </tr>
-        
+
                 <tr>
             <td class=c1>(*)Apellido Paterno</td>
             <td class=c2><input  type="text" id="ag_apePat_presidente" name="ag_apePat_presidente" value="'|| ln_apePat_presidente ||'" size=54 onkeypress= "return alpha(event)" ></td>
            <td class=c3>Muestra el apellido paterno del Presidente del Tribunal Arbitral</td>
-           
+
         </tr>
-        
-        
+
+
                 <tr>
             <td class=c1>(*)Apellido Materno</td>
             <td class=c2><input  type="text" id="ag_apeMat_presidente" name="ag_apeMat_presidente" value="'|| ln_apeMat_presidente  ||'" size=54 
     onkeypress= "return alpha(event)" ></td>
             <td class=c3>Muestra el   apellido materno del Presidente del Tribunal Arbitral</td>
-           
+
         </tr>
-        
-        
-        
+
+
+
         <tr>
             <td class=c1>(*)Nombres</td>
             <td class=c2><input  type="text" id="ag_nombres_presidente" name="ag_nombres_presidente" value="' || ln_nombres_presidente ||'" size=54 
     onkeypress= "return alpha(event)"></td>
             <td class=c3>Muestra los nombres  del Presidente del Tribunal Arbitral</td>
-           
+
         </tr>
        <input  type="hidden" name="ag_motivo_presidente" value="'|| ln_MOTIVO_PRESIDENTE ||'" size=54>
       '); 
-      
-      
+
+
             usp_print('
             <tr> <td><h4>Arbitro designado por la Entidad</h4></td><td td colspan = 2 ><input type=button value="..." onclick="modArbitro(2);"></td></tr>
         <tr>
-           
+
             <td class=c1>RUC Nro.</td>
             <td class=c2><input  type="text" class="form-control"  id="ag_ruc_arbitro_ent" name="ag_ruc_arbitro_ent" value="'|| ln_RUC_ARBITRO_ENTIDAD  ||'" size=54 readonly class="InpReadOnly" /><input type="hidden" name="ag_sunat_arbitro_ent" value="'|| sunat ||'" size=54 readonly></td>
            <td class=c3>Ingrese el número de RUC del Arbitro designado por la entidad</td>
-           
+
         </tr>
       '); 
-      
-      
+
+
             usp_print('
         <tr>
             <td class=c1>(*)Apellidos y Nombres</td>
             <td class=c2><input  type="text"  class="form-control"  id="ag_mom_arbitro_ent" name="ag_mom_arbitro_ent" value="'|| ln_NOMBRE_ARBITRO_ENTIDAD  ||'" size=54 readonly class="InpReadOnly" /></td>
            <td class=c3>Muestra los Apellidos y Nombres del Arbitro designado por la entidad</td>
-            
+
         </tr>
-        
+
                 <tr>
             <td class=c1>(*)Apellido Paterno</td>
             <td class=c2><input  type="text" id="ag_apePat_ent" name="ag_apePat_ent" value="'|| ln_apePat_ent  ||'" size=54 
     onkeypress= "return alpha(event)" ></td>
        <td class=c3>Muestra el apellido paterno del Presidente del Tribunal Arbitral</td>
-           
+
         </tr>
-        
-        
+
+
                 <tr>
             <td class=c1>(*)Apellido Materno</td>
             <td class=c2><input  type="text" id="ag_apeMat_ent" name="ag_apeMat_ent" value="' || ln_apeMat_ent  ||'" size=54 
     onkeypress= "return alpha(event)"></td>
        <td class=c3>Muestra el   apellido materno del Presidente del Tribunal Arbitral</td>
-           
+
         </tr>
-        
-        
+
+
             <tr>
             <td class=c1>(*)Nombres</td>
             <td class=c2><input  type="text" id="ag_nombres_ent" name="ag_nombres_ent" value="'|| ln_nombres_ent ||'" size=54 
     onkeypress= "return alpha(event)"></td>
          <td class=c3>Muestra los nombres  del Presidente del Tribunal Arbitral</td>
-           
+
         </tr>
            <input  type="hidden" name="ag_motivo_arbitro_ent" value="'||ln_MOTIVO_ARBITRO_ENTIDAD||'" size=54>
       '); 
-      
+
               usp_print('
               <tr> <td><h4>Arbitro designado por el Contratista</h4></td><td td colspan = 2 ><input type=button value="..." onclick="modArbitro(3);"></td>  </tr>
         <tr>
-           
+
             <td class=c1>RUC Nro.</td>
             <td class=c2><input  type="text" class="form-control"  id="ag_ruc_arbitro_cont" name="ag_ruc_arbitro_cont" value="'|| ln_RUC_ARBITRO_CONTRATISTA  ||'" size=54 readonly class="InpReadOnly" /><input  type="hidden" name="ag_sunat_arbitro_cont" value="'|| sunat  ||'" size=54 readonly></td>
            <td class=c3>Ingrese el número de RUC del Arbitro designado por el contratista</td>
         </tr>
       '); 
-      
-      
+
+
             usp_print('
         <tr>
             <td class=c1>(*)Apellidos y Nombres</td>
             <td class=c2><input type="text" class="form-control"  id="ag_nombre_arbitro_cont" name="ag_nombre_arbitro_cont" value="'|| ln_NOMBRE_ARBITRO_CONTRATISTA  ||'" size=54 readonly class="InpReadOnly" /></td>
             <td class=c3>Muestra los Apellidos y Nombres del Arbitro designado por el contratista</td>
         </tr>
-        
-    
-        
+
+
+
             <tr>
             <td class=c1>(*)Apellido Paterno</td>
             <td class=c2><input  type="text" id="ag_apePat_cont" name="ag_apePat_cont" value=" '  ||  ln_apePat_cont  ||' " size=54 
     onkeypress= "return alpha(event)"></td>
           <td class=c3>Muestra el apellido paterno del Presidente del Tribunal Arbitral</td> 
-           
+
         </tr>
-    
+
             <tr>
             <td class=c1>(*)Apellido Materno</td>
             <td class=c2><input  type="text" id="ag_apeMat_cont" name="ag_apeMat_cont" value="' || ln_apeMat_cont    || '" size=54 
     onkeypress= "return alpha(event)"></td>
           <td class=c3>Muestra el   apellido materno del Presidente del Tribunal Arbitral</td>    
-           
+
         </tr>                   
-        
-        
+
+
                <tr>
             <td class=c1>(*)Nombres</td>
             <td class=c2><input  type="text" id="ag_nombres_cont" name="ag_nombres_cont" value="' || ln_nombres_cont ||'" size=54 
     onkeypress= "return alpha(event)"></td>
           <td class=c3>Muestra los nombres  del Presidente del Tribunal Arbitral</td>
-           
+
         </tr>
-        
+
         <input  type="hidden" name="ag_motivo_arbitro_cont" value="'|| ln_MOTIVO_ARBITRO_CONTRATISTA ||'" size=54>
       ');
-      
+
      end if;
-      
+
       if  ln_tipoarbitro = 220 then
             usp_print('
           <tr><td colspan = 1 align = left ><h3>Identificaci&oacute;n del &Aacute;rbitro &Uacute;nico</h3></td><td><input type=button name="idTipoArbitro" value="..." onclick="modArbitro(1);" ></td></tr>
         <tr>
-            
+
             <td class=c1 id="t_ruc_presidente">RUC Nro.</td>
             <td class=c2><input  type="text" class="form-control" id="ag_ruc_presidente" name="ag_ruc_presidente" value="'|| ln_RUC_PRESIDENTE ||'" size=54 readonly class="InpReadOnly" /><input  type="hidden" class="form-control" name="ag_sunat_presidente" value="'|| sunat ||'" size=54 readonly class="InpReadOnly"></td>
             <td class=c3 name="d_ruc_presidente">Ingrese el n&uacute;mero de RUC del &Aacute;rbitro &Uacute;nico</td>
         </tr>
       '); 
-      
-      
+
+
             usp_print('
         <tr>
             <td class=c1 name="t_nombre_presidente">(*)Apellidos y Nombres</td>
             <td class=c2><input  type="text" class="form-control" id="ag_nombre_presidente" name="ag_nombre_presidente" value="'|| ln_NOMBRE_PRESIDENTE||'" size=54 readonly class="InpReadOnly" /></td>
             <td class=c3 name="d_nombre_presidente">Muestra los Apellidos y Nombres del &Aacute;rbitro &Uacute;nico</td>
-           
+
         </tr>
-        
-            
+
+
             <tr>
             <td class=c1 name="t_apepat_presidente">(*)Apellido Paterno</td>
             <td class=c2><input type="text" id="ag_apePat_presidente" name="ag_apePat_presidente" value="' || ln_apePat_presidente  ||'" size=54 
     onkeypress= "return alpha(event)" /></td>
             <td class=c3 name="d_apepat_presidente">Muestra el apellido paterno del &Aacute;rbitro &Uacute;nico</td>
-           
-           
+
+
         </tr>
-    
+
             <tr>
             <td class=c1>(*)Apellido Maternow</td>
             <td class=c2><input  type="text" id="ag_apeMat_presidente" name="ag_apeMat_presidente" value="'|| ln_apeMat_presidente  || '" size=54 
     onkeypress= "return alpha(event)" /></td>
             <td class=c3>Muestra el   apellido materno del &Aacute;rbitro &Uacute;nico</td>
         </tr>
-    
+
         <tr>
             <td class=c1>(*)Nombres</td>
             <td class=c2><input  type="text" id="ag_nombres_presidente" name="ag_nombres_presidente" value="'|| ln_nombres_presidente ||'" size=54 onkeypress= "return alpha(event)"/></td>
             <td class=c3>Muestra los nombres  del &Aacute;rbitro &Uacute;nico</td>
-           
+
         </tr>
-        
+
      <tr> <td><br><input  type="hidden" name="ag_motivo_presidente" value="'|| ln_MOTIVO_PRESIDENTE ||'" size=54></td></tr>
       ');
-      
+
          end if; 
     end if;
     -- inicio punto 3 vpt
@@ -3627,57 +3627,57 @@ function init(cod){
         <td class=c1>RUC Nro.</td>
         <td class=c2><input  type="text" class="form-control" id="ag_ruc_secretario" name="ag_ruc_secretario" value="'|| ln_RUC_SECRETARIO  ||'" size=54 readonly class=InpReadOnly" ><input type="hidden" name="ag_sunat_secretario" value="'|| sunat ||'" size=54 readonly></td>
         <td class=c3>Ingrese el número de RUC del Secretario Arbitral</td>
-       
+
         </tr>
         '); 
-  
-  
+
+
         usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
         <td class=c2><input  type="text" class="form-control" id="ag_nombre_secretario" name="ag_nombre_secretario" value="'|| ln_NOMBRE_SECRETARIO  ||'" size=54 readonly class="InpReadOnly" /></td>
         <td class=c3>Muestra los Apellidos y Nombres del Secretario Arbitral</td>
-        
+
     </tr>
-    
+
         <tr>
         <td class=c1>(*)Apellido Paterno</td>
         <td class=c2><input  type="text" id="ag_apepat_secretario" name="ag_apepat_secretario" value="'|| ln_APEPAT_SECRETARIO  ||'" size=54 
         onkeypress= "return alpha(event)" ></td>
         <td class=c3>Muestra el apellido paterno del Secretario Arbitral</td>
-       
+
     </tr>
-    
-    
+
+
         <tr>
         <td class=c1>(*)Apellido Materno</td>
         <td class=c2><input  type="text" id="ag_apemat_secretario" name="ag_apemat_secretario" value="' || ln_APEMAT_SECRETARIO  ||'" size=54 
         onkeypress= "return alpha(event)"></td>
         <td class=c3>Muestra el   apellido materno del Secretario Arbitral</td>
-       
+
     </tr>
-    
-    
+
+
         <tr>
         <td class=c1>(*)Nombres</td>
         <td class=c2><input  type="text" id="ag_nombres_secretario" name="ag_nombres_secretario" value="'|| ln_NOMBRES_SECRETARIO ||'" size=54 
         onkeypress= "return alpha(event)"></td>
         <td class=c3>Muestra los nombres  del SeCretario Arbitral</td>
-       
+
     </tr>
-    
+
     <input  type="hidden" name="ag_motivo_secretario" value="'||ln_MOTIVO_SECRETARIO||'" size=54>
   '); 
   --final punto 3 vpt
- 
-  
+
+
   end if;
- 
+
  usp_print('<input type = "hidden" value = "'|| ag_cod ||'" name = "ag_cod" >
             <input type = "hidden" value = "'|| ln_NUMERO_REGISTRO ||'" name = "ag_num_reg" > 
             <input type = "hidden" value = "'|| ag_tipo_seleccion ||'" name = "ag_tipo_seleccion" >
             <input type = "hidden" value = "'|| LN_TIPOARBITRO_EVAL ||'" name = "nh_ag_tipo_arbitro" >
-  
+
   </table><br>');
 
    usp_print('
@@ -3686,11 +3686,11 @@ function init(cod){
         <br/>
         <br/>
         ');
-        
+
  END;
- 
- 
- 
+
+
+
  PROCEDURE uspCreaArbitraje (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
@@ -3701,7 +3701,7 @@ function init(cod){
   sunat                                VARCHAR2,
   ag_f_autoriza                          VARCHAR2 
   )   
-    
+
  IS
  lv_codtipofile                VARCHAR2(100); 
  lvtipodocumento               VARCHAR2(100); 
@@ -3716,7 +3716,7 @@ function init(cod){
    ctipoarbitro                 ref_cursor;  
     ctipodemandante               ref_cursor;
  ctipomecanismo                ref_cursor;  
- 
+
    ------- Cursores -------
    ------- Listado de Prorrogas ------  
  BEGIN
@@ -3727,11 +3727,11 @@ function init(cod){
             ('Visualice el contrato antes de seleccionar la acci&oacute;n.<br>Retorne a la Consola de Contratos ...', ''));
      RETURN;
   END IF;
-  
+
   select  n_contrato into ln_num_contrato  from reg_procesos.contrato where N_COD_CONTRATO = session__cod_contrato  ; 
 
 
-  
+
     open ctipoarbitraje for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 6;
@@ -3739,31 +3739,31 @@ function init(cod){
     open ctipoarbitro for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 23;
-  
-    
+
+
     open ctipodemandante for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 12;
-     
-     
+
+
     open ctipomecanismo for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 30;
-     
-       
+
+
     lv_combo_demandante  := PKU_SS_UTILES.f_retorna_combo(ctipodemandante, 'ag_tipo_demandante', ag_tipo_demandante,'Seleccione...','style="width:260px"');
-     
+
     lv_combo_mecanismo   :=     PKU_SS_UTILES.f_retorna_combo(ctipomecanismo, 'ag_mecanismo', ag_mecanismo,'Seleccione...','style="width:260px" onchange="arbitraje();"'); 
-    
+
     lv_combo_arbitraje  := PKU_SS_UTILES.f_retorna_combo(ctipoArbitraje, 'ag_tipo_arbitraje', ag_tipo_arbitraje,'Seleccione...','style="width:260px"');
-     
+
     lv_combo_arbitro    :=     PKU_SS_UTILES.f_retorna_combo(ctipoarbitro, 'ag_tipo_arbitro', ag_tipo_arbitro,'Seleccione...','style="width:260px" onchange="arbitraje();"'); 
-    
-          
+
+
  PKU_SS_FUNCIONES_JS.js_script('
- 
- 
- 
+
+
+
   function modArbitro(cod)
  {
         if (cod == 1)
@@ -3790,59 +3790,59 @@ function init(cod){
           nombre = thisform.ag_nombre_secretario.value
         //  motivo = thisform.ag_motivo_secretario.value
         }
- 
- 
- 
+
+
+
    //    ventanaHija =   window.open(''portlet5open.asp?_portletid_=mod_controversia&scriptdo=NuevoArbitro''+''&ruc=''+ ruc +''&nombre=''+ nombre  + ''&cod=''+cod,'''',''toolbar=no,Width=700,Height=400,scrollbars=yes,modal=yes,dependent,alwaysRaised'')
        ventanaHija =   window.open(''ControllerServletOpen?portletid=mod_controversia&scriptdo=NuevoArbitro''+''&ruc=''+ ruc +''&nombre=''+ nombre  + ''&cod=''+cod,'''',''toolbar=no,Width=700,Height=400,scrollbars=yes,modal=yes,dependent,alwaysRaised'')
  }
- 
- 
+
+
   function RtnArbitro(nombre,ruc,tipo,pub,sunat)
  {
 
- 
+
      if (tipo == 1)      
         {
           thisform.ag_ruc_presidente.value=ruc;
           thisform.ag_nombre_presidente.value=nombre;
           thisform.ag_sunat_presidente.value=sunat ;
-         
-  
+
+
         }
      if (tipo == 2)
         {
           thisform.ag_ruc_arbitro_ent.value=ruc;
           thisform.ag_mom_arbitro_ent.value=nombre;
           thisform.ag_sunat_arbitro_ent.value=sunat ;
-         
+
         }
      if (tipo == 3)
         {
           thisform.ag_ruc_arbitro_cont.value=ruc;
           thisform.ag_nombre_arbitro_cont.value=nombre;
           thisform.ag_sunat_arbitro_cont.value=sunat ;
-           
+
         } 
       if (tipo == 4)
         {
           thisform.ag_ruc_secretario.value=ruc;
           thisform.ag_nombre_secretario.value=nombre;
           thisform.ag_sunat_secretario.value=sunat ;
-           
+
         }
-        
-   
-        
+
+
+
  }
- 
- 
+
+
  function Crear()
     {
       thisform.scriptdo.value = "doNewControversia";
       thisform.submit();
     }
-    
+
      function arbitraje()
     {
          if (thisform.ag_mecanismo.value == 316)
@@ -3850,20 +3850,20 @@ function init(cod){
         thisform.scriptdo.value = "creaArbitraje";
         thisform.submit();
       }
-      
+
     if (thisform.ag_mecanismo.value == 315)  
       {
         thisform.scriptdo.value = "creaConciliacion";
         thisform.submit();
       }
-    
+
     }
-    
-    
-    
-    
+
+
+
+
     function  publicar()
-    
+
     {
 
         if (thisform.ag_tipo_demandante.value == ""  )
@@ -3877,8 +3877,8 @@ function init(cod){
               alert("Ingrese el mecanismo de solución de Controversia");
               return;
         }
-        
-        
+
+
                     if (thisform.ag_f_autoriza.value == ""  )
         {
               alert("Ingrese la fecha del documento que autoriza la entidad");
@@ -3889,14 +3889,14 @@ function init(cod){
               alert("Ingrese el Tipo de Arbitraje");
                return;
         }
-        
-        
+
+
                 if (thisform.ag_tipo_arbitro.value == "" )
         {
               alert("Ingrese el Tipo de Árbitro");
                return;
         }
-        
+
         if (document.getElementById("ag_ruc_presidente") )
         {
               if (thisform.ag_ruc_presidente.value == null || thisform.ag_ruc_presidente.value == "")
@@ -3914,20 +3914,20 @@ function init(cod){
                    return;
               }
         }
-        
-        
-        
+
+
+
                 if (document.getElementById("ag_apePat_presidente") )
         {
               if (thisform.ag_apePat_presidente.value == null || thisform.ag_apePat_presidente.value == "")
               {
                   alert("Ingrese el apellido paterno del Presidente del Tribunal Arbitral");
                   thisform.ag_apePat_presidente.focus ();
-                  
+
                    return;
               }
         }
-        
+
                 if (document.getElementById("ag_apeMat_presidente") )
         {
               if (thisform.ag_apeMat_presidente.value == null || thisform.ag_apeMat_presidente.value == "")
@@ -3937,40 +3937,40 @@ function init(cod){
                    return;
               }
         }
-        
-        
+
+
                 if (document.getElementById("ag_nombres_presidente") )
         {
               if (thisform.ag_nombres_presidente.value == null || thisform.ag_nombres_presidente.value == "")
               {
                   alert("Ingrese los nombres del Presidente del Tribunal Arbitral");
                    thisform.ag_nombres_presidente.focus();
-                  
+
                    return;
               }
         }
-        
-     
+
+
               if(document.getElementById("ag_nombre_presidente"))
-        
+
         {
-     
+
         nombreCompleto =  trim(thisform.ag_nombre_presidente.value);
         concatenacion  =  trim(thisform.ag_apePat_presidente.value + thisform.ag_apeMat_presidente.value  + thisform.ag_nombres_presidente.value);    
         nombreCompleto = nombreCompleto.toUpperCase();
         concatenacion = concatenacion.toUpperCase();
-  
+
              if ( nombreCompleto != concatenacion    )
-        
+
               {
-              
+
                     alert("Ingrese correctamente los Apellidos y Nombres del Presidente del Tribunal Arbitral");
 
                     return;
-              
+
               }
         }
-        
+
 
 
                 if (document.getElementById("ag_ruc_arbitro_ent") )
@@ -3981,9 +3981,9 @@ function init(cod){
                    return;
               }
         }
-    
-        
-        
+
+
+
                         if (document.getElementById("ag_mom_arbitro_ent") )
         {
               if (thisform.ag_mom_arbitro_ent.value == null || thisform.ag_mom_arbitro_ent.value == "")
@@ -3992,20 +3992,20 @@ function init(cod){
                    return;
               }
         }
-        
-        
-                
+
+
+
                 if (document.getElementById("ag_apePat_ent") )
         {
               if (thisform.ag_apePat_ent.value == null || thisform.ag_apePat_ent.value == "")
               {
                   alert("Ingrese el apellido paterno del Arbitro designado por la entidad");
                   thisform.ag_apePat_ent.focus ();
-                  
+
                    return;
               }
         }
-        
+
                 if (document.getElementById("ag_apeMat_ent") )
         {
               if (thisform.ag_apeMat_ent.value == null || thisform.ag_apeMat_ent.value == "")
@@ -4015,43 +4015,43 @@ function init(cod){
                    return;
               }
         }
-        
-        
+
+
                 if (document.getElementById("ag_nombres_ent") )
         {
               if (thisform.ag_nombres_ent.value == null || thisform.ag_nombres_ent.value == "")
               {
                   alert("Ingrese los nombres del Arbitro designado por la entidad");
                    thisform.ag_nombres_ent.focus();
-                  
+
                    return;
               }
         }
-        
-        
-        
-        
+
+
+
+
          if(document.getElementById("ag_mom_arbitro_ent"))  
         {
-        
+
             nombreCompleto =  trim(thisform.ag_mom_arbitro_ent.value);
             concatenacion  =  trim(thisform.ag_apePat_ent.value + thisform.ag_apeMat_ent.value  + thisform.ag_nombres_ent.value);    
             nombreCompleto = nombreCompleto.toUpperCase();
             concatenacion = concatenacion.toUpperCase();
-      
+
                  if ( nombreCompleto != concatenacion    )
-            
+
                   {
-                  
+
                         alert("Ingrese correctamente los Apellidos y Nombres del Arbitro designado por la Entidad");
-    
+
                         return;
-                  
+
                   }
-         
+
        }
-              
-        
+
+
                                 if (document.getElementById("ag_ruc_arbitro_cont") )
         {
               if (thisform.ag_ruc_arbitro_cont.value == null || thisform.ag_ruc_arbitro_cont.value == "")
@@ -4060,8 +4060,8 @@ function init(cod){
                    return;
               }
         }
-        
-        
+
+
                                 if (document.getElementById("ag_nombre_arbitro_cont") )
         {
               if (thisform.ag_nombre_arbitro_cont.value == null || thisform.ag_nombre_arbitro_cont.value == "")
@@ -4070,21 +4070,21 @@ function init(cod){
                    return;
               }
         }
-        
-      
-        
-                      
+
+
+
+
                 if (document.getElementById("ag_apePat_cont") )
         {
               if (thisform.ag_apePat_cont.value == null || thisform.ag_apePat_cont.value == "")
               {
                   alert("Ingrese el apellido paterno del Arbitro designado por el Contratista");
                   thisform.ag_apePat_cont.focus ();
-                  
+
                    return;
               }
         }
-        
+
                 if (document.getElementById("ag_apeMat_cont") )
         {
               if (thisform.ag_apeMat_cont.value == null || thisform.ag_apeMat_cont.value == "")
@@ -4094,43 +4094,43 @@ function init(cod){
                    return;
               }
         }
-        
-        
+
+
                 if (document.getElementById("ag_nombres_cont") )
         {
               if (thisform.ag_nombres_cont.value == null || thisform.ag_nombres_cont.value == "")
               {
                   alert("Ingrese los nombres del Arbitro designado por el Contratista");
                    thisform.ag_nombres_cont.focus();
-                  
+
                    return;
               }
         }
-        
-        
+
+
             if(document.getElementById("ag_nombre_arbitro_cont"))  
-        
+
             {
               nombreCompleto =  trim(thisform.ag_nombre_arbitro_cont.value);
               concatenacion  =  trim(thisform.ag_apePat_cont.value + thisform.ag_apeMat_cont.value  + thisform.ag_nombres_cont.value);    
               nombreCompleto = nombreCompleto.toUpperCase();
               concatenacion = concatenacion.toUpperCase();
-              
+
                    if ( nombreCompleto != concatenacion    )
-              
+
                     {
-                    
+
                           alert("Ingrese correctamente los Apellidos y Nombres del Arbitro designado por el Contratista");
-      
+
                           return;
-                    
+
                     }
-                  
-        
+
+
             } 
-        
+
         <!--Inicio mlaura Req 55 -->
-        
+
             if (document.getElementById("ag_ruc_secretario") )
         {
               if (thisform.ag_ruc_secretario.value == null || thisform.ag_ruc_secretario.value == "")
@@ -4148,20 +4148,20 @@ function init(cod){
                    return;
               }
         }
-        
-        
-        
+
+
+
                 if (document.getElementById("ag_apepat_secretario") )
         {
               if (thisform.ag_apepat_secretario.value == null || thisform.ag_apepat_secretario.value == "")
               {
                   alert("Ingrese el apellido paterno del Secretario Arbitral");
                   thisform.ag_apepat_secretario.focus ();
-                  
+
                    return;
               }
         }
-        
+
                 if (document.getElementById("ag_apemat_secretario") )
         {
               if (thisform.ag_apemat_secretario.value == null || thisform.ag_apemat_secretario.value == "")
@@ -4171,55 +4171,55 @@ function init(cod){
                    return;
               }
         }
-        
-        
+
+
                 if (document.getElementById("ag_nombres_secretario") )
         {
               if (thisform.ag_nombres_secretario.value == null || thisform.ag_nombres_secretario.value == "")
               {
                   alert("Ingrese los nombres del Secretario Arbitral");
                    thisform.ag_nombres_secretario.focus();
-                  
+
                    return;
               }
         }
-        
-     
+
+
         if(document.getElementById("ag_nombre_secretario"))
-        
+
         {
-     
+
         nombreCompleto =  trim(thisform.ag_nombre_secretario.value);
         concatenacion  =  trim(thisform.ag_apepat_secretario.value + thisform.ag_apemat_secretario.value  + thisform.ag_nombres_secretario.value);    
         nombreCompleto = nombreCompleto.toUpperCase();
         concatenacion = concatenacion.toUpperCase();
-  
+
              if ( nombreCompleto != concatenacion    )
-        
+
               {
-              
+
                     alert("Ingrese correctamente los Apellidos y Nombres del Secretario Arbitral");
 
                     return;
-              
+
               }
         }
-        
+
           thisform.scriptdo.value = "arbitrajeInsert";
-           
+
               if ( confirm("¿Esta Ud. seguro de publicar los cambios realizados?") )
         {
              thisform.submit();
         }
-    
+
     }
 
-   
-    
-    
+
+
+
  ');   
- 
- 
+
+
  usp_print(session__cod_contrato);
 ----------- CABECERA --------------------
  USP_PRINT('
@@ -4239,30 +4239,30 @@ function init(cod){
 
  usp_print('
   <table class="table table-striped">');    
- 
+
  usp_print(' <td align = "center" colspan = 3><h3>Ficha Electr&oacute;nica</h3>  </td>');
   usp_print(' <td align = "center" colspan = 3><br></td>');
-  
-  
-  
 
-      
-      
+
+
+
+
+
          usp_print('
     <tr>
       <td class=c1>(*)Tipo de mecanismo de soluci&oacute;n de Controversias</td>
     <td class=c2>'||lv_combo_mecanismo||'</td>
     <td class=c3>Seleccione el tipo de mecanismo de soluci&oacute;n de Controversia.</td>'
-    
+
     );  
-    
+
         usp_print('
     <tr>
       <td class=c1>(*)Demandante</td>
     <td class=c2>'||lv_combo_demandante||'</td>
     <td class=c3>Seleccione al demandante.</td>
     </tr>'); 
-  
+
     usp_print('
     <tr>
         <td class=c1>(*)Fecha de Audiencia de Instalaci&oacute;n</td>
@@ -4277,7 +4277,7 @@ function init(cod){
         <td class=c3>Seleccione la fecha en la que se llev&oacute; acabo la audiencia de instalaci&oacute;n.</td>
     </tr>
   '); 
-  
+
 
     usp_print('
     <tr>
@@ -4285,253 +4285,253 @@ function init(cod){
     <td class=c2>'||lv_combo_arbitraje||'</td>
     <td class=c3>Seleccione el tipo de Arbitraje.</td>
     </tr>'); 
-      
-      
+
+
          usp_print('
     <tr>
       <td class=c1>(*)Tipo de &Aacute;rbitro</td>
     <td class=c2>'||lv_combo_arbitro||'</td>
     <td class=c3>Seleccione el tipo de &Aacute;rbitro.</td>
     </tr>');   
-    
-    
-    
+
+
+
    if  ag_tipo_arbitro = 221 then
          usp_print('<tr><td colspan = 3 > <br><h3>Identificaci&oacute;n de los miembros del Tribunal Arbitral </h3></td></tr>');
-    
+
       usp_print('
-      
+
       <tr><td><h4>Presidente del Tribunal Arbitral</h4></td><td><input type=button value="..." onclick="modArbitro(1);"> </td></tr>
     <tr>
-        
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input type="text" id="ag_ruc_presidente" name="ag_ruc_presidente" value="" size=54 readonly><input  type="hidden" name="ag_sunat_presidente" value="" size=54 readonly></td>
         <td class=c3>Ingrese el n&uacute;mero de RUC del Presidente del Tribunal Arbitral</td>
     </tr>
   '); 
-  
-  
+
+
         usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
         <td class=c2><input  type="text" id="ag_nombre_presidente" name="ag_nombre_presidente" value="" size=54 readonly></td>
         <td class=c3>Muestra los Apellidos y Nombres del Presidente del Tribunal Arbitral</td>
-       
-    </tr>
-    
 
-    
+    </tr>
+
+
+
         <tr>
         <td class=c1>(*)Apellido Paterno</td>
         <td class=c2><input  type="text" id="ag_apePat_presidente" name="ag_apePat_presidente" value="" size=54></td>
         <td class=c3>Muestra el apellido paterno del Presidente del Tribunal Arbitral</td>
-       
+
     </tr>
 
         <tr>
         <td class=c1>(*)Apellido Materno</td>
         <td class=c2><input  type="text" id="ag_apeMat_presidente" name="ag_apeMat_presidente" value="" size=54></td>
         <td class=c3>Muestra el   apellido materno del Presidente del Tribunal Arbitral</td>
-       
+
     </tr>
-    
-    
+
+
             <tr>
         <td class=c1>(*)Nombres</td>
         <td class=c2><input  type="text" id="ag_nombres_presidente" name="ag_nombres_presidente" value="" size=54></td>
         <td class=c3>Muestra los nombres  del Presidente del Tribunal Arbitral</td>
-       
+
     </tr>
   '); 
-  
-  
+
+
         usp_print('
         <tr> <td><h4>Arbitro designado por la Entidad</h4></td><td><input type=button value="..." onclick="modArbitro(2);"></tr>
     <tr>
-       
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input  type="text" id="ag_ruc_arbitro_ent" name="ag_ruc_arbitro_ent" value="" size=54 readonly><input  type="hidden" name="ag_sunat_arbitro_ent" value="" size=54 readonly></td>
         <td class=c3>Ingrese el n&uacute;mero de RUC del Arbitro designado por la entidad</td>
-      
+
     </tr>
   '); 
-  
-  
+
+
         usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
         <td class=c2><input  type="text" id="ag_mom_arbitro_ent" name="ag_mom_arbitro_ent" value="" size=54 readonly></td>
         <td class=c3>Muestra los Apellidos y Nombres del Arbitro designado por la entidad</td>
-        
-    </tr>
-    
-        </tr>
-    
 
-    
+    </tr>
+
+        </tr>
+
+
+
         <tr>
         <td class=c1>(*)Apellido Paterno</td>
         <td class=c2><input  type="text" id="ag_apePat_ent" name="ag_apePat_ent" value="" size=54></td>
         <td class=c3>Muestra el apellido paterno del Arbitro designado por la entidadwww</td>
-       
+
     </tr>
 
         <tr>
         <td class=c1>(*)Apellido Materno</td>
         <td class=c2><input  type="text" id="ag_apeMat_ent" name="ag_apeMat_ent" value="" size=54></td>
         <td class=c3>Muestra el   apellido materno del Arbitro designado por la entidad</td>
-       
+
     </tr>
-    
+
     <tr>
         <td class=c1>(*)Nombres</td>
         <td class=c2><input  type="text" id="ag_nombres_ent" name="ag_nombres_ent" value="" size=54></td>
         <td class=c3>Muestra los nombres  del Arbitro designado por la entidad</td>
-       
+
     </tr>
   '); 
-  
+
           usp_print('
           <tr> <td><h4>Arbitro designado por el Contratista</h4></td><td><input type=button value="..." onclick="modArbitro(3);">  </tr>
     <tr>
-       
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input  type="text" id="ag_ruc_arbitro_cont" name="ag_ruc_arbitro_cont" value="" size=54 readonly><input  type="hidden" name="ag_sunat_arbitro_cont" value="" size=54 readonly></td>
         <td class=c3>Ingrese el n&uacute;mero de RUC del Arbitro designado por el contratista</td>
     </tr>
   '); 
-   
-  
+
+
         usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
         <td class=c2><input type="text" id="ag_nombre_arbitro_cont" name="ag_nombre_arbitro_cont" value="" size=54 readonly></td>
         <td class=c3>Muestra los Apellidos y Nombres del Arbitro designado por el contratista</td>
-        
-    </tr>
-    
 
-    
+    </tr>
+
+
+
         <tr>
         <td class=c1>(*)Apellido Paterno</td>
         <td class=c2><input  type="text" id="ag_apePat_cont" name="ag_apePat_cont" value="" size=54></td>
         <td class=c3>Muestra el apellido paterno del Arbitro designado por el contratista</td>
-       
+
     </tr>
 
         <tr>
         <td class=c1>(*)Apellido Materno</td>
         <td class=c2><input  type="text" id="ag_apeMat_cont" name="ag_apeMat_cont" value="" size=54></td>
         <td class=c3>Muestra el   apellido materno del Arbitro designado por el contratista</td>
-       
+
     </tr>
-    
+
                 <tr>
         <td class=c1>(*)Nombres</td>
         <td class=c2><input  type="text" id="ag_nombres_cont" name="ag_nombres_cont" value="" size=54></td>
         <td class=c3>Muestra los nombres  del Arbitro designado por el contratista</td>
-       
+
     </tr>
   ');
-  
+
  end if;
-  
+
   if  ag_tipo_arbitro = 220 then
         usp_print('
       <tr><td><h3>Identificaci&oacute;n del &Aacute;rbitro &Uacute;nico</h3></td><td><input type=button value="..." onclick="modArbitro(1);"></td></tr>
     <tr>
-        
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input  type="text" class="form-control" id="ag_ruc_presidente"  name="ag_ruc_presidente" value="" size=54 readonly><input  type="hidden" name="ag_sunat_presidente" value="" size=54 readonly class="InpReadOnly"></td>
         <td class=c3>Ingrese el n&uacute;mero de RUC del &Aacute;rbitro &Uacute;nico</td>
     </tr>
 
   '); 
-  
-  
+
+
         usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
         <td class=c2><input  type="text" class="form-control" id="ag_nombre_presidente" name="ag_nombre_presidente" value="" size=54 readonly class="InpReadOnly"> </td>
         <td class=c3>Muestra los Apellidos y Nombres del &Aacute;rbitro &Uacute;nico</td>
-       
+
     </tr>
-    
+
     <tr>
         <td class=c1>(*)Apellido Paterno</td>
         <td class=c2><input  type="text" id="ag_apePat_presidente" name="ag_apePat_presidente" value="" size=54 onkeypress= "return alpha(event)" /></td>
         <td class=c3>Muestra el apellido paterno del &Aacute;rbitro &Uacute;nico</td>
-       
+
     </tr>
-    
+
             <tr>
         <td class=c1>(*)Apellido Materno</td>
         <td class=c2><input  type="text" id="ag_apeMat_presidente" name="ag_apeMat_presidente" value="" size=54 onkeypress= "return alpha(event)"></td>
         <td class=c3>Muestra el apellido materno del &Aacute;rbitro &Uacute;nico</td>
-       
+
     </tr>
-    
-    
+
+
             <tr>
         <td class=c1>(*)Nombres</td>
         <td class=c2><input  type="text" id="ag_nombres_presidente" name="ag_nombres_presidente" value="" size=54 onkeypress= "return alpha(event)"></td>
         <td class=c3>Muestra los nombres  del &Aacute;rbitro &Uacute;nico</td>
-       
+
     </tr> 
-     
+
   '); 
-   
+
   end if;
   -->inicio vpt
-  
+
         usp_print('
       <tr><td><h3>Identificacion del Secretario Arbitral</h3></td><td><input type=button value="..." onclick="modArbitro(4);"></td></tr>
     <tr>
-        
+
         <td class=c1>RUC Nro.</td>
         <td class=c2><input  type="text" class="form-control" id="ag_ruc_secretario" name="ag_ruc_secretario" value="" size=54 readonly><input  type="hidden" name="ag_sunat_secretario" value="" size=54 readonly class="InpReadOnly"></td>
         <td class=c3>Ingrese el número de RUC del Secretario Arbitral</td>
     </tr>
 
   '); 
-  
-  
+
+
         usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
         <td class=c2><input  type="text" class="form-control" id="ag_nombre_secretario" name="ag_nombre_secretario" value="" size=54 readonly class="InpReadOnly"> </td>
         <td class=c3>Muestra los Apellidos y Nombres del Secretario Arbitral</td>
-       
+
     </tr>
-    
+
     <tr>
         <td class=c1>(*)Apellido Paterno</td>
         <td class=c2><input  type="text" id="ag_apepat_secretario" name="ag_apepat_secretario" value="" size=54 onkeypress= "return alpha(event)" /></td>
         <td class=c3>Muestra el apellido paterno del Secretario Arbitral</td>
-       
+
     </tr>
-    
+
             <tr>
         <td class=c1>(*)Apellido Materno</td>
         <td class=c2><input  type="text" id="ag_apemat_secretario" name="ag_apemat_secretario" value="" size=54 onkeypress= "return alpha(event)"></td>
         <td class=c3>Muestra el apellido materno del Secretario Arbitral</td>
-       
+
     </tr>
-    
-    
+
+
             <tr>
         <td class=c1>(*)Nombres</td>
         <td class=c2><input  type="text" id="ag_nombres_secretario" name="ag_nombres_secretario" value="" size=54 onkeypress= "return alpha(event)"></td>
         <td class=c3>Muestra los nombres  del Secretario Arbitral</td>
-       
+
     </tr> 
-     
+
   '); 
-   
+
   -->final vpt
-  
-  
-   
+
+
+
   usp_print('</table><br>');
 
    usp_print('
@@ -4539,21 +4539,21 @@ function init(cod){
         <br/>
         <br/>
         ');
-        
+
  END;
-  
- 
- 
-  
- 
+
+
+
+
+
  PROCEDURE uspCreaControversias (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
   ag_tipo_demandante                 VARCHAR2 ,
   ag_mecanismo                       VARCHAR2 
-  
+
   )  
-  
+
  IS
  lv_codtipofile                VARCHAR2(100); 
  lvtipodocumento               VARCHAR2(100); 
@@ -4564,7 +4564,7 @@ function init(cod){
  ln_num_contrato               varchar2(4000);  
  ctipodemandante               ref_cursor;
  ctipomecanismo                ref_cursor;  
-   
+
    ------- Cursores -------
    ------- Listado de Prorrogas ------  
  BEGIN
@@ -4575,56 +4575,56 @@ function init(cod){
             ('Visualice el contrato antes de seleccionar la acci&oacute;n.<br>Retorne a la Consola de Contratos ...', ''));
      RETURN;
   END IF;
-  
+
   select  n_contrato into ln_num_contrato  from reg_procesos.contrato where N_COD_CONTRATO = session__cod_contrato  ; 
 
 
     open ctipodemandante for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 12;
-     
-     
+
+
     open ctipomecanismo for
     select n_id_maestro,c_descripcion
     from arbitraje.tbl_arb_maestro where n_id_tipomaestro = 30;
-     
-     
+
+
 
     lv_combo_demandante  := PKU_SS_UTILES.f_retorna_combo(ctipodemandante, 'ag_tipo_demandante', ag_tipo_demandante,'Seleccione...','style="width:260px"');
-     
+
     lv_combo_mecanismo   :=     PKU_SS_UTILES.f_retorna_combo(ctipomecanismo, 'ag_mecanismo', ag_mecanismo,'Seleccione...','style="width:260px" onchange="arbitraje();"'); 
-    
-    
-    
-          
+
+
+
+
  PKU_SS_FUNCIONES_JS.js_script('
  function Crear()
     {
       thisform.scriptdo.value = "doNewControversia";
       thisform.submit();
     }
-    
-    
+
+
      function arbitraje()
     {
-    
+
         if (thisform.ag_mecanismo.value == 316)
           {
             thisform.scriptdo.value = "creaArbitraje";
             thisform.submit();
           }
-          
+
         if (thisform.ag_mecanismo.value == 315)  
           { 
             thisform.scriptdo.value = "creaConciliacion";
             thisform.submit();
           }
     }
-    
-    
+
+
  ');   
- 
- 
+
+
  usp_print(session__cod_contrato);
 ----------- CABECERA --------------------
  USP_PRINT('
@@ -4644,7 +4644,7 @@ function init(cod){
 
  usp_print('
   <table class="table table-striped">');    
- 
+
  usp_print(' <td align = "center" colspan = 3>Ficha Electr&oacute;nica</td>');
   usp_print(' <td align = "center" colspan = 3><br></td>');
   usp_print('
@@ -4662,15 +4662,15 @@ function init(cod){
     <td class=c3>Seleccione al demandante.</td>
     </tr>'); 
    */   
-      
+
          usp_print('
     <tr>
       <td class=c1>(*)Tipo de mecanismo de soluci&oacute;n de Controversia</td>
     <td class=c2>'||lv_combo_mecanismo||'</td>
     <td class=c3>Seleccione el tipo de mecanismo de soluci&oacute;n de Controversia.</td>
     </tr>');   
- 
-   
+
+
   usp_print('</table><br>');
 
    usp_print('
@@ -4678,14 +4678,14 @@ function init(cod){
         <br/>
         <br/>
         ');
-        
+
  END;
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
  PROCEDURE uspEditArbitro (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
@@ -4694,11 +4694,11 @@ function init(cod){
   cod                        VARCHAR2 DEFAULT NULL,
   ag_motivo                     VARCHAR2 DEFAULT NULL,
   sunat                     VARCHAR2 DEFAULT NULL 
- 
+
   )      
-  
+
  IS
- 
+
  lv_codtipofile                VARCHAR2(100); 
  lvtipodocumento               VARCHAR2(100); 
  cod_tipo_file                 VARCHAR2(100); 
@@ -4708,16 +4708,16 @@ function init(cod){
  ln_num_contrato               varchar2(4000);     
  ln_nombre                     varchar2(4000);    
  ctipomotivo               ref_cursor; 
- 
+
  ln_campotitulo                 varchar2 (800); --mlaura/ddrodriguez Req 55
  ln_camporuc                    varchar2 (800); --mlaura/ddrodriguez Req 55
  ln_camponomapel                varchar2 (800); --mlaura/ddrodriguez Req 55
-   
+
    ------- Cursores -------
-   
-   
+
+
        Cursor c_cursor( ruc in varchar2 default null , ag_nombre in varchar2 default null) is
-    
+
     SELECT c_paterno,c_materno,c_nombre,c_ruc
     from arbitraje.TBL_ARB_ARBITRO  
     where c_ruc  like  ruc and  c_nombre || ' '  || c_paterno  || ' '  ||  c_materno  like  '%' || ag_nombre || '%'  ; 
@@ -4731,7 +4731,7 @@ function init(cod){
             ('Visualice el contrato antes de seleccionar la acci&oacute;n.<br>Retorne a la Consola de Contratos ...', ''));
      RETURN;
   END IF;
-  
+
   select  n_contrato into ln_num_contrato  from reg_procesos.contrato where N_COD_CONTRATO = session__cod_contrato  ; 
 
 
@@ -4760,51 +4760,51 @@ function init(cod){
    ------- Tablero descripcion -------
 
 
-     
+
     open ctipomotivo for
     select codigo, descripcion
     from reg_procesos.tipo_motivo_controversia;
-     
-     
+
+
 
 
 lv_combo_motivo   :=     PKU_SS_UTILES.f_retorna_combo(ctipomotivo, 'ag_motivo', ag_motivo,'Seleccione...','style="width:260px" '); 
-  
-    
-          
+
+
+
  PKU_SS_FUNCIONES_JS.js_script('
- 
- 
- 
- 
+
+
+
+
   function check(){
 
-                  
+
                if ( thisform.manual.checked == false)
-               
+
                {
                    thisform.sunat.value = "" ;
                    thisform.ag_nombre.value = "";
                    thisform.ag_nombre.readOnly = true;
-                  
+
                }
                else
                {
                    thisform.sunat.value = 0 ; 
                    thisform.ag_nombre.readOnly = false;
-                 
+
                }
 
  }
- 
+
   function ValidaRUCSunat(){
-                  
+
 
                  thisform.scriptdo.value = "usp_ValidarRUC";
                  thisform.submit();
  }
- 
- 
+
+
        function SoloNumerosNoDec(){
 
 //Solo permite ingreso de numeros del teclado superior, derecho sin punto decimal
@@ -4819,14 +4819,14 @@ lv_combo_motivo   :=     PKU_SS_UTILES.f_retorna_combo(ctipomotivo, 'ag_motivo',
             break;
     }
 }
-       
+
          function ValidaRuc(obj){
-         
-      
+
+
           SoloNumerosNoDec();
                     if  (obj.value.length >= 11)
                     {
-                    
+
                         window.event.keyCode = 0;
                     }   
                     else
@@ -4836,59 +4836,59 @@ lv_combo_motivo   :=     PKU_SS_UTILES.f_retorna_combo(ctipomotivo, 'ag_motivo',
 
 
 }
-    
- 
+
+
         function retornaArbitro(nombre,ruc,tipo,motivo,pub,sunat){
-       
-         
-       
+
+
+
            if (thisform.ag_motivo.value == null || thisform.ag_motivo.value == "" ) 
            {
             alert ("Debe seleccionar un motivo");
             thisform.ag_motivo.focus();
             return;
-           
+
            }
-           
+
                       if (thisform.ruc.value == null || thisform.ruc.value == "" ) 
            {
             alert ("Debe ingresar el RUC");
             thisform.ag_motivo.focus();
             return;
-           
+
            }
-           
+
                       if (thisform.ag_nombre.value == null || thisform.ag_nombre.value == "" ) 
            {
             alert ("Debe ingresar el nombre");
             thisform.ag_motivo.focus();
             return;
-           
+
            }
-           
-           
+
+
 
              var wo = window.opener
-  
 
-                   
+
+
              wo.RtnArbitro(nombre,ruc,tipo,motivo,pub,sunat)
              window.close();
-             
+
         }
-  
+
               function busqueda()
           {
-          
-               
+
+
                 thisform.scriptdo.value = "uspEditArbitro";
                 thisform.submit();
          }
-    
-    
-    
+
+
+
  ');   
- 
+
  usp_print('
   <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>');    
 
@@ -4896,9 +4896,9 @@ lv_combo_motivo   :=     PKU_SS_UTILES.f_retorna_combo(ctipomotivo, 'ag_motivo',
   usp_print('
     <tr>
 
-        
-        
-        
+
+
+
 
         <td style="width:20%">RUC Nro.</td>
         <td style="width:30%" class=c2>
@@ -4909,13 +4909,13 @@ lv_combo_motivo   :=     PKU_SS_UTILES.f_retorna_combo(ctipomotivo, 'ag_motivo',
         </td>                        
         <td style="width:30%">'||ln_camporuc||'</td>
 
-        
-        
-        
+
+
+
      </tr>
   ');  
-  
-  
+
+
     usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
@@ -4924,11 +4924,11 @@ lv_combo_motivo   :=     PKU_SS_UTILES.f_retorna_combo(ctipomotivo, 'ag_motivo',
         <td class=c3>'||ln_camponomapel||'</td>
      </tr>
     <tr> <td colspan = "3"></td></tr>
-    
-    
-    
+
+
+
   '); 
-  
+
     usp_print('
     <tr>
     <td class=c1>(*)Motivo</td>
@@ -4939,20 +4939,20 @@ lv_combo_motivo   :=     PKU_SS_UTILES.f_retorna_combo(ctipomotivo, 'ag_motivo',
     <input type="hidden"   name="sunat" size=12  value = "'||sunat||'"  >
     <input type="hidden" name="cod" size=54  value = "'||cod||'" >
      <script> 
-          
+
               if (thisform.sunat.value == "1" && thisform.ag_nombre.value != "" ) 
               {
                 document.getElementById("DSunat").style.visibility ="hidden"; 
               }
     </script>
-    
-    
+
+
     ');  
-    
-    
+
+
     usp_print('<tr><td colspan = "4" align = center><input type = "button" value = "Grabar" onclick="retornaArbitro(thisform.ag_nombre.value,thisform.ruc.value,'''|| cod||''',thisform.ag_motivo.value,''1'','''|| sunat||''')";  ></input><input type = "button" value = "Cancelar" onclick = "window.close();"></input></td></tr> ');
-    
-   
+
+
 /*      
 usp_print('
   <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>
@@ -4962,29 +4962,29 @@ usp_print('
    <tr><td><br></td><td>Nombre</td><td>RUC</td></tr>
 
 
-  
-   
+
+
   </tr>
 <input type="hidden" name="cod" size=54  value = "'||cod||'" >
   ');    
 
       if ruc is null  then  ln_ruc := '%' ; else ln_ruc :=  ruc ; end if ;
       if ag_nombre is null  then  ln_nombre := '%' ; else ln_nombre :=  ag_nombre ; end if ;
- 
+
       for xrow in c_cursor(ln_ruc,ln_nombre) loop
       begin
 
         usp_print('   <tr><td><input type=button value="..." onclick="retornaArbitro('''|| xrow.c_nombre || ' '  || xrow.c_paterno  || ' '  ||  xrow.c_materno ||''','''|| xrow.c_ruc||''','''|| cod||''','''|| ag_motivo||''',''1'')";></td><td>'|| xrow.c_nombre || ' '  || xrow.c_paterno || ' '  ||  xrow.c_materno ||'</td><td> '|| xrow.c_ruc ||' </td></tr> '); 
-  
-              
+
+
        end;
    end loop;  
 
-   
+
   usp_print('</table><br>');
 */
 
-   
+
   usp_print('</table><br>');
 
    usp_print('
@@ -4992,11 +4992,11 @@ usp_print('
         <br/> 
         <br/>
         '); 
-        
+
  END;
- 
- 
- 
+
+
+
   PROCEDURE uspNuevoArbitro ( 
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
@@ -5005,11 +5005,11 @@ usp_print('
   cod                        VARCHAR2 DEFAULT NULL,
   ag_motivo                     VARCHAR2 DEFAULT NULL,
   sunat                        VARCHAR2 DEFAULT NULL 
- 
+
   )      
-  
+
  IS
- 
+
  lv_codtipofile                VARCHAR2(100); 
  lvtipodocumento               VARCHAR2(100); 
  cod_tipo_file                 VARCHAR2(100); 
@@ -5020,7 +5020,7 @@ usp_print('
  ln_nombre                      varchar2(4000);
  ln_camporuc                   varchar2(2000);
  ln_camponomapel               varchar2(2000);
-   
+
    ------- Listado de Prorrogas ------  
  BEGIN
   PKU_SS_CONTROVERSIAS.dojscript  ;
@@ -5030,7 +5030,7 @@ usp_print('
             ('Visualice el contrato antes de seleccionar la acci&oacute;n.<br>Retorne a la Consola de Contratos ...', ''));
      RETURN;
   end if;
-  
+
    ------- Tablero descripcion -------
    if (cod = 1) then
        ln_camporuc := 'Ingrese el n&uacute;mero de RUC del Presidente del Tribunal Arbitral / Arbitro Unico';
@@ -5051,42 +5051,42 @@ usp_print('
 
    ------- Tablero descripcion -------
 
-     
-          
+
+
  PKU_SS_FUNCIONES_JS.js_script('
- 
 
 
- 
+
+
  function ValidaRUCSunat(){
-                  
+
 
                  thisform.scriptdo.value = "usp_ValidarRUC";
                  thisform.submit();
  }
- 
- 
+
+
   function check(){
 
-                  
+
                if ( thisform.manual.checked == false)
-               
+
                {
                    thisform.sunat.value = "" ;
                    thisform.ag_nombre.value = "";
                    thisform.ag_nombre.readOnly = true;
-                  
+
                }
                else
                {
                    thisform.sunat.value = 0 ; 
                    thisform.ag_nombre.readOnly = false;
-                 
+
                }
 
  }
- 
- 
+
+
        function SoloNumerosNoDec(){
 
 //Solo permite ingreso de numeros del teclado superior, derecho sin punto decimal
@@ -5101,14 +5101,14 @@ usp_print('
             break;
     }
 }
-       
+
          function ValidaRuc(obj){
-         
-      
+
+
           SoloNumerosNoDec();
                     if  (obj.value.length >= 11)
                     {
-                    
+
                         window.event.keyCode = 0;
                     }   
                     else
@@ -5118,49 +5118,49 @@ usp_print('
 
 
 }
-  
+
         function retornaArbitro(nombre,ruc,tipo,pub,sunat){
-       
+
             if (ruc == "" ) 
             {alert ("Ingrese el ruc");
             return;
-            
+
             }
-            
+
                   if (nombre == "" ) 
             {alert ("Ingrese el nombre");
             return;
-            
+
             }
 
              var wo = window.opener
              wo.RtnArbitro(nombre,ruc,tipo,pub,sunat)
              window.close();
-             
+
         }
-  
+
               function busqueda()
           {
-          
-               
+
+
                 thisform.scriptdo.value = "NuevoArbitro";
                 thisform.submit();
          }
-    
-    
-    
+
+
+
  ');   
- 
+
  usp_print('<script>
  .inputWidth{
    width:auto;      
  }
  </script>');
- 
+
  usp_print('
    <center><h3>Ficha Electr&oacute;nica</h3></center>
   <table class="table table-striped" style="width:100%">');    
- 
+
   usp_print('
     <tr>
         <td style="width:20%">RUC Nro </td>
@@ -5172,43 +5172,43 @@ usp_print('
         </td>                        
         <td style="width:30%">'||ln_camporuc||'</td>
      </tr>
-    
+
   ');  
-  
-  
+
+
     usp_print('
     <tr>
         <td class=c1>(*)Apellidos y Nombres</td>
         <td class=c2 ><input type="text" name="ag_nombre" size=54  value = "'||ag_nombre||'" readonly  onkeypress= "return alpha(event)"></br><div id = "DSunat"> </div></td> 
         <td class=c3></td> 
         <td class=c3>'||ln_camponomapel||'</td>
-        
- 
+
+
      </tr>
       <input type="hidden"   name="sunat" size=12  value = "'||sunat||'"  >
      <script> 
-          
+
               if (thisform.sunat.value == "1" && thisform.ag_nombre.value != "" ) 
               {
                 document.getElementById("DSunat").style.visibility ="hidden"; 
               }
     </script>
      <tr><td colspan = "4" align = center><input type = "button" value = "Grabar" onclick="retornaArbitro(thisform.ag_nombre.value,thisform.ruc.value,'''|| cod||''',''1'',''' || sunat ||''')";  >&nbsp;</input><input type = "button" value = "Cancelar" onclick = "window.close();"></input></td></tr> 
- 
-    
+
+
   '); 
-   
-      
+
+
 usp_print('
   <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>
   <tr></td></tr>
   <tr><td><br></td></tr>
      <tr><td><br></td></tr>
-  
 
 
-  
-   
+
+
+
   </tr>
 <input type="hidden" name="cod" size=54  value = "'||cod||'" >
  <input type = "hidden" name = "ventana" value = "1" >
@@ -5218,7 +5218,7 @@ usp_print('
   usp_print('</table><br>');
 
 
-   
+
   usp_print('</table><br>');
 
    usp_print('
@@ -5226,68 +5226,68 @@ usp_print('
         <br/> 
         <br/>
         ');
-        
+
  END;
- 
- 
- 
+
+
+
     PROCEDURE uspBuscaCentro (
   session__cod_contrato   VARCHAR2 DEFAULT NULL,
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
   ag_departamento         VARCHAR2 DEFAULT NULL,
   ag_centro               VARCHAR2 DEFAULT NULL
   )     
-  
+
  IS
    lv_combo_Departamento           varchar2(4000); 
    cdepartamento                   ref_cursor; 
    departamento                    varchar2(4000); 
    centro                          varchar2(4000); 
-   
+
    ------- Cursores -------
- 
+
     Cursor c_cursor( ag_centro in varchar2 default null, ag_departamento varchar2 default null ) is
-    
+
     SELECT cod_centro_conciliacion,c.descripcion descripcion,departamento,d.dep_desc
     from reg_procesos.centros_conciliacion  c left join sease.dep_ubigeo d on c.departamento = d.dep_codigo 
     where departamento  like   ag_departamento   and descripcion  like '%' ||  UPPER(ag_centro) || '%'
     order by descripcion
-        
+
     ; 
 
 
-   
+
    ------- Listado  ------ 
-   
+
 
  BEGIN
   PKU_SS_CONTROVERSIAS.dojscript  ; 
- 
+
      open cdepartamento for
     select dep_codigo, dep_desc
     from   sease.dep_ubigeo;
-    
+
         lv_combo_Departamento   :=     PKU_SS_UTILES.f_retorna_combo(cdepartamento, 'ag_departamento', ag_departamento,'Seleccione...','style="width:260px" onchange=""'); 
-    
-   
- 
+
+
+
    IF (session__cod_contrato IS NULL) THEN
      usp_print
         (pku_procesos_comun.f_putmensaje
             ('Visualice el contrato antes de seleccionar la acci&oacute;n.<br>Retorne a la Consola de Contratos ...', ''));
      RETURN;
   END IF;
-  
 
-        
+
+
  PKU_SS_FUNCIONES_JS.js_script('
- 
 
- 
+
+
         function retornaCod_preupuestal(codigo,descripcion){
 
-    
-    
+
+
 var cadena;
 
  cadena = descripcion.replace(/(^\s*)|(\s*$)/g,""); ;
@@ -5298,34 +5298,34 @@ var cadena;
              var wo = window.opener
              wo.RtnCodSniop(codigo,cadena)
              window.close();
-             
+
         }
-        
+
           function busqueda()
           {
-          
-               
+
+
                 thisform.scriptdo.value = "BuscaCentro";
                 thisform.submit();
         }
-        
+
         function nuevoCentroConciliacion ()
 {
-            
+
                 thisform.scriptdo.value = "uspNuevoCentro";
                 thisform.submit();
 }
 
  function RtnCentro(codigo,descripcion){
-             
+
   //  thisform.ag_c_conciliacion.value = codigo;              
   //  thisform.ag_c_conciliacion_desc.value  =   descripcion;
 
 }
-    
-    
+
+
  ');   
- 
+
 
 
  usp_print('
@@ -5337,40 +5337,40 @@ var cadena;
 onkeypress= "return alpha(event)"></td>
         <td class=c3><input type=button value="Buscar" onclick="busqueda();"></td>
     </tr>
- 
+
        <tr>
         <td class=c1>(*)Departamento</td>
         <td class=c2>'||lv_combo_Departamento||'</td>
         <td class=c3></td>
     </tr>
- 
+
 </table>
- 
+
 <br/>
 <table class="table table-hover" style="font-size:0.9em">
    <tr><td align = "left" >Centros de Conciliaci&oacute;n</td><td>Departamento</td><td><br></td></tr>
-  
-   
+
+
   </tr>
- 
+
   ');    
-  
+
       if ag_departamento is null  then  departamento := '%' ; else departamento :=  ag_departamento ; end if ;
       if ag_centro is null then centro := '%' ; else centro := ag_centro ; end if ;
- 
+
            usp_print('   <tr><td align = "left"><input type=button value=".." onclick="nuevoCentroConciliacion()";>Otros</td><td></td><td>''</td></tr> '); 
-  
-  
+
+
             for xrow in c_cursor(centro,departamento) loop
       begin
 
         usp_print('   <tr><td align = "left"><input type=button value=".." onclick="retornaCod_preupuestal('|| xrow.cod_centro_conciliacion||','''|| trim(xrow.descripcion)||''')";>'|| xrow.descripcion ||'</td><td>'|| xrow.dep_desc||'</td><td></td></tr> '); 
-  
-              
+
+
        end;
    end loop;  
 
-   
+
   usp_print('</table><br>');
 
    usp_print('
@@ -5378,18 +5378,18 @@ onkeypress= "return alpha(event)"></td>
         <br/>
         <br/>
         ');
-        
+
  END;
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+
+
+
+
+
+
+
+
+
+
    PROCEDURE usp_ValidarRUC (
   session__cod_contrato    VARCHAR2 DEFAULT NULL,
   session__filesingedhttp  VARCHAR2 DEFAULT NULL,
@@ -5399,37 +5399,37 @@ onkeypress= "return alpha(event)"></td>
   ag_motivo                VARCHAR2 DEFAULT NULL,
   ventana                  VARCHAR2 DEFAULT NULL
   )       
-  
+
  IS
      nombre      varchar2(4000); 
       estado      varchar2(10);
 
  BEGIN 
- 
- 
- 
+
+
+
   PKU_SS_FUNCIONES_JS.js_script('
-  
-  
+
+
   function cerrar() { 
                         ventana=window.self; 
                         ventana.opener=window.self; 
                         ventana.close(); } 
-  
-  
+
+
    document.write("<br>Validadndo Impedimentos...");  ');  
-    
+
      select reg_procesos.FN_VALIDA_ARBITRO(ruc) into estado from dual ;
- 
- 
- 
- 
- 
-      
- 
+
+
+
+
+
+
+
       if estado = 'impedido' then
- 
- 
+
+
                            USP_PRINT('
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" class="tableform" >
                 <tr>
@@ -5441,32 +5441,32 @@ onkeypress= "return alpha(event)"></td>
                             <tr>
                             <td align = "center"><h3><br></h3></td>
                             </tr>
-                            
+
                              <tr>
                              <td align="center" valign=top width="50%">
                              </td>
                              </tr>
-                             
+
                      </table>');
              USP_PRINT('</TD></TR>');
              USP_PRINT('</TABLE><br>');
-             
+
           PKU_SS_FUNCIONES_JS.js_script('alert("Arbitro con Impedimento")'); 
           PKU_SS_FUNCIONES_JS.js_script('cerrar();');
-             
- 
+
+
       else
-      
+
                   PKU_SS_FUNCIONES_JS.js_script('
-   
-                 
-                 
+
+
+
                  document.write("<BR>Validadndo con Sunat...");  '); 
-               
+
                    select f_ws_sunat_get_razon_social_2(ruc) into nombre from dual ;
-      
-      
- 
+
+
+
                  usp_print('
                  <input  type="hidden" name="sunat" value="1" size=54 readonly>
                  <input  type="hidden" name="ruc" value="' || ruc || '" size=54 readonly>
@@ -5475,13 +5475,13 @@ onkeypress= "return alpha(event)"></td>
                   <input  type="hidden" name="ag_motivo" value="' || ag_motivo || '" size=54 readonly>
                    <input  type="hidden " name="ag_estado" value="' || estado || '" size=54 readonly>')
                    ;
-               
-      
+
+
    end if;
-      
-      
+
+
     if  ventana = '1' then
-    
+
        PKU_SS_FUNCIONES_JS.js_script('
            thisform.scriptdo.value = "NuevoArbitro";
                 thisform.submit();
@@ -5491,13 +5491,13 @@ onkeypress= "return alpha(event)"></td>
            thisform.scriptdo.value = "uspEditArbitro";
                         thisform.submit();
       ');
-     
-     
+
+
      end if;
-      
-        
+
+
  END;
- 
+
 
 
 
@@ -5507,57 +5507,57 @@ onkeypress= "return alpha(event)"></td>
   ag_departamento         VARCHAR2 DEFAULT NULL,
   ag_centro               VARCHAR2 DEFAULT NULL
   )     
-  
+
  IS
    lv_combo_Departamento           varchar2(4000); 
    cdepartamento                   ref_cursor; 
    departamento                    varchar2(4000); 
    centro                          varchar2(4000); 
-   
+
    ------- Cursores -------
- 
+
     Cursor c_cursor( ag_centro in varchar2 default null, ag_departamento varchar2 default null ) is
-    
+
     SELECT cod_centro_conciliacion,replace(descripcion,' ','') descripcion,departamento,d.dep_desc
     from reg_procesos.centros_conciliacion  c left join sease.dep_ubigeo d on c.departamento = d.dep_codigo 
     where departamento  like   ag_departamento   and descripcion  like '%' ||  UPPER(ag_centro) || '%'
     order by descripcion
-        
+
     ; 
 
 
-   
+
    ------- Listado  ------ 
-   
+
 
  BEGIN
- 
+
   PKU_SS_CONTROVERSIAS.dojscript  ;
      open cdepartamento for
     select dep_codigo, dep_desc
     from   sease.dep_ubigeo;
-    
+
         lv_combo_Departamento   :=     PKU_SS_UTILES.f_retorna_combo(cdepartamento, 'ag_departamento', ag_departamento,'Seleccione...','style="width:260px" onchange=""'); 
-    
-   
- 
+
+
+
    IF (session__cod_contrato IS NULL) THEN
      usp_print
         (pku_procesos_comun.f_putmensaje
             ('Visualice el contrato antes de seleccionar la acci&oacute;n.<br>Retorne a la Consola de Contratos ...', ''));
      RETURN;
   END IF;
-  
 
-        
+
+
  PKU_SS_FUNCIONES_JS.js_script('
- 
 
- 
+
+
         function retornaCod_preupuestal(codigo,descripcion){
 
-    
-    
+
+
 var cadena;
 
 cadena= descripcion.replace(/\s/g,"");
@@ -5568,20 +5568,20 @@ cadena= descripcion.replace(/\s/g,"");
              var wo = window.opener
              wo.RtnCodSniop(codigo,cadena)
              window.close();
-             
+
         }
-        
+
           function busqueda()
           {
-          
-               
+
+
                 thisform.scriptdo.value = "BuscaCentro";
                 thisform.submit();
         }
-        
+
         function nuevoCentroConciliacion ()
 {
-            
+
                 thisform.scriptdo.value = "uspNuevoCentro";
                 thisform.submit();
 }
@@ -5594,29 +5594,29 @@ function InsertCentro ()
                   alert ("Ingrese el nombre del centro de Conciliación");
                   return;
                 }
-                
+
                 if (thisform.ag_departamento.value == "")
                 {
                     alert("Ingrese el departamento");
                     return;
-                
+
                 }
-            
+
                 thisform.scriptdo.value = "uspNuevoCentroInsert";
                 thisform.submit();
 }
 
 
  function RtnCentro(codigo,descripcion){
-             
+
   //  thisform.ag_c_conciliacion.value = codigo;              
   //  thisform.ag_c_conciliacion_desc.value  =   descripcion;
   alert("hola");
 }
-    
-    
+
+
  ');   
- 
+
 
 
  usp_print('
@@ -5624,37 +5624,37 @@ function InsertCentro ()
   <tr><td><br></td><td><br></td><td><br></td></tr>
   <tr><td><br></td><td><br></td><td><br></td></tr>
    <tr><td colspan = "3" ><h3> Nuevo Centro de Conciliaci&oacute;n </h3uspCreaArbitraje></td></tr>
- 
- 
- 
+
+
+
      <tr>
         <td class=c1>(*)Descripci&oacute;n</td>
         <td class=c2><input type = "text" name = "ag_centro" value = "'||ag_centro||'" 
 onkeypress= "return alpha(event)"></td>
         <td class=c3></td>
     </tr>
- 
+
       <tr>
         <td class=c1>(*)Departamento</td>
         <td class=c2>'||lv_combo_Departamento||'</td>
         <td class=c3></td>
     </tr>
- 
+
 
   <tr><td><br></td><td><br></td><td><br></td></tr>
 
- 
+
 
    <tr><td colspan = "3" align = "center"><input type=button value="Guardar" onclick="InsertCentro();"></td></tr> 
       <tr><td><br></td><td><br></td><td><br></td></tr>
 
-   
-  </tr>
- 
-  ');    
-  
 
-         
+  </tr>
+
+  ');    
+
+
+
   usp_print('</table><br>');
 
    usp_print('
@@ -5662,9 +5662,9 @@ onkeypress= "return alpha(event)"></td>
         <br/>
         <br/>
         ');
-        
+
  END;
- 
+
 
 
 PROCEDURE uspNuevoCentroInsert( 
@@ -5672,29 +5672,29 @@ PROCEDURE uspNuevoCentroInsert(
   session__filesingedhttp VARCHAR2 DEFAULT NULL,
   ag_departamento         VARCHAR2 DEFAULT NULL,
   ag_centro               VARCHAR2 DEFAULT NULL
-   
+
  ) Is 
 
- 
+
 
  BEGIN
-  
-     
+
+
  PKU_SS_CONTROVERSIAS.dojscript  ;
       --insert into reg_procesos.contrato_conciliacion (numero,num_registro,tipo_demandante,cod_centro_conciliacion,ruc_conciliador,nombre_conciliador,fecha_audiencia,nombre_doc_acta,tipo_estado_conciliacion,n_cod_contrato,url_doc_acta)
- 
+
       insert into reg_procesos.centros_conciliacion (
       cod_centro_conciliacion,
       descripcion,
       departamento
-      
+
       )
       values(SEQUENCE_CEN_CONCIL.NEXTVAL,
       UPPER(ag_centro),
       ag_departamento 
-      
+
       );
-          
+
   commit;
 usp_print('<input type = "text" name = "ag_centro" value = "'||ag_centro||'"  
 onkeypress= "return alpha(event)">');
@@ -5702,13 +5702,13 @@ usp_print('<input type = "text" name = "ag_departamento" value = "'||ag_departam
 onkeypress= "return alpha(event)">');
     usp_print('
     <script language=javascript>
-    
+
        thisform.scriptdo.value="BuscaCentro";
        thisform.submit();
     </script>
     ');
 
  END; 
- 
+
 END PKU_GESTOR_CONT_CONTROVERSIAS;
 /

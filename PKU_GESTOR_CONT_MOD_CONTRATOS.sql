@@ -1161,9 +1161,9 @@ usp_print('<br>ag_cod_contrato:'||ag_cod_contrato);*/
 
   --RECUPERAMOS SI ES EXCEPTUADO
   
-  select count(*) into contador from adm.tbl_adm_prov_exceptuado@aixseace tceia where tceia.C_RUC= lv_ruc_contratista;
+  select count(*) into contador from adm.tbl_adm_prov_exceptuado@AIXSEACE tceia where tceia.C_RUC= lv_ruc_contratista;
   if ((contador)>0) then
-  select distinct(tceia.c_ruc) into ln_prov_exeptuado from adm.tbl_adm_prov_exceptuado@aixseace tceia where tceia.c_ruc= lv_ruc_contratista;
+  select distinct(tceia.c_ruc) into ln_prov_exeptuado from adm.tbl_adm_prov_exceptuado@AIXSEACE tceia where tceia.c_ruc= lv_ruc_contratista;
   end if;
 --extranjero no domiciliado sin RNP ("L","0")  o proveedor exceptuado 
 if ( (substr(lv_ruc_contratista,1,1) in ('0','I','L')) OR (ln_prov_exeptuado is not null)  )then
@@ -1186,7 +1186,7 @@ begin
 		          	if (LN_C_TIPSEL = 293) then
 			            begin
 			            
-                    select distinct(tcn.c_causal)  into ln_c_causal  from pro.tbl_act_expediente@aixseace tcn  where  tcn.n_id_expede=av_id_expede;
+                    select distinct(tcn.c_causal)  into ln_c_causal  from pro.tbl_act_expediente@AIXSEACE tcn  where  tcn.n_id_expede=av_id_expede;
 				            
                     IF (ln_c_causal = 305) then 
 				                lv_requiere_const_clc := 'Si';
@@ -4117,8 +4117,8 @@ fecha_registro                 VARCHAR2(8);
 */
 
         select i.n_id_item,um.unm_codigo,um.unm_desc,trim(substr(i.c_ccubso,9, 8)) nivel5,nvl(i.c_dsitem,i.c_dcubso) descripcion, i.c_cantid cantidad,fecha_registro fecha_registro
-        from pro.tbl_act_item@aixseace i
-        inner join sease.unidad_medida um on um.unm_codigo=(select l.n_cod_referencia from pro.tbl_cnf_valor_listado@aixseace l where n_id_vallistado =i.c_unimed)
+        from pro.tbl_act_item@AIXSEACE i
+        inner join sease.unidad_medida um on um.unm_codigo=(select l.n_cod_referencia from pro.tbl_cnf_valor_listado@AIXSEACE l where n_id_vallistado =i.c_unimed)
         where n_id_padre in (select n_id_item from reg_procesos.item_convoca where n_convoca in (select n_convoca from reg_procesos.convocatorias where n_convoca = nconvoca and codobjeto =3) and proc_item=procitem)
         and i.n_id_item not in (select nvl(ic.n_id_item,0) from reg_procesos.item_contrato ic where ic.n_convoca = nconvoca and ic.proc_item=procitem);
         
@@ -4128,10 +4128,10 @@ fecha_registro                 VARCHAR2(8);
 	/*  Inicio 085-2018-SGFS  tchacon */
         cursor items_paquete2 (nconvoca number,procitem number,fecha_registro varchar2) is
         select i.n_id_item,um.unm_codigo,um.unm_desc,trim(substr(i.c_ccubso,9, 8)) nivel5,nvl(i.c_dsitem,i.c_dcubso) descripcion, i.c_cantid cantidad,dp.c_monadj montoadjudicado,fecha_registro fecha_registro
-        from pro.tbl_act_item@aixseace i
-        inner join sease.unidad_medida um on um.unm_codigo=(select l.n_cod_referencia from pro.tbl_cnf_valor_listado@aixseace l where n_id_vallistado =i.c_unimed)
-        inner join PRO.DET_SEL_DE_PAQ@aixseace dp on dp.n_id_item=i.n_id_item
-        inner join PRO.TBL_SEL_OTOR_ITEM_PAQ@aixseace tp  on  tp.N_ID_OTOR_ITEM_PAQ=dp.N_ID_OTOR_ITEM_PAQ and tp.C_ESTADO='A'
+        from pro.tbl_act_item@AIXSEACE i
+        inner join sease.unidad_medida um on um.unm_codigo=(select l.n_cod_referencia from pro.tbl_cnf_valor_listado@AIXSEACE l where n_id_vallistado =i.c_unimed)
+        inner join PRO.DET_SEL_DE_PAQ@AIXSEACE dp on dp.n_id_item=i.n_id_item
+        inner join PRO.TBL_SEL_OTOR_ITEM_PAQ@AIXSEACE tp  on  tp.N_ID_OTOR_ITEM_PAQ=dp.N_ID_OTOR_ITEM_PAQ and tp.C_ESTADO='A'
         where n_id_padre in (select n_id_item from reg_procesos.item_convoca where n_convoca in (select n_convoca from reg_procesos.convocatorias where n_convoca = nconvoca and codobjeto =3) and proc_item=procitem)
         and i.n_id_item not in (select nvl(ic.n_id_item,0) from reg_procesos.item_contrato ic where ic.n_convoca = nconvoca and ic.proc_item=procitem);
     /*  Fin 085-2018-SGFS  tchacon */   
