@@ -1,13 +1,12 @@
-set scan off
 CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_CONFOR_LIQUID" is
 
   -- Author  : GMILLONES
   -- Created : 27/05/2009 11:34:32 a.m.
   -- Purpose : 
-  
+
       --consultoria nube migracion
   url_azure_app    varchar2(250):= 'https://zonasegura2.seace.gob.pe/documentos';
-  
+
   gpk_coddoc_liquidacion          number:= 700;
   gpk_directorio_liquidacion      varchar2(50):= 'mon\docs\contratos';
   type ref_cursor is ref cursor;
@@ -18,7 +17,7 @@ CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_CONFOR_LIQUID" is
        session__cod_contrato      varchar2,
        session__PUBLICADO         varchar2
      );
-       
+
 PROCEDURE uspNewLiquidacionDoEdit(
     session__N_CONVOCA       varchar2,
     session__COD_CONTRATO    varchar2,
@@ -29,7 +28,7 @@ PROCEDURE uspNewLiquidacionDoEdit(
     session__PUBLICADO           varchar2,
     ag_cod_contrato              varchar2,
     ag_accion                    varchar2);
-    
+
 PROCEDURE uspLiquidacionDoUpdate(
     ag_n_convoca                 varchar2 DEFAULT Null,
     ag_cod_contrato              varchar2 DEFAULT Null,
@@ -139,7 +138,7 @@ CREATE OR REPLACE PACKAGE BODY "PKU_GESTOR_CONT_CONFOR_LIQUID" is
    ln_modulo number;        -- (1/3) 12.09.2020 , permite verificar si las acciones sobre el contrato deben estas habilitados
 
   Begin
-  
+
     if(session__COD_CONTRATO is not null)then
         ln_n_convoca    := session__N_CONVOCA;
         ln_cod_contrato := session__COD_CONTRATO;
@@ -162,7 +161,7 @@ CREATE OR REPLACE PACKAGE BODY "PKU_GESTOR_CONT_CONFOR_LIQUID" is
      );
        return;    
     end if;
-        
+
     -------- Java Script -------
 
  PKU_SS_FUNCIONES_JS.js_script('
@@ -174,7 +173,7 @@ CREATE OR REPLACE PACKAGE BODY "PKU_GESTOR_CONT_CONFOR_LIQUID" is
  ');   
 
     -------- Titulos ------------
-    
+
     usp_print('
     <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>
         <tr>');
@@ -187,12 +186,12 @@ CREATE OR REPLACE PACKAGE BODY "PKU_GESTOR_CONT_CONFOR_LIQUID" is
             end if;
     usp_print('</td>');
     usp_print('
-            
+
         </tr>
     </table>
     <br>');
-    
-  
+
+
 
     ------ Cabecera de Columnas --------
     usp_print('
@@ -211,7 +210,7 @@ CREATE OR REPLACE PACKAGE BODY "PKU_GESTOR_CONT_CONFOR_LIQUID" is
             <td class="th1">Monto Contratado</td>  
             <td class="th1">Monto de Liquidaci&oacute;n / Conformidad</td>  
             <td class="th1">Objeto del Contrato</td>
-            
+
         </tr>
     ');
 
@@ -364,7 +363,7 @@ IS
   where tipo_documento.cod_tipo_doc = gpk_coddoc_liquidacion
   order by tipo_documento.cod_tipo_doc;
 
- 
+
 
     ------------ Variables ------------
     ln_n_convoca           number;
@@ -402,68 +401,68 @@ IS
     ctiporesultadoLiq             ref_cursor;
     cmoneda                       ref_cursor;
     cContratos                    ref_cursor;
-    
+
 
     ln_codmoneda_sel              NUMBER;
     ln_objeto_sel                 NUMBER;
-    
+
     -- Montos sumarizados
     ln_monto_adicional            NUMBER;
     ln_monto_contrato             NUMBER;
     ln_monto_reajuste             NUMBER;
     ln_monto_gastos               NUMBER;
     ln_monto_penalidades          NUMBER;
-    
-    
+
+
     ls_monto_adicional            varchar2(24);
     ls_monto_contrato             varchar2(24);
     ls_monto_reajuste             varchar2(24);
     ls_monto_gastos               varchar2(24);    
     ls_monto_penalidades          varchar2(24);
-    
+
 Begin
 
 
     ---------- Java Script -------------
     usp_print('
     <script language="javascript">
-    
-           
+
+
     function goSubmit(jscriptdo)
     {
            thisform.scriptdo.value = jscriptdo;
            thisform.submit();
     };
-         
+
     function cambiarEtiqueta(valor){
-    
+
        document.getElementById(''dFecha'').innerHTML = "(*)Fecha"
        document.getElementById(''dMonto'').innerHTML = "(*)Monto"
        document.getElementById(''dCopia'').innerHTML = "(*)Adjuntar Copia";
-          
+
        if (valor== 7){
           document.getElementById(''dFecha'').innerHTML = "(*)Fecha de la Conformidad"
           document.getElementById(''dMonto'').innerHTML = "(*)Monto de la Conformidad"
           document.getElementById(''dCopia'').innerHTML = "(*)Adjuntar Copia de la Conformidad";
        }
-       
+
        if (valor== 8){
           document.getElementById(''dFecha'').innerHTML = "(*)Fecha de la Liquidacion"
           document.getElementById(''dMonto'').innerHTML = "(*)Monto de la Liquidacion"
           document.getElementById(''dCopia'').innerHTML = "(*)Adjuntar Copia de la Liquidacion";      
        }
-        
+
     }
-    
+
     function diasEntre2( as_fec1, as_fec2 )
     {
       fec1 = getDateObject(as_fec1)
       fec2 = getDateObject(as_fec2)
-      
+
       ls_dias = Math.round( fec2.getTime()/86400000 - fec1.getTime()/86400000 ) ;
       return ls_dias;
     }
-      
+
     function dias(obj)
     {
         if ( thisform.f_contrato.value != "" && thisform.ag_f_liquidacion.value != "" && ValidarFechas1( thisform.f_contrato, thisform.ag_f_liquidacion, "Liquidación", "Contrato" ) )
@@ -571,13 +570,13 @@ Begin
         }
     }
     </script>');
-    
-    
+
+
     IF session__COD_CONTRATO IS NOT NULL THEN
-    
+
         ln_n_convoca            := session__N_CONVOCA;
         ln_cod_contrato         := nvl(ag_cod_contrato,session__COD_CONTRATO);
-        
+
     ELSE
         usp_print(
             pku_procesos_comun.f_putMensaje(
@@ -596,7 +595,7 @@ Begin
      );
        return;    
     end if;
-    
+
    -------- Funciones Script para Validaciones -------
       pku_procesos_comun.dojscript;
       pku_ss_funciones_js.fFechasGeneral;
@@ -608,7 +607,7 @@ Begin
     exception
         when no_data_found then
              row_contrato := null;
-           
+
     end;
 
    ln_monto_adicional      := PKU_SS_UTILES.f_get_sum_monto_adicional(ln_cod_contrato);      
@@ -616,18 +615,18 @@ Begin
    ln_monto_reajuste       := PKU_SS_UTILES.f_get_sum_monto_reajustes(ln_cod_contrato);      
    ln_monto_gastos         := PKU_SS_UTILES.f_get_sum_monto_gastos(ln_cod_contrato);
    ln_monto_penalidades    := PKU_SS_UTILES.f_get_sum_monto_penalidades(ln_cod_contrato);
-     
+
    ls_monto_adicional      := trim(to_char(ln_monto_adicional,pku_ss_constantes.gv_formato_dinero));
    ls_monto_contrato       := trim(to_char(ln_monto_contrato,pku_ss_constantes.gv_formato_dinero));
    ls_monto_reajuste       := trim(to_char(ln_monto_reajuste,pku_ss_constantes.gv_formato_dinero));
    ls_monto_gastos         := trim(to_char(ln_monto_gastos,pku_ss_constantes.gv_formato_dinero));
    ls_monto_penalidades    := trim(to_char(ln_monto_penalidades,pku_ss_constantes.gv_formato_dinero));
 
-  
+
    --------- Obtener datos de la convocatoria -------
     if (ln_n_convoca is not null) then
         begin
-        
+
          Select 
                 convocatorias.anhoentidad,
                 convocatorias.codconsucode,
@@ -643,7 +642,7 @@ Begin
             from REG_PROCESOS.convocatorias
             left outer join sease.tipo_proceso on tipo_proceso.tip_codigo = proc_tipo
            where n_convoca = ln_n_convoca;
-            
+
         exception
             when no_data_found then
                 lv_anhoentidad:= null;
@@ -652,8 +651,8 @@ Begin
 
    --lvdirectorio := gpk_directorio_liquidacion;
    --lv_ruta_file := '\'||lvdirectorio||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca;
-   lv_ruta_file :=  '\'||gpk_directorio_liquidacion||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca;
-  
+   lv_ruta_file :=  '\'||gpk_directorio_liquidacion||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca||'\';
+
 
    ------- Convenio Marco -------
    usp_print('
@@ -674,14 +673,14 @@ Begin
    <input type="hidden" name="ag_monto_contrato"           value="'||ln_monto_contrato ||'"/>
    <input type="hidden" name="ag_moneda_contrato"          value="'||row_contrato.codmoneda_contrato ||'"/>
    ');
-   
-   
+
+
   -------- Titulos ------------
     usp_print('
     <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>
         <tr>');
     usp_print(
-    
+
             PKU_SS_UTILES.f_get_titulo_contrato ( session__COD_CONTRATO, 'Conformidad/Liquidación Consentida' )
     );
     usp_print('
@@ -690,12 +689,12 @@ Begin
                 <input type="button" value="Grabar" onclick="grabar(this,''doInsertarLiquidacionAmpliacion'')">
             </td>
         </tr>
-  
+
     </table>
     <br>');
 
-  
-           
+
+
    ------- Titulo de Cabecera -----
    -- uspConOpeTituloDoView(nvl(ag_cod_contrato,session__COD_CONTRATO),row_contrato.f_liquidacion);
 
@@ -711,13 +710,13 @@ Begin
    cmoneda                := pku_ss_utiles.f_cmonedas;
    ctiporesultadoLiq      := pku_ss_utiles.f_ctipo_resultado_liq;
    cContratos             := pku_ss_utiles.f_list_contratos(session__COD_CONTRATO);
-       
+
    lv_combo_operacion     := PKU_SS_UTILES.f_retorna_combo(ctipooperacion, 'ag_ind_ope', nvl(row_contrato.cod_operacion_contrato,ag_ind_ope),'-- Seleccionar --',' style="width:99%" onchange="cambiarEtiqueta(this.value)" ');
    lv_combo_moneda        := PKU_SS_UTILES.f_retorna_combo(cmoneda, 'ag_mon_codigo', nvl(row_contrato.codmoneda_liquidacion,ln_codmoneda_sel),'-- Seleccionar moneda --',' style="width:99%" onclick="dias(this)" disabled ');
    lv_combo_tipomecanismo := PKU_SS_UTILES.f_retorna_combo(ctipomecanismo, 'ag_cod_mecanismo', row_contrato.cod_mecanismo,'-- Seleccionar mecanismo --',' style="width:99%" onclick="dias(this)"  '); 
    lv_tipo_resultadoLiq   := PKU_SS_UTILES.f_retorna_combo(ctiporesultadoLiq, 'ag_cod_tipo_resultado', row_contrato.cod_resultado_liq,'-- Seleccionar resultado --',' style="width:99%" onclick="dias(this)"  ');
    lv_Contratos           := PKU_SS_UTILES.f_retorna_combo(cContratos, 'ag_cod_contrato', to_number(nvl(ag_cod_contrato,session__COD_CONTRATO)),'-- Seleccionar --',' style="width:99%" onchange=" thisform.scriptdo.value =''doViewLiquidacionAmpliacion''; thisform.submit();"  ');
-   
+
    ------- Número del Contrato --------
    usp_print('
     <table width=100% class="table table-striped">');
@@ -729,10 +728,10 @@ Begin
             PKU_PROCESOS_COMUN.f_putRowForm('(*)Tipo de Contrato',
                 lv_Contratos,
                 '.'));     
-                
+
   if row_contrato.f_liquidacion is not null and  ag_accion is null then
-    
-   
+
+
      IF row_contrato.cod_operacion_contrato = 7 THEN
         usp_print(
             pku_procesos_comun.f_putMensaje(
@@ -740,7 +739,7 @@ Begin
         );
         usp_print(' </table>');
         return;
-        
+
       ELSIF   row_contrato.cod_operacion_contrato = 8 THEN
         usp_print(
             pku_procesos_comun.f_putMensaje(
@@ -750,13 +749,13 @@ Begin
         return;
       END IF;
     end if;
-                    
+
    usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('(*)Tipo Operacion',
                 lv_combo_operacion,
                 'Seleccione el Tipo de Operación'));     
 
-                                                
+
    usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('<div id=dFecha>(*)Fecha</div>',
                 '<input type="hidden" name="f_contrato" value="'||to_char(row_contrato.f_contrato,'dd/mm/yyyy')||'"/>'||
@@ -797,12 +796,12 @@ Begin
             PKU_PROCESOS_COMUN.f_putRowForm('Monto del Contrato',
                 '<input type="text" name="ag_monto_contrato" readOnly=true style="width:98%" value="'||ls_monto_contrato||'" style="text-align: right" />',
                 'Monto del Contrato'));
-                
+
    usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('Adicionales',
                 '<input type="text" name="ag_monto_adic" readOnly=true style="width:98%" value="'||ls_monto_adicional||'" style="text-align: right"/>',
                 'Monto de Adicionales.'));
-    
+
    usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('Reajustes',
                 '<input type="text" name="ag_monto_reajustes" readOnly=true style="width:98%" value="'||ls_monto_reajuste||'" style="text-align: right" />',
@@ -812,19 +811,19 @@ Begin
             PKU_PROCESOS_COMUN.f_putRowForm('Gastos Generales',
                 '<input type="text" name="ag_monto_gastosg" readOnly=true style="width:98%" value="'||ls_monto_gastos||'" style="text-align: right"/>',
                 'Monto de Gastos Generales.'));
-    
+
    usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('Penalidades',
                 '<input type="text" name="ag_monto_penalidades" readOnly=true style="width:98%" value="'||ls_monto_penalidades||'" style="text-align: right" />',
                 'Monto de Penalidades.'));
-        
+
    --inicio ahuanca
    /*
    usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('<div id=dMonto>(*)Monto</div>',
                 '<input type="text" name="ag_monto_liquida" style="width:98%" value="'||row_contrato.monto_liquidacion||'"  style="text-align: right" onkeyup="validarInputNumDecimal(this)" onblur="validarFormInputNumDecimal(this)"/>',
                 'Monto de la liquidación.'));
-                
+
    */
 
    usp_print(
@@ -832,14 +831,14 @@ Begin
                 '<input type="text" name="ag_monto_liquida" style="width:98%" value="'||row_contrato.monto_liquidacion||'"  style="text-align: right" />',
                 'Monto de la liquidación.'));
 --fin ahuancac 
-   
+
    usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('Saldo',
                 '<input type="text" name="ag_saldo" style="width:98%" value="'||row_contrato.saldo||'" style="text-align: right" />',
                 'Monto del Saldo.'));
-                
-                
-                     
+
+
+
    for cd in c_docs(ln_n_convoca,row_contrato.cod_documento_liquidacion) loop
         ln_ape_pat_aprobador    := cd.ape_pat_aprobador;
         ln_ape_mat_aprobador    := cd.ape_mat_aprobador;
@@ -854,7 +853,7 @@ Begin
     -----------------------
     usp_print(
                 PKU_PROCESOS_COMUN.f_get_subTitulo('Responsable') );
-    
+
     usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('(*)Apellido Paterno',
                 '<input type="text" name="ag_ape_pat_aprobador" style="width:98%" size="60" value="'||ln_ape_pat_aprobador||'"/>',
@@ -971,7 +970,7 @@ PROCEDURE uspLiquidacionDoUpdate(
     iisenv__remote_host          VARCHAR2
     )
 Is
-    
+
     ln_n_convoca              number;
     ln_plazo_real             reg_procesos.contrato.plazo_real%type;
     ln_cod_resultado_liq      reg_procesos.contrato.cod_resultado_liq%type;
@@ -1057,11 +1056,11 @@ Begin
 
 
     SELECT COUNT(1) INTO LN_DOC_LIQ_OLD FROM CONVOCATORIA_DOC WHERE N_CONVOCA = ag_n_convoca AND N_COD_CONTRATO = ag_cod_contrato AND COD_TIPO_DOC = 700;
-    
+
     IF LN_DOC_LIQ_OLD = 0 THEN
       BEGIN
         INSERT INTO REG_PROCESOS.convocatoria_doc (n_convoca, cod_tipo_doc, doc_url, cod_tipo_file, doc_nombre,user_upload, ip_from_upload, nro_doc, ape_pat_aprobador,ape_mat_aprobador, nom_aprobador, cargo_aprobador, fec_aprob,doc_obs, tamano_bytes,N_COD_CONTRATO )
-        VALUES( ln_n_convoca, gpk_coddoc_liquidacion, WriteFileDirectoryDynamic||pfiletoupload_file1,lv_codtipofile, pfiletoupload_file1, session__userid, iisenv__remote_host, pfiletoupload_file1,ag_ape_pat_aprobador, ag_ape_mat_aprobador, ag_nom_aprobador, ag_cargo_aprobador, to_date(ag_f_liquidacion,'dd/mm/yyyy'), ag_doc_obs, docname__size,ag_cod_contrato );
+        VALUES( ln_n_convoca, gpk_coddoc_liquidacion, WriteFileDirectoryDynamic||'/'||pfiletoupload_file1,lv_codtipofile, pfiletoupload_file1, session__userid, iisenv__remote_host, pfiletoupload_file1,ag_ape_pat_aprobador, ag_ape_mat_aprobador, ag_nom_aprobador, ag_cargo_aprobador, to_date(ag_f_liquidacion,'dd/mm/yyyy'), ag_doc_obs, docname__size,ag_cod_contrato );
       EXCEPTION
           WHEN OTHERS THEN
              reg_procesos.pku_ss_mod_contratos.f_msg_error('Error al intentar registrar el documento','''doViewLiquidacionAmpliacion''');
@@ -1078,10 +1077,10 @@ Begin
              fec_aprob           = to_date(ag_f_liquidacion,'dd/mm/yyyy'),
              doc_obs             = ag_doc_obs
        WHERE cod_doc             = ag_cod_doc;
-        
+
       IF pfiletoupload_file1 IS NOT NULL THEN 
         UPDATE REG_PROCESOS.convocatoria_doc
-             SET doc_url             = WriteFileDirectoryDynamic||pfiletoupload_file1, 
+             SET doc_url             = WriteFileDirectoryDynamic||'/'||pfiletoupload_file1, 
                  cod_tipo_file       = lv_codtipofile,
                  doc_nombre          = pfiletoupload_file1,
                  user_upload         = session__userid,        
@@ -1089,7 +1088,7 @@ Begin
                  nro_doc             = pfiletoupload_file1, 
                  tamano_bytes        = docname__size                 
            WHERE cod_doc             = ag_cod_doc;       
-       
+
      END IF;
     END IF;
 
@@ -1098,7 +1097,7 @@ Begin
                   WHERE doc.cod_tipo_doc = 700
                     AND doc.n_convoca = ln_n_convoca
                     AND doc.n_cod_contrato = TO_NUMBER(ag_cod_contrato);
-                    
+
     UPDATE REG_PROCESOS.contrato
        SET f_liquidacion             = ld_f_liquidacion,
            plazo_real                = ln_plazo_real,
@@ -1120,7 +1119,7 @@ Begin
 
    COMMIT;
 
-    
+
     usp_print('
     <input type="hidden" name="ag_n_convoca"            value="'||ag_n_convoca||'"/>
     <input type="hidden" name="ag_cod_contrato"         value="'||ag_cod_contrato||'"/>
@@ -1139,7 +1138,7 @@ Begin
     <input type="hidden" name="ag_fec_aprob"            value="'||ag_fec_aprob||'"/>
     <input type="hidden" name="pfiletoupload_file1"                 value="'||pfiletoupload_file1||'"/>
     <input type="hidden" name="ag_grabo_liquidacion"    value="1"/>
-    
+
     <script>
         thisform.scriptdo.value = "LisConformidadLiq";
         if (_error ==0 ) thisform.submit();
@@ -1180,7 +1179,7 @@ IS
     lv_ruta_file      varchar2(250);
 
 BEGIN
-   
+
     ln_n_convoca        := to_number(ag_n_convoca);
     ln_cod_contrato     := to_number(ag_cod_contrato);
 
@@ -1208,8 +1207,8 @@ BEGIN
 
 --    lvdirectorio := gpk_directorio_liquidacion;
 --    lv_ruta_file := lvdirectorio||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca;
-    lv_ruta_file := '\'||gpk_directorio_liquidacion||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca;    
-          
+    lv_ruta_file := '\'||gpk_directorio_liquidacion||'\'||lv_anhoentidad||'\'||lv_eue_codigo||'\'||ln_n_convoca||'\';    
+
 
     -------- Funciones Script para Validaciones -------
     REG_PROCESOS.PKU_SS_FUNCIONES_JS.fValidaCadenas_JS;
@@ -1229,7 +1228,7 @@ BEGIN
     <input type="hidden" name="WriteFileDirectory"         value="FileSinged"/>
     <input type="hidden" name="WriteFileDirectoryDynamic"  value="'||lv_ruta_file||'"/>
     <input type="hidden" name="extension"/>');
-    
+
     ------------- Campos de Datos ----------
     usp_print('
     <table border="0" width=100% align=center class=tableform cellpadding=3 cellspacing=0>
@@ -1327,13 +1326,13 @@ BEGIN
                         thisform.extension.value = extension;
                         thisform.scriptdo.value = objScrdo;
                         thisform.submit();
-                        
+
                     }
                 }
                 </script>');
 
    END;
 
-  
+
 end PKU_GESTOR_CONT_CONFOR_LIQUID;
 /
