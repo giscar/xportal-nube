@@ -1,4 +1,3 @@
-set scan off;
 CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_ADICIONALES"
   IS
 --------------------------------------------------
@@ -20,8 +19,10 @@ CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_ADICIONALES"
   lb_validacion_rnp2 boolean:=true;
   lb_estado_inha varchar2(500) :='';
   lb_error BOOLEAN:=false;
-  
-  
+
+  --consultoria nube migracion
+  url_azure_app    varchar2(250):= 'https://zonasegura2.seace.gob.pe/documentos/';
+
   FUNCTION f_valida_rnp_contrato(
          ag_ruc_contratista   IN VARCHAR2,
          ag_n_convoca         IN VARCHAR2,
@@ -29,31 +30,31 @@ CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_ADICIONALES"
          ag_n_propuesta        IN NUMBER,
          ag_estado_rnp       OUT VARCHAR2
          ) return BOOLEAN;
-  
+
   function f_get_emp_dets (vc_cod_contrato number )return emp_dets_nt;  
   FUNCTION f_cuenta_adired(ag_cod_contrato IN varchar2, ag_n_convoca IN varchar2) return number;
-  
+
   FUNCTION f_get_desc_entidadAutoriza(ag_cod_entid_autoriza IN varchar2, p_anhoentidad IN varchar2 ) return varchar2;
-  
+
   FUNCTION f_get_id_operacion(ag_cod_adicional IN number) return number;
-  
+
 
   FUNCTION f_ind_uso_siaf(ag_cod_contrato IN varchar2) return number;
-  
+
   FUNCTION f_ind_uso_siaf_modif(ag_cod_adicional IN varchar2) return number;
-  
+
   FUNCTION f_maxitems(ag_cod_contrato IN varchar2) return number;
- 
+
 -----------------------------------------------------------------------------------------------------------------
 ----------- PROCEDURE USP_REGISTRA_ITEMS -----------
 -----------------------------------------------------------------------------------------------------------------
- 
+
    PROCEDURE usp_registra_items(
     ag_trama_items       VARCHAR2, 
     ag_cod_adicional     NUMBER, 
     ag_n_cod_contrato    NUMBER,
     ag_codmoneda         NUMBER);
-     
+
    PROCEDURE uspLisAdicionalesDoView( 
       -- variables convenio marco
       ag_ncor_orden_pedido          VARCHAR2 DEFAULT '',
@@ -82,7 +83,7 @@ CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_ADICIONALES"
       ag_proc_tipo               varchar2   
 
    );
-      
+
    PROCEDURE uspadicionalreddoinsert (
       session__n_convoca           VARCHAR2 DEFAULT NULL,
       session__cod_contrato        VARCHAR2 DEFAULT NULL,
@@ -133,7 +134,7 @@ CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_ADICIONALES"
       WriteFileDirectoryDynamic       VARCHAR2,--jgarcia
       ag_trama_items                  VARCHAR2 default null        
    );
-   
+
 
      PROCEDURE uspadicionaladicdoinsert (
       ag_cod_contrato                VARCHAR2,
@@ -220,7 +221,7 @@ CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_ADICIONALES"
         session__userid                 VARCHAR2 default null,
         session__eue_codigo             VARCHAR2 default null,
         ag_cod_objeto                   VARCHAR2 default null);
-        
+
    PROCEDURE uspmanadicionaldoedit (
       ag_n_convoca               IN   VARCHAR2 DEFAULT '',
       ag_cod_contrato            IN   VARCHAR2 DEFAULT '',
@@ -238,10 +239,10 @@ CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_ADICIONALES"
       ag_trama_calendario             VARCHAR2,
       session__n_convoca           VARCHAR2 DEFAULT NULL----jgarciaf
       );
-  
- 
+
+
     PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2);
-  
+
     PROCEDURE uspdonewadicionaledit (
       session__n_convoca           VARCHAR2 DEFAULT NULL,
       session__cod_contrato        VARCHAR2 DEFAULT NULL,
@@ -284,9 +285,9 @@ CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_ADICIONALES"
       ag_trama_calendario             VARCHAR2 DEFAULT NULL,
       ag_descripcion                  VARCHAR2 DEFAULT NULL,
          SizeFile                        varchar2--jgarcia
-    
+
    );
-   
+
   PROCEDURE uspadicionalreddoupdate (
       ag_n_convoca                   VARCHAR2,
       ag_cod_contrato                VARCHAR2,
@@ -311,7 +312,7 @@ CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_ADICIONALES"
       ag_anhoentidad                 VARCHAR2 DEFAULT NULL,
       ag_trama_items                 VARCHAR2
    );
-   
+
    PROCEDURE uspmanreducciondoedit (
       session__n_convoca           VARCHAR2 DEFAULT NULL,
       session__cod_contrato        VARCHAR2 DEFAULT NULL,
@@ -325,7 +326,7 @@ CREATE OR REPLACE PACKAGE "PKU_GESTOR_CONT_ADICIONALES"
       ag_anhoentidad                  VARCHAR2 DEFAULT NULL,
       ag_trama_items                  VARCHAR2 DEFAULT NULL
    );
-   
+
     procedure jscript_vigencia;
   procedure actualiza_vigencia(
 v_codigo                VARCHAR2,
@@ -380,7 +381,7 @@ begin
                 left outer join REG_PROCESOS.objeto o on b.codobjeto = o.codobjeto
                 left outer join REG_PROCESOS.monedas m on b.codmoneda = m.codmoneda
                 left outer join REG_PROCESOS.monedas mo on a.mon_codigo = mo.codmoneda
-              
+
             where a.n_cod_contrato = vc_cod_contrato;
     return return_value;
 end;
@@ -491,32 +492,32 @@ IS
       ln_tipo_proceso           NUMBER; 
        mensaje_inhabi          VARCHAR2(500);
       lv_ruc_postor          VARCHAR2(20);
-      
+
 
 BEGIN
 
    lv_n_convoca     := to_number(ag_n_convoca);
   select p.ruc_postor into lv_ruc_postor from reg_procesos.convocatoria_propuesta p where p.n_convoca = lv_n_convoca and  p.n_propuesta=ag_n_propuesta ;
-  
+
   lv_ruc_consorcio := lv_ruc_postor;
-  
+
   lv_id_consorcio  := substr(lv_ruc_consorcio,0,1);
   ld_f_contrato    := to_date(ag_f_contrato,'dd/mm/yyyy');
   LB_RETORNO       := TRUE;
   ag_estado_rnp := '';
   mensaje_inhabi:= '';
-  
+
 
   /*PARA EL DEMO SE QUITO LA VALIDACION */
  /*RETURN TRUE; */
 
 ----Sacamos el tipo de proceso y la entidad
   SELECT C.PROC_TIPO INTO ln_tipo_proceso FROM REG_PROCESOS.CONVOCATORIAS C WHERE C.N_CONVOCA = lv_n_convoca;   
-      
-  
+
+
   SELECT count(1) INTO ln_proc_tipo  FROM reg_procesos.convocatorias  WHERE n_convoca = ag_n_convoca  AND  proc_tipo in (11,23,40);   
-  
-  
+
+
 
 
     ----- Consorcio
@@ -530,7 +531,7 @@ BEGIN
 
           -- verificamos que el postor NO sea una entidad
           IF  ln_valida_rucentidad = 0 THEN
-             
+
       cant :=reg_procesos.F_WS_RNP_GET_ESTADO_ACTUAL_ESP(xrow.RUC_MIEMBRO,to_char(ld_f_contrato,'yyyymmdd'));
         --cant :='ERROR'; comentario para inhabilitar la validacion del sistemas de rnp
               -- IF cant <> '1-OK' THEN
@@ -544,7 +545,7 @@ BEGIN
                   mensaje_inhabi := 'Sistema externo no disponible, vuelva a intentar';
                   LB_RETORNO    := false;
                   lb_error :=true;
-                    
+
               END IF;    
           END IF;
 
@@ -565,17 +566,17 @@ BEGIN
                     LB_RETORNO := FALSE;
                     lb_error:=false;
               END IF;
-           
+
            --- caso de de cant= 9-Error Llamada al Web Service - RNP
              IF UPPER(cant) LIKE '%ERROR%' THEN
                     mensaje_inhabi := 'Sistema externo no disponible, vuelva a intentar';
                     LB_RETORNO    := false;
                     lb_error :=true;
-                    
-                    
-                                      
+
+
+
                 END IF;                
-           
+
             END IF;
   ag_estado_rnp:=mensaje_inhabi;
   END IF;  
@@ -584,7 +585,7 @@ RETURN LB_RETORNO;
 
 END;
 
-  
+
 /*******************************************************************************/
 /******************************************************************************/
 -- segun el nodename del xml este este es para el nuevo adicional
@@ -682,7 +683,7 @@ END;
       ag_trama_calendario             VARCHAR2 DEFAULT NULL,
       ag_descripcion                  VARCHAR2 DEFAULT NULL,
         SizeFile                        varchar2--jgarcia
-      
+
    )
    IS
       -------- declaracion de Variables -------
@@ -702,8 +703,8 @@ END;
       centidadautoriza                ref_cursor;
       ctipoinstrumento                ref_cursor;
       ln_ley number;
-      
-      
+
+
        --JGARCIA
          lv_directorio            varchar2(50);  ---jgarciaf
          lv_ruta                  varchar2(50); ---jgarciaf
@@ -731,7 +732,7 @@ END;
       ls_fec_final                  varchar2(10);
       ln_PROC_TIPO                  number;
       t_tipo_consultoria            number;
-      
+
 
    BEGIN
 
@@ -777,23 +778,23 @@ END;
    reg_procesos.pku_procesos_comun.doJScriptFechas;
 
  ---- jgarciaf inicio
-     
+
    lv_anhoentidad := session__anhoentidad;
    lv_eue_codigo := session__eue_codigo;    
    lv_directorio := gpk_directorio_adicred;
    ---lv_ruta       := WriteFileDirectoryDynamic||'/'||docname;
-   
+
    lv_ruta := lv_directorio||'\'||lv_anhoentidad||'\'||lpad(lv_eue_codigo,6,'0')||'\'||session__n_convoca; 
-  
+
    usp_print('
      <input type ="hidden" name=WriteFileDirectoryDynamic value="'||lv_ruta||'" type=text>
      <input type ="hidden" name=WriteFileDirectory value="FileSinged" type=text>
      <input type="hidden" name="extension"/>
      <input type ="hidden" id=SizeFile name=SizeFile />
    ');
-   
+
    ----- JGARCIAF FIN 
-   
+
    usp_print('
     <script language="javascript">
                function f_changetipo()
@@ -847,8 +848,8 @@ END;
 
   usp_print(PKU_SS_UTILES.f_get_titulo_contrato(session__cod_contrato,'Crear Adicionales/Reducciones'));
 
-  
-  
+
+
   usp_print('<td align="right" valign=top width="50%">
              <input type="button" value="Volver" onclick="thisform.scriptdo.value=''LisAdicionalesDoView'';thisform.submit();">');
 
@@ -865,12 +866,12 @@ END;
   usp_print ('
         </td>
     </tr>');
-  
-    
+
+
    /* select * into consucode,proveedor,proceso,nconvoca,fcontra,npropuesta from table(f_get_emp_dets(session_cod_contrato));
-    
-    
-    
+
+
+
      usp_print('
     <table>
     <tr >
@@ -879,26 +880,26 @@ END;
     <tr >
     <td><h3>'|| proveedor ||'</h3></td>
     </tr>
-    
+
     <tr >
     <td><h3>'|| proceso ||'</h3></td>
     </tr>
-    
+
      <tr >
     <td><h3>'|| nconvoca ||'</h3></td>
     </tr>
-    
+
       <tr >
     <td><h3>'|| fcontra ||'</h3></td>
     </tr>
-    
+
     <tr >
     <td><h3>'|| npropuesta ||'</h3></td>
     </tr>
-   
+
      </table>');*/
-    
-    
+
+
   IF (ag_muestra IS NULL) THEN
        usp_print('<input type="hidden" name="ag_cgr" value="'|| ag_cgr|| '"/>');
   ELSE
@@ -1001,11 +1002,11 @@ END;
                 lv_combo_tipoinstrumento
                 ||'<input size=22 type="text" name="ag_nro_doc_adicional" value="'|| ag_nro_doc_adicional|| '" onblur="ValidarString(this, ''Nmero de Documento'');" />',
                 'Seleccione el Tipo de Documento'));
-                
-                     
+
+
             ---- jgarciaf inicio
-            
-    
+
+
     usp_print('
         <script language="javascript">
             function obtenerTamano(){
@@ -1024,15 +1025,15 @@ END;
                 }            
             }
         </script>');        
-    
+
    usp_print(            
             PKU_PROCESOS_COMUN.f_putRowForm('(*)Adjuntar Archivo',
                 '<input type="file" id="pfiletoupload1"  name="pfiletoupload1" class="form-control" size="'|| SizeFile|| '" value="" onchange="obtenerTamano()">
                 <input type="hidden" name="pfiletoupload_file1" value=""/>',
                   'Seleccione el archivo que contiene el Adccional o Reduccion del Servicio, solo se permiten archivos *.doc ,*.docx, *.pdf ,*.zip,*.rar'));
-                
+
             ---- jgarciaf FIN
-     
+
 
     usp_print(
             PKU_PROCESOS_COMUN.f_putRowForm('(*)Fecha del Documento autorizado por la Entidad',
@@ -1101,7 +1102,7 @@ END;
               </td>  
          </tr>
          ');
- 
+
    --Nmero de Valorizacin
 /*    usp_print('
         <tr>
@@ -1483,7 +1484,7 @@ function submit_form ( )
           thisform.ag_monto_adicional.focus();
           return false ;
    }
-   
+
    /*jgarcia  INICIO*/
 
 if (thisform.pfiletoupload1.value != "" )
@@ -1496,12 +1497,12 @@ if (thisform.pfiletoupload1.value != "" )
     if (extension == "docx")
                         {
                             extension = "." + extension;
-                            
+
                         }
     if ( extension == ".doc" || extension == ".pdf" || extension == ".zip" || extension == ".rar" || extension == ".docx")
           {
 
-   
+
             var namearchive = "'||to_char(sysdate, 'ddmmyyyyHH24MISS')||'"+extension;
             thisform.pfiletoupload_file1.value = namearchive;
             thisform.extension.value = extension;
@@ -1512,7 +1513,7 @@ if (thisform.pfiletoupload1.value != "" )
             return false ;
           }
   }
-      
+
     else   {
           alert ("Registre el documento Adicional ");
         return false ;
@@ -1574,8 +1575,8 @@ if (thisform.pfiletoupload1.value != "" )
      if(!valorizacion()) return false;
     }*/
 
-      
-      
+
+
       /*jgarcia  INICIO*/
 
 if (thisform.pfiletoupload1.value != "" )
@@ -1588,12 +1589,12 @@ if (thisform.pfiletoupload1.value != "" )
     if (extension == "docx")
                         {
                             extension = "." + extension;
-                            
+
                         }
     if ( extension == ".doc" || extension == ".pdf" || extension == ".zip" || extension == ".rar" || extension == ".docx")
           {
 
-   
+
             var namearchive = "'||to_char(sysdate, 'ddmmyyyyHH24MISS')||'"+extension;
             thisform.pfiletoupload_file1.value = namearchive;
             thisform.extension.value = extension;
@@ -1604,13 +1605,13 @@ if (thisform.pfiletoupload1.value != "" )
             return false ;
           }
   }
-      
+
     else   {
           alert ("Registre el documento Adicional ");
         return false ;
         }    
 
-  
+
 /*jgarcia  FIN*/
 
   thisform.scriptdo.value=pagina;
@@ -1651,7 +1652,7 @@ if (thisform.pfiletoupload1.value != "" )
       }catch(err){
       }                
      });
-     
+
 
      </script>');
 
@@ -1762,7 +1763,7 @@ END;
 --fin
 usp_print('<script>');
    usp_print(lv_trama_items);
-  
+
    usp_print('
    $(document).ready(function(){
           var myObject = eval(''('' + itemJSON + '')'');                    
@@ -1773,7 +1774,7 @@ usp_print('<script>');
                                        "<input type=checkbox name=chkObjs class=chkObjs ></input>"+
                                        "<input type=hidden  datafld=copiar name=hcopiar />"+
                                    "</td>"+
-                                   
+
                                    "<td width = 3%>"+myObject[i][''fila'']+"</td>"+  
                                    "<td width = 3%>"+myObject[i][''procitem'']+"</td>"+
                                    "<td width = 30%>"+myObject[i][''descripcion'']+"</td>"+
@@ -1791,11 +1792,11 @@ usp_print('<script>');
                                    else
                                       usp_print('"<td  style=''display:none'' width=''12%''></td>"+'); 
                                    end if;
-                                   
+
                                 usp_print('"<td width = 11%>"+
                                                 "<input type=text datafld=monto name=txtMontoxml size=15 style=''text-align:left'' onkeyup=''validarInputNumDecimal(this)'' onblur=''validarFormInputNumDecimal(this); this.value = redondear(this.value, 2)'' ></input>"+
                                            "</td>"+');
-                                           
+
                                     usp_print('"<td style=''display:none''>"+myObject[i][''ley'']+"</td>"+');
                                 --Fin  
                                     if ln_cod_obj in (1,2,4)  and ln_ley_29564 > 0 then
@@ -1803,15 +1804,15 @@ usp_print('<script>');
                                                        "<span datafld=chl dataformatas=html >"+
                                                  "</td>"+');
                                     end if;   
-                                              
+
                                      usp_print('"</tr>");                         
                    }
    });
-      
+
    ');
 
 usp_print('</script>');   
-   
+
    ---------- Cabecera de los Items ---------------
    usp_print('<!-- datapagesize="1" -->
 <input type="hidden" name=chkObjs >
@@ -1861,7 +1862,7 @@ usp_print('</script>');
      usp_print('
      <tr>
         <td>');
-        
+
      --Inicio KMerma SM-286-2019
      IF ag_ind_adred = 3 and ag_proc_tipo not in (11) THEN
          usp_print('<br><br>
@@ -2381,7 +2382,7 @@ is
     ag_trama_calendario             VARCHAR2,
     --jgarciaf
     session__n_convoca           VARCHAR2 DEFAULT NULL----jgarciaf
-    
+
  )
  IS
     -------- declaracion de Variables -------
@@ -2462,7 +2463,7 @@ is
     -- Items
     lv_trama_items                varchar2(32000);
     lv_trama_calendario           varchar2(18000);
-    
+
     -- variables de los datos del upload--jgarciaf
       ln_NCOD_DOC                    NUMBER;-----jgarciaf
       lv_DOC_URL                     VARCHAR2(250);----jgarciaf
@@ -2618,9 +2619,9 @@ is
   FROM REG_PROCESOS.ADICIONAL_REDUCCION
   WHERE IND_ADICIONAL_REDUCCION IN (1,2) 
   AND N_COD_CONTRATO=session__cod_contrato; 
-  
+
   if (ln_adic_reduc>0) then
-  
+
           usp_print('
                </td>
                <td valign=top align=right>
@@ -2643,7 +2644,7 @@ is
              END IF;
           END IF;
   end if;
-    
+
   usp_print('</td>
        </tr>
      </table>
@@ -2737,7 +2738,7 @@ is
       usp_print('<tr>
        <td class=c1>(*)Fecha del Documento autorizado por (CGR)</td>
        <td class=c2>
-       
+
        <div class="input-group datepicker" id="idDivTxtFechaIni">
                 <div class="input-group-addon  add-on">
                      <span class="glyphicon glyphicon-calendar"></span>
@@ -2757,26 +2758,26 @@ is
         <input size=22 name="ag_nro_doc_adicional" class="form-control" maxlength="130" value="'|| nvl(ag_nro_doc_adicional,ad_nro_doc_adicional)|| '" onblur="ValidarString(this, ''Nmero de Documento'');" /></td>
     <td class=c3>Documento de Autorizacion</td>
     </tr>');
-       
+
 ----jgarcia inicio
-     
-     
-   
-     
+
+
+
+
  -- datos del upload del contrato
-   
+
    REG_PROCESOS.PKU_GESTOR_CONT_UTILES_2.P_last_upload_adicional( ag_cod_contrato, session__N_CONVOCA, ln_NCOD_DOC,lv_DOC_URL,lv_FEC_UPLOAD ,lv_USER_UPLOAD,lv_FEC_APROB ,lv_EXT_TIPO_FILE,lv_ICON_TIPO_FILE, lv_DOC_OBS,ag_cod_adicional);
 
 
  -----JGARCIAF----  DATOS DEL UPLOAD 
- 
-usp_print( '<tr align=center> <td colspan="4" align=center>' || case when lv_DOC_URL is not null then '<br><a target=_blank href="DownloadFileServlet?fileName='||lv_DOC_URL||'">
+
+usp_print( '<tr align=center> <td colspan="4" align=center>' || case when lv_DOC_URL is not null then '<br><a target=_blank href="'||url_azure_app||lv_DOC_URL||'">
                 <img src="'||lv_ICON_TIPO_FILE||'" border="0" width="25" height="25"/></a>' 
                 end || case when lv_FEC_UPLOAD is not null then ' Registrado el '||lv_FEC_UPLOAD end||'<input type="hidden" name="pfiletoupload_file1" value=""/>
-                       
+
           </td>
           </tr>');
-    
+
  ---jgarcia fin
 
 
@@ -2786,7 +2787,7 @@ usp_print( '<tr align=center> <td colspan="4" align=center>' || case when lv_DOC
     <tr>
     <td class=c1>(*)Fecha del Documento que autoriza la Operacion</td>
     <td class=c2>
-    
+
     <div class="input-group datepicker" id="idDivTxtFechaIni">
                 <div class="input-group-addon  add-on">
                      <span class="glyphicon glyphicon-calendar"></span>
@@ -2838,8 +2839,8 @@ usp_print( '<tr align=center> <td colspan="4" align=center>' || case when lv_DOC
 
  END IF;
 
- 
- 
+
+
  usp_print('<script>
   function redondear( num, dec )
         {
@@ -2848,11 +2849,11 @@ usp_print( '<tr align=center> <td colspan="4" align=center>' || case when lv_DOC
             dec = (!dec ? 2 : dec);
             return Math.round(num * Math.pow(10, dec)) / Math.pow(10, dec);
         }
-    
- 
+
+
      var total = 0;
  $("#idBotonAgregarCalendario").on("click", function(){
- 
+
       var mont = $(this).parent().parent().children().eq("2").children().val();
       var fec = $(this).parent().parent().children().eq("1").children().children(".fecCalendar").val();
      // total = total+ parseFloat(mont);  
@@ -2869,14 +2870,14 @@ usp_print( '<tr align=center> <td colspan="4" align=center>' || case when lv_DOC
                               enumeraItemCalendario();
                               calculaTotalCalendario();
    }});
-                              
+
       function enumeraItemCalendario(){
        var i = 0;
        $(".rowIndexCalendario").each(function(){
            i++;
            $(this).text(i);
        })}
-     
+
       function deleteRowCalendario(indice){
         tableId = document.getElementById("cal_idtablex");
         rest = indice.parentNode.parentNode.childNodes.item(2).childNodes.item(0).value;
@@ -2884,7 +2885,7 @@ usp_print( '<tr align=center> <td colspan="4" align=center>' || case when lv_DOC
         enumeraItemCalendario();
         calculaTotalCalendario();
       }
-     
+
      function calculaTotalCalendario(){
         var total = 0;
         $(".cag_cal_monto_pago").each(function(){
@@ -2893,7 +2894,7 @@ usp_print( '<tr align=center> <td colspan="4" align=center>' || case when lv_DOC
         $("#idSumTotal").text(total);
         thisform.an_total_calendario.value = total;
       }
-     
+
      function generacionTramaCalendario(){
         var xmlCalendario = "";
         xmlCalendario = xmlCalendario+"<root>";
@@ -2910,7 +2911,7 @@ usp_print( '<tr align=center> <td colspan="4" align=center>' || case when lv_DOC
        xmlCalendario = xmlCalendario+"</root>";  
        thisform.ag_trama_calendario.value = xmlCalendario;
      }
-   
+
    function f_validaCampoNumerico()
     {
         escribe=1;
@@ -2919,7 +2920,7 @@ usp_print( '<tr align=center> <td colspan="4" align=center>' || case when lv_DOC
             window.event.keyCode=0;                  //anula la entrada de texto.
         }
     }
-     
+
      </script>');
 
  --------  Datos de Valorizaciones
@@ -3312,15 +3313,15 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
       ln_ind_siaf                   NUMBER;
 
         --JGARCIA
-        
+
          lv_directorio            varchar2(50);  ---jgarciaf
          lv_ruta                  varchar2(50); ---jgarciaf
          lv_anhoentidad           varchar2(4); ---jgarciaf
          lv_eue_codigo            varchar2(50); ---jgarciaf
          lv_codtipofile           VARCHAR2(20);---jgarciaf
          lv_id_redu                 NUMBER ;    ---jgarciaf
-       
-         
+
+
 
       ln_valida_rango               NUMBER;
 
@@ -3338,17 +3339,17 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
       ln_ind_siaf              := f_ind_uso_siaf(ag_cod_contrato);
 
    /* 003-SM aramirez inicio*/
-        
+
               select * into consucode,proveedor,proceso,nconvoca,fcontra,npropuesta from table(f_get_emp_dets(session_cod_contrato));
-              
-                
-              
+
+
+
            if (consucode='002433' and proceso='SEL') or (consucode='002433' and proceso='ABR') or (consucode='002433' and proceso='COM') then
-                  
+
                    lb_validacion_rnp2 := f_valida_rnp_contrato(proveedor,nconvoca,ag_fec_doc_adicional,npropuesta,lb_estado_inha);
-                       
+
                       if  lb_validacion_rnp2 then
-                                 
+
                                                              -- Verificamos que el adicional o reduccion se encuentre dentro de la vigencia del contrato
                               select count(1) into  ln_valida_rango
                                 from reg_procesos.contrato x
@@ -3356,9 +3357,9 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                  and trunc(to_date(ag_fec_doc_adicional,'dd/mm/yyyy')) >= trunc(x.f_vigencia_ini)
                               /*   and trunc(to_date(ag_fec_doc_adicional,'dd/mm/yyyy')) <= trunc(x.f_vigencia_fin);*/
                               and trunc(to_date(ag_fec_doc_adicional,'dd/mm/yyyy')) <= trunc(pku_ss_utiles.f_get_fecha_fin_amp(ag_cod_contrato));
-                        
+
                               IF ln_valida_rango = 0  THEN
-                        
+
                                     usp_print(
                                     pku_procesos_comun.f_putMensaje(
                                         'La fecha del Adicional o Reduccion se debe encontrar dentro de la vigencia del contrato.
@@ -3367,10 +3368,10 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                 );
                                 RETURN;
                               END IF;
-                        
-                        
+
+
                         ------------------------- Obtiene el tipo de archivo JGARCIAF -------------------------------------
-                        
+
                            BEGIN
                                 --select cod_tipo_file into lv_codtipofile From Reg_procesos.tipo_archivo Where ext_tipo_file=upper(substr(pfiletoupload_file1,length(pfiletoupload_file1)-2,length(pfiletoupload_file1)));
                                 select cod_tipo_file into lv_codtipofile From Reg_procesos.tipo_archivo Where ext_tipo_file=upper(substr(pfiletoupload_file1,(INSTR(pfiletoupload_file1,'.',1) + 1)));
@@ -3383,11 +3384,11 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                     );
                                    return;
                            END;
-                        
+
                            ------------------------- Fin de Obtiene el tipo de archivo  JGARCIAF------------------------------
-                        
-                        
-                        
+
+
+
                               ---------- Ingresar la reduccion o Adicional ----------
                               INSERT INTO reg_procesos.adicional_reduccion
                                           (n_cod_contrato,
@@ -3413,28 +3414,28 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                            TO_DATE (ag_fec_doc_adicional, 'dd/mm/yyyy'),
                                            ag_concepto_adicional, ag_nro_doc_cgr,
                                            TO_DATE (ag_fec_doc_cgr, 'dd/mm/yyyy'));
-                        
-                        
-                        
+
+
+
                         ---- jgarciaf inicio
-                             
+
                            lv_anhoentidad := ag_anhoentidad;
                            lv_eue_codigo := session__eue_codigo;    
                            lv_directorio := gpk_directorio_adicred;
                            lv_ruta := lv_directorio||'\'||lv_anhoentidad||'\'||lpad(lv_eue_codigo,6,'0')||'\'||ag_n_convoca; 
-                          
+
                            usp_print('
                              <input type ="hidden" name=WriteFileDirectoryDynamic value="'||lv_ruta||'" type=text>
                              <input type ="hidden" name=WriteFileDirectory value="FileSinged" type=text>
                            ');
-                           
-                           
-                          
+
+
+
                              BEGIN
-                          
+
                                     select max(Cod_Adicional) into lv_id_redu from REG_PROCESOS.Adicional_Reduccion where n_cod_contrato=ln_cod_contrato;
-                                    
-                                    
+
+
                                 REG_PROCESOS.PKU_GESTOR_CONT_UTILES_2.p_insUploadReduccion(
                                       reg_procesos.f_get_min_n_convoca(session__N_CONVOCA),
                                       TO_DATE (ag_fec_doc_adicional,reg_procesos.pku_ss_constantes.gv_formato_fecha_hora24),
@@ -3447,8 +3448,8 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                       WriteFileDirectoryDynamic,
                                       ln_cod_contrato,
                                       lv_id_redu);
-                                      
-                                      
+
+
                            EXCEPTION
                               WHEN OTHERS THEN
                                   usp_print(
@@ -3457,12 +3458,12 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                             '')
                                     );
                                    return;
-                        
+
                            END;
-                           
+
                         ----- jgarciaf fin
-                        
-                        
+
+
                               ------------- Ingresar la valorizacion -----------------
                               IF (ag_monto_bruto IS NOT NULL) THEN
                                  BEGIN
@@ -3504,29 +3505,29 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                                 );
                                  END;
                               END IF;
-                        
+
                           ln_suma_restom := TO_NUMBER (ag_m_contratado) - TO_NUMBER (ag_monto_adicional);
-                        
+
                           ------- Registro de Items del Adicional/Reduccion ------------------
                           usp_registra_items( ag_trama_items, reg_procesos.pk_convocatoria.getCodReduccion,ln_cod_contrato,ln_cod_moneda);
-                        
+
                         /*  -- En las reducciones no se modifica el calendario , x lo tanto ya no se transferira al MEF
                           -- actualizar la suma en el monto contratado del CONTRATO
                          IF (ln_ind_siaf = 1) THEN
-                        
+
                              UPDATE reg_procesos.contrato
                                 SET m_contratado   = ln_suma_restom,
                                     id_operacion   = reg_procesos.pk_convocatoria.getidoperacion()
                                WHERE n_cod_contrato = ln_cod_contrato;
-                        
+
                                reg_procesos.pk_trans_mef.sp_ws_mef_send_operacion(reg_procesos.pk_convocatoria.getidoperacion());
-                        
+
                           ELSE
                              UPDATE reg_procesos.contrato
                                 SET m_contratado = ln_suma_restom
                               WHERE n_cod_contrato = ag_cod_contrato;
                           END IF;
-                        
+
                           COMMIT;
                         */
                         /*    pku_ss_make_contrato.usp_calcula_costofinal (ag_cod_contrato);
@@ -3550,23 +3551,23 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                 <input type="hidden"  name ="ag_proc_sigla"            value="'|| ag_proc_sigla ||'" />
                                 <input type="hidden"  name ="ag_currenpage"            value="'|| ag_currenpage ||'" />
                                 <input type="hidden" name="pfiletoupload_file1"                 value="'||pfiletoupload_file1||'"/>');
-                        
+
                               usp_print
                                  ('
                                 <script language="javascript">
                                     thisform.scriptdo.value=''LisAdicionalesDoView'';
                                     thisform.submit();
                                 </script>');
-                                    
+
 
                        else 
                            begin   
-                           
-                                   
-                           
+
+
+
                                   if lb_error then
-                                       
-                                       
+
+
                                         usp_print('
                                    <script language=javascript>
                                      alert("Sistema externo no disponible, vuelva a intentar");
@@ -3575,7 +3576,7 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                    </script>
                                    ');
                                    return;
-                                       
+
                                    else
                                    usp_print('
                                    <script language=javascript>
@@ -3585,14 +3586,14 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                    </script>
                                    ');
                                    return;
-                                   
+
                                    end if;
                              end;
                              return;
                         end if;
-              
+
              else 
-                    
+
                                            -- Verificamos que el adicional o reduccion se encuentre dentro de la vigencia del contrato
                           select count(1) into  ln_valida_rango
                             from reg_procesos.contrato x
@@ -3600,9 +3601,9 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                              and trunc(to_date(ag_fec_doc_adicional,'dd/mm/yyyy')) >= trunc(x.f_vigencia_ini)
                           /*   and trunc(to_date(ag_fec_doc_adicional,'dd/mm/yyyy')) <= trunc(x.f_vigencia_fin);*/
                           and trunc(to_date(ag_fec_doc_adicional,'dd/mm/yyyy')) <= trunc(pku_ss_utiles.f_get_fecha_fin_amp(ag_cod_contrato));
-                    
+
                           IF ln_valida_rango = 0  THEN
-                    
+
                                 usp_print(
                                 pku_procesos_comun.f_putMensaje(
                                     'La fecha del Adicional o Reduccion se debe encontrar dentro de la vigencia del contrato.
@@ -3611,10 +3612,10 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                             );
                             RETURN;
                           END IF;
-                    
-                    
+
+
                     ------------------------- Obtiene el tipo de archivo JGARCIAF -------------------------------------
-                    
+
                        BEGIN
                             --select cod_tipo_file into lv_codtipofile From Reg_procesos.tipo_archivo Where ext_tipo_file=upper(substr(pfiletoupload_file1,length(pfiletoupload_file1)-2,length(pfiletoupload_file1)));
                             select cod_tipo_file into lv_codtipofile From Reg_procesos.tipo_archivo Where ext_tipo_file=upper(substr(pfiletoupload_file1,(INSTR(pfiletoupload_file1,'.',1) + 1)));
@@ -3627,11 +3628,11 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                 );
                                return;
                        END;
-                    
+
                        ------------------------- Fin de Obtiene el tipo de archivo  JGARCIAF------------------------------
-                    
-                    
-                    
+
+
+
                           ---------- Ingresar la reduccion o Adicional ----------
                           INSERT INTO reg_procesos.adicional_reduccion
                                       (n_cod_contrato,
@@ -3657,28 +3658,28 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                        TO_DATE (ag_fec_doc_adicional, 'dd/mm/yyyy'),
                                        ag_concepto_adicional, ag_nro_doc_cgr,
                                        TO_DATE (ag_fec_doc_cgr, 'dd/mm/yyyy'));
-                    
-                    
-                    
+
+
+
                     ---- jgarciaf inicio
-                         
+
                        lv_anhoentidad := ag_anhoentidad;
                        lv_eue_codigo := session__eue_codigo;    
                        lv_directorio := gpk_directorio_adicred;
                        lv_ruta := lv_directorio||'\'||lv_anhoentidad||'\'||lpad(lv_eue_codigo,6,'0')||'\'||ag_n_convoca; 
-                      
+
                        usp_print('
                          <input type ="hidden" name=WriteFileDirectoryDynamic value="'||lv_ruta||'" type=text>
                          <input type ="hidden" name=WriteFileDirectory value="FileSinged" type=text>
                        ');
-                       
-                       
-                      
+
+
+
                          BEGIN
-                      
+
                                 select max(Cod_Adicional) into lv_id_redu from REG_PROCESOS.Adicional_Reduccion where n_cod_contrato=ln_cod_contrato;
-                                
-                                
+
+
                             REG_PROCESOS.PKU_GESTOR_CONT_UTILES_2.p_insUploadReduccion(
                                   reg_procesos.f_get_min_n_convoca(session__N_CONVOCA),
                                   TO_DATE (ag_fec_doc_adicional,reg_procesos.pku_ss_constantes.gv_formato_fecha_hora24),
@@ -3691,8 +3692,8 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                   WriteFileDirectoryDynamic,
                                   ln_cod_contrato,
                                   lv_id_redu);
-                                  
-                                  
+
+
                        EXCEPTION
                           WHEN OTHERS THEN
                               usp_print(
@@ -3701,12 +3702,12 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                         '')
                                 );
                                return;
-                    
+
                        END;
-                       
+
                     ----- jgarciaf fin
-                    
-                    
+
+
                           ------------- Ingresar la valorizacion -----------------
                           IF (ag_monto_bruto IS NOT NULL) THEN
                              BEGIN
@@ -3748,29 +3749,29 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                                             );
                              END;
                           END IF;
-                    
+
                       ln_suma_restom := TO_NUMBER (ag_m_contratado) - TO_NUMBER (ag_monto_adicional);
-                    
+
                       ------- Registro de Items del Adicional/Reduccion ------------------
                       usp_registra_items( ag_trama_items, reg_procesos.pk_convocatoria.getCodReduccion,ln_cod_contrato,ln_cod_moneda);
-                    
+
                     /*  -- En las reducciones no se modifica el calendario , x lo tanto ya no se transferira al MEF
                       -- actualizar la suma en el monto contratado del CONTRATO
                      IF (ln_ind_siaf = 1) THEN
-                    
+
                          UPDATE reg_procesos.contrato
                             SET m_contratado   = ln_suma_restom,
                                 id_operacion   = reg_procesos.pk_convocatoria.getidoperacion()
                            WHERE n_cod_contrato = ln_cod_contrato;
-                    
+
                            reg_procesos.pk_trans_mef.sp_ws_mef_send_operacion(reg_procesos.pk_convocatoria.getidoperacion());
-                    
+
                       ELSE
                          UPDATE reg_procesos.contrato
                             SET m_contratado = ln_suma_restom
                           WHERE n_cod_contrato = ag_cod_contrato;
                       END IF;
-                    
+
                       COMMIT;
                     */
                     /*    pku_ss_make_contrato.usp_calcula_costofinal (ag_cod_contrato);
@@ -3794,7 +3795,7 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                             <input type="hidden"  name ="ag_proc_sigla"            value="'|| ag_proc_sigla ||'" />
                             <input type="hidden"  name ="ag_currenpage"            value="'|| ag_currenpage ||'" />
                             <input type="hidden" name="pfiletoupload_file1"                 value="'||pfiletoupload_file1||'"/>');
-                    
+
                           usp_print
                              ('
                             <script language="javascript">
@@ -3803,16 +3804,16 @@ usp_print('<input type="hidden"  name="ag_trama_calendario" value="" />');
                             </script>');
 
             end if;
-        
-        
-        
-        
+
+
+
+
         /* 003-SM aramirez fin*/
-        
-        
 
 
-     
+
+
+
    END;
 
 -----------------------------------------------------------------------------------------------------------------
@@ -3977,7 +3978,7 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
       ag_cod_objeto                  varchar2,
       ag_proc_tipo                   varchar2  ,
       ag_tipo_consultoria             number,
-      
+
      --- para cargar archivo
       session__n_convoca           VARCHAR2 DEFAULT NULL,----JGARCIAF
       session__anhoentidad            VARCHAR2 DEFAULT NULL,---JGARCIAF
@@ -4007,7 +4008,7 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
       ln_monto_contrato         NUMBER;
 
       ln_ley_29564              NUMBER;
-    
+
         --JGARCIA
          lv_directorio            varchar2(50);  ---jgarciaf
          lv_ruta                  varchar2(50); ---jgarciaf
@@ -4019,19 +4020,19 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
 
    BEGIN  
         /*validaciones */
-       select * into consucode,proveedor,proceso,nconvoca,fcontra,npropuesta from table(f_get_emp_dets(session_cod_contrato));
+      -- select * into consucode,proveedor,proceso,nconvoca,fcontra,npropuesta from table(f_get_emp_dets(session_cod_contrato));
            if (consucode='002433' and proceso='SEL') or (consucode='002433' and proceso='ABR') or (consucode='002433' and proceso='COM') then
-                  
+
                    lb_validacion_rnp2 := f_valida_rnp_contrato(proveedor,nconvoca,ag_fec_doc_adicional,npropuesta,lb_estado_inha);
-                   
+
                     /*      if lb_validacion_rnp2 then
                                 men:='esta habilitado';
-                                
+
                                 else
                                  men:='esta inhabilitado';
-                                
+
                             end if;
-                        
+
                             begin
                                    usp_print('
                                    <script language=javascript>
@@ -4042,49 +4043,49 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                                    ');
                                    return;
                              end;*/
-                        
+
                       if  lb_validacion_rnp2 then
-                              
+
                                                                        --aqui comienza el proceso para grabar
                        /* 003-2019*/
                 -- Verificamos los montos maximos
                       reg_procesos.PKU_GESTOR_CONT_FUNCIONES_JS_3.js_script(' var _error = 0; ');
-                
+
                       ln_cod_contrato          := TO_NUMBER (ag_cod_contrato);
-                
+
                       SELECT COUNT(1)INTO ln_ley_29564 FROM REG_PROCESOS.CONTRATO_VALIDACIONES WHERE CODCONSUCODE = session__eue_codigo;
                       SELECT M_CONTRATADO INTO ln_monto_contrato FROM CONTRATO WHERE N_COD_CONTRATO = ln_cod_contrato;
-                
+
                       SELECT nvl(SUM(monto_adicional),0) INTO ln_sum_adicional_actual FROM reg_procesos.adicional_reduccion WHERE n_cod_Contrato = ln_cod_contrato  and IND_ADICIONAL_REDUCCION =1;
-                
+
                       ln_sum_adicional_total   := ln_sum_adicional_actual + ag_monto_adicional;
                 --- Hallamos el % que le corresponde
-                
+
                       IF (to_number(ag_cod_entid_autoriza) = to_number(session__eue_codigo) and to_number(session__eue_codigo) <> 8 )THEN
-                
-                
-                
+
+
+
                                     SELECT tope INTO ln_porcentaje_total FROM REG_PROCESOS.ADICIONAL_REDUCCION_TOPES WHERE ind_adicional_reduccion = 1 AND CODOBJETO = ag_cod_objeto AND CGR = 2;
-                
+
                                     ln_sum_adicional_MAX := ln_monto_contrato * (ln_porcentaje_total/100);
                           ELSE
-                
+
                                   if ag_cod_objeto = 4 and ag_tipo_consultoria = 2  then
-                
+
                                            ln_sum_adicional_MAX := 9999999999 ;
-                
+
                                   else
-                
-                
+
+
                                            SELECT tope INTO ln_porcentaje_total FROM REG_PROCESOS.ADICIONAL_REDUCCION_TOPES WHERE ind_adicional_reduccion = 1 AND CODOBJETO = ag_cod_objeto AND CGR = 1;
-                
-                
+
+
                                            ln_sum_adicional_MAX := ln_monto_contrato * (ln_porcentaje_total/100);
-                
+
                                   end if ;
-                
-                
-                
+
+
+
                       END IF;
                       --- Validar Tope Maximo
                     -- Memo 368-2011/spla-raa
@@ -4092,14 +4093,14 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                         IF ( ln_ley_29564 = 0 )  THEN
                           IF ln_sum_adicional_total > ln_sum_adicional_MAX  THEN
                              REG_PROCESOS.PKU_SS_MOD_CONTRATOS.f_msg_pantalla('El monto adicional supera el limite permitido ','''DoNewAdicionalEdit''');
-                
+
                              return;
                           END IF;
                         END IF;
                     end if;
-                
-                
-                
+
+
+
                   -- Verificamos que el adicional o reduccion se encuentre dentro de la vigencia del contrato
                       select count(1) into  ln_valida_rango
                         from reg_procesos.contrato x
@@ -4107,12 +4108,12 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                          and trunc(to_date(ag_fec_doc_adicional,'dd/mm/yyyy')) >= trunc(x.f_vigencia_ini)
                       /*   and trunc(to_date(ag_fec_doc_adicional,'dd/mm/yyyy')) <= trunc(x.f_vigencia_fin);*/
                       and trunc(to_date(ag_fec_doc_adicional,'dd/mm/yyyy')) <= trunc(pku_ss_utiles.f_get_fecha_fin_amp(ag_cod_contrato));
-                
-                
-                
-                
+
+
+
+
                       IF ln_valida_rango = 0  THEN
-                
+
                             usp_print(
                             pku_procesos_comun.f_putMensaje(
                                 'La fecha del Adicional o Reduccion se debe encontrar dentro de la vigencia del contrato.
@@ -4121,19 +4122,19 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                         );
                         RETURN;
                       END IF;
-                
+
                       lv_codentidadautoriza    := TO_CHAR (ag_cod_entid_autoriza);
                       ln_ind_siaf              := TO_NUMBER (ag_ind_siaf);
                       -- variables para la insercion en la tabla adicion_reduccion
-                
+
                       ln_tipo_doc_adicional    := TO_NUMBER (ag_tipo_doc_adicional);
                       ln_cod_moneda            := TO_NUMBER (ag_codmoneda);
                       ln_codmoneda_v           := TO_NUMBER (ag_codmoneda_v);
                       ln_ind_adred             := 1;
-                
-                
+
+
                 ------------------------- Obtiene el tipo de archivo JGARCIAF -------------------------------------
-                
+
                    BEGIN
                         --select cod_tipo_file into lv_codtipofile From Reg_procesos.tipo_archivo Where ext_tipo_file=upper(substr(pfiletoupload_file1,length(pfiletoupload_file1)-2,length(pfiletoupload_file1)));
                         select cod_tipo_file into lv_codtipofile From Reg_procesos.tipo_archivo Where ext_tipo_file=upper(substr(pfiletoupload_file1,(INSTR(pfiletoupload_file1,'.',1) + 1)));
@@ -4146,12 +4147,12 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                             );
                            return;
                    END;
-                
+
                    ------------------------- Fin de Obtiene el tipo de archivo  JGARCIAF------------------------------
-                
-                
-                
-                
+
+
+
+
                       ---------- Ingresar el adicional o reduccion  ----------
                       INSERT INTO reg_procesos.adicional_reduccion
                                   (n_cod_contrato,
@@ -4174,25 +4175,25 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                                    ag_concepto_adicional, ag_nro_doc_cgr,
                                    TO_DATE (ag_fec_doc_cgr, 'dd/mm/yyyy'), lv_codentidadautoriza,
                                    ag_descripcion);
-                
-                
+
+
                 ---- jgarciaf inicio
-                     
+
                    lv_anhoentidad := session__anhoentidad;
                    lv_eue_codigo := session__eue_codigo;    
                    lv_directorio := gpk_directorio_adicred;
                    lv_ruta := lv_directorio||'\'||lv_anhoentidad||'\'||lpad(lv_eue_codigo,6,'0')||'\'||session__n_convoca; 
-                  
+
                    usp_print('
                      <input type="hidden" name=WriteFileDirectoryDynamic value="'||lv_ruta||'" type=text>
                      <input type="hidden" name=WriteFileDirectory value="FileSinged" type=text>
                    ');
-                   
+
                      BEGIN
-                  
-                             
+
+
                      select max(Cod_Adicional) into lv_id_adi from Adicional_Reduccion where n_cod_contrato=ln_cod_contrato;
-                            
+
                         REG_PROCESOS.PKU_GESTOR_CONT_UTILES_2.p_insUploadAdicional(
                               reg_procesos.f_get_min_n_convoca(session__N_CONVOCA),
                               TO_DATE (ag_fec_doc_adicional,reg_procesos.pku_ss_constantes.gv_formato_fecha_hora24),
@@ -4205,7 +4206,7 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                               WriteFileDirectoryDynamic,
                               ln_cod_contrato,
                               lv_id_adi);
-                              
+
                    EXCEPTION
                       WHEN OTHERS THEN
                           usp_print(
@@ -4214,12 +4215,12 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                                     '')
                             );
                            return;
-                
+
                    END;
-                   
+
                 ----- jgarciaf fin
-                
-                
+
+
                       ------------- Ingresar la valorizacion ----------------
                       IF (ag_fec_valorizacion IS NOT NULL) THEN
                          BEGIN
@@ -4260,51 +4261,51 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                                          ag_fec_valorizacion );
                          END;
                       END IF;
-                
-                
+
+
                     ------- Registro de Items del Adicional/Reduccion ------------------
                     usp_registra_items( ag_trama_items, reg_procesos.pk_convocatoria.getcodadicional,ln_cod_contrato,ln_cod_moneda);
-                
+
                  ------- Actualizar Campos del Contrato: Transferencia al MEF -------
                     IF (ln_ind_siaf = 1)THEN
-                
+
                     ------- Actualiza Contrato --------
                        BEGIN
                           UPDATE reg_procesos.adicional_reduccion
                              SET id_operacion  = reg_procesos.pk_convocatoria.getidoperacion
                            WHERE cod_adicional = reg_procesos.pk_convocatoria.getcodadicional;
-                
-                
+
+
                           reg_procesos.pk_trans_mef.sp_ws_mef_send_operacion
                                                 (reg_procesos.pk_convocatoria.getidoperacion);
-                
+
                         update CONTRATO_OPERACION
                            set CONTRATO_OPERACION.Usuario_Transfer = session__userid
                         where CONTRATO_OPERACION.id_operacion = reg_procesos.pk_convocatoria.getidoperacion;
-                
+
                     --------- Actualiza Calendario --------
                           usp_registra_calendario(ag_trama_calendario);
                        END;
-                
+
                     END IF;
-                
+
                     -- obtener codigo de la valorizacion
                     SELECT reg_procesos.pk_convocatoria.getcodadicional,
                            reg_procesos.pk_convocatoria.getcodvalorizacion
                       INTO ln_cod_adicional,
                            ln_cod_valorizacion
                       FROM DUAL;
-                
+
                     --- actualizo el codigo de valorizacion
                     UPDATE reg_procesos.adicional_reduccion
                        SET cod_valorizacion = ln_cod_valorizacion
                      WHERE cod_adicional = ln_cod_adicional;
-                
+
                     COMMIT;
-                
+
                     pku_ss_make_contrato.usp_calcula_costofinal (ag_cod_contrato);
-                
-                
+
+
                     usp_print
                        ('
                      <script language="javascript">
@@ -4313,20 +4314,20 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                                   thisform.submit();
                      </script>'
                        );
-                
-               
-                 
+
+
+
                  --aqui termina el registrar
 
-                             
+
                         else 
                           begin  
-                          
-                                  
-                          
+
+
+
                                   if lb_error  then
-                                       
-                                       
+
+
                                         usp_print('
                                    <script language=javascript>
                                      alert("Sistema externo no disponible, vuelva a intentar");
@@ -4335,7 +4336,7 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                                    </script>
                                    ');
                                    return;
-                                       
+
                                    else
                                    usp_print('
                                    <script language=javascript>
@@ -4345,54 +4346,54 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                                    </script>
                                    ');
                                    return;
-                                   
+
                                    end if;
                              end;
                              return;
                         end if;
-              
+
              else 
-                        
+
                                          --aqui comienza el proceso para grabar
                        /* 003-2019*/
                 -- Verificamos los montos maximos
                       reg_procesos.PKU_GESTOR_CONT_FUNCIONES_JS_3.js_script(' var _error = 0; ');
-                
+
                       ln_cod_contrato          := TO_NUMBER (ag_cod_contrato);
-                
+
                       SELECT COUNT(1)INTO ln_ley_29564 FROM REG_PROCESOS.CONTRATO_VALIDACIONES WHERE CODCONSUCODE = session__eue_codigo;
                       SELECT M_CONTRATADO INTO ln_monto_contrato FROM CONTRATO WHERE N_COD_CONTRATO = ln_cod_contrato;
-                
+
                       SELECT nvl(SUM(monto_adicional),0) INTO ln_sum_adicional_actual FROM reg_procesos.adicional_reduccion WHERE n_cod_Contrato = ln_cod_contrato  and IND_ADICIONAL_REDUCCION =1;
-                
+
                       ln_sum_adicional_total   := ln_sum_adicional_actual + to_number(ag_monto_adicional);
                 --- Hallamos el % que le corresponde
-                
+
                       IF (to_number(ag_cod_entid_autoriza) = to_number(session__eue_codigo) and to_number(session__eue_codigo) <> 8 )THEN
-                
-                
-                
+
+
+
                                     SELECT tope INTO ln_porcentaje_total FROM REG_PROCESOS.ADICIONAL_REDUCCION_TOPES WHERE ind_adicional_reduccion = 1 AND CODOBJETO = ag_cod_objeto AND CGR = 2;
-                
+
                                     ln_sum_adicional_MAX := ln_monto_contrato * (ln_porcentaje_total/100);
                           ELSE
-                
+
                                   if ag_cod_objeto = 4 and ag_tipo_consultoria = 2  then
-                
+
                                            ln_sum_adicional_MAX := 9999999999 ;
-                
+
                                   else
-                
-                
+
+
                                            SELECT tope INTO ln_porcentaje_total FROM REG_PROCESOS.ADICIONAL_REDUCCION_TOPES WHERE ind_adicional_reduccion = 1 AND CODOBJETO = ag_cod_objeto AND CGR = 1;
-                
-                
+
+
                                            ln_sum_adicional_MAX := ln_monto_contrato * (ln_porcentaje_total/100);
-                
+
                                   end if ;
-                
-                
-                
+
+
+
                       END IF;
                       --- Validar Tope Maximo
                     -- Memo 368-2011/spla-raa
@@ -4400,14 +4401,14 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                         IF ( ln_ley_29564 = 0 )  THEN
                           IF ln_sum_adicional_total > ln_sum_adicional_MAX  THEN
                              REG_PROCESOS.PKU_SS_MOD_CONTRATOS.f_msg_pantalla('El monto adicional supera el limite permitido ','''DoNewAdicionalEdit''');
-                
+
                              return;
                           END IF;
                         END IF;
                     end if;
-                
-                
-                
+
+
+
                   -- Verificamos que el adicional o reduccion se encuentre dentro de la vigencia del contrato
                       select count(1) into  ln_valida_rango
                         from reg_procesos.contrato x
@@ -4415,12 +4416,12 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                          and trunc(to_date(ag_fec_doc_adicional,'dd/mm/yyyy')) >= trunc(x.f_vigencia_ini)
                       /*   and trunc(to_date(ag_fec_doc_adicional,'dd/mm/yyyy')) <= trunc(x.f_vigencia_fin);*/
                       and trunc(to_date(ag_fec_doc_adicional,'dd/mm/yyyy')) <= trunc(pku_ss_utiles.f_get_fecha_fin_amp(ag_cod_contrato));
-                
-                
-                
-                
+
+
+
+
                       IF ln_valida_rango = 0  THEN
-                
+
                             usp_print(
                             pku_procesos_comun.f_putMensaje(
                                 'La fecha del Adicional o Reduccion se debe encontrar dentro de la vigencia del contrato.
@@ -4429,19 +4430,19 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                         );
                         RETURN;
                       END IF;
-                
+
                       lv_codentidadautoriza    := TO_CHAR (ag_cod_entid_autoriza);
                       ln_ind_siaf              := TO_NUMBER (ag_ind_siaf);
                       -- variables para la insercion en la tabla adicion_reduccion
-                
+
                       ln_tipo_doc_adicional    := TO_NUMBER (ag_tipo_doc_adicional);
                       ln_cod_moneda            := TO_NUMBER (ag_codmoneda);
                       ln_codmoneda_v           := TO_NUMBER (ag_codmoneda_v);
                       ln_ind_adred             := 1;
-                
-                
+
+
                 ------------------------- Obtiene el tipo de archivo JGARCIAF -------------------------------------
-                
+
                    BEGIN
                         --select cod_tipo_file into lv_codtipofile From Reg_procesos.tipo_archivo Where ext_tipo_file=upper(substr(pfiletoupload_file1,length(pfiletoupload_file1)-2,length(pfiletoupload_file1)));
                         select cod_tipo_file into lv_codtipofile From Reg_procesos.tipo_archivo Where ext_tipo_file=upper(substr(pfiletoupload_file1,(INSTR(pfiletoupload_file1,'.',1) + 1)));
@@ -4454,12 +4455,12 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                             );
                            return;
                    END;
-                
+
                    ------------------------- Fin de Obtiene el tipo de archivo  JGARCIAF------------------------------
-                
-                
-                
-                
+
+
+
+
                       ---------- Ingresar el adicional o reduccion  ----------
                       INSERT INTO reg_procesos.adicional_reduccion
                                   (n_cod_contrato,
@@ -4482,25 +4483,25 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                                    ag_concepto_adicional, ag_nro_doc_cgr,
                                    TO_DATE (ag_fec_doc_cgr, 'dd/mm/yyyy'), lv_codentidadautoriza,
                                    ag_descripcion);
-                
-                
+
+
                 ---- jgarciaf inicio
-                     
+
                    lv_anhoentidad := session__anhoentidad;
                    lv_eue_codigo := session__eue_codigo;    
                    lv_directorio := gpk_directorio_adicred;
                    lv_ruta := lv_directorio||'\'||lv_anhoentidad||'\'||lpad(lv_eue_codigo,6,'0')||'\'||session__n_convoca; 
-                  
+
                    usp_print('
                      <input type="hidden" name=WriteFileDirectoryDynamic value="'||lv_ruta||'" type=text>
                      <input type="hidden" name=WriteFileDirectory value="FileSinged" type=text>
                    ');
-                   
+
                      BEGIN
-                  
-                             
+
+
                      select max(Cod_Adicional) into lv_id_adi from Adicional_Reduccion where n_cod_contrato=ln_cod_contrato;
-                            
+
                         REG_PROCESOS.PKU_GESTOR_CONT_UTILES_2.p_insUploadAdicional(
                               reg_procesos.f_get_min_n_convoca(session__N_CONVOCA),
                               TO_DATE (ag_fec_doc_adicional,reg_procesos.pku_ss_constantes.gv_formato_fecha_hora24),
@@ -4513,7 +4514,7 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                               WriteFileDirectoryDynamic,
                               ln_cod_contrato,
                               lv_id_adi);
-                              
+
                    EXCEPTION
                       WHEN OTHERS THEN
                           usp_print(
@@ -4522,12 +4523,12 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                                     '')
                             );
                            return;
-                
+
                    END;
-                   
+
                 ----- jgarciaf fin
-                
-                
+
+
                       ------------- Ingresar la valorizacion ----------------
                       IF (ag_fec_valorizacion IS NOT NULL) THEN
                          BEGIN
@@ -4568,51 +4569,51 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                                          ag_fec_valorizacion );
                          END;
                       END IF;
-                
-                
+
+
                     ------- Registro de Items del Adicional/Reduccion ------------------
                     usp_registra_items( ag_trama_items, reg_procesos.pk_convocatoria.getcodadicional,ln_cod_contrato,ln_cod_moneda);
-                
+
                  ------- Actualizar Campos del Contrato: Transferencia al MEF -------
                     IF (ln_ind_siaf = 1)THEN
-                
+
                     ------- Actualiza Contrato --------
                        BEGIN
                           UPDATE reg_procesos.adicional_reduccion
                              SET id_operacion  = reg_procesos.pk_convocatoria.getidoperacion
                            WHERE cod_adicional = reg_procesos.pk_convocatoria.getcodadicional;
-                
-                
+
+
                           reg_procesos.pk_trans_mef.sp_ws_mef_send_operacion
                                                 (reg_procesos.pk_convocatoria.getidoperacion);
-                
+
                         update CONTRATO_OPERACION
                            set CONTRATO_OPERACION.Usuario_Transfer = session__userid
                         where CONTRATO_OPERACION.id_operacion = reg_procesos.pk_convocatoria.getidoperacion;
-                
+
                     --------- Actualiza Calendario --------
                           usp_registra_calendario(ag_trama_calendario);
                        END;
-                
+
                     END IF;
-                
+
                     -- obtener codigo de la valorizacion
                     SELECT reg_procesos.pk_convocatoria.getcodadicional,
                            reg_procesos.pk_convocatoria.getcodvalorizacion
                       INTO ln_cod_adicional,
                            ln_cod_valorizacion
                       FROM DUAL;
-                
+
                     --- actualizo el codigo de valorizacion
                     UPDATE reg_procesos.adicional_reduccion
                        SET cod_valorizacion = ln_cod_valorizacion
                      WHERE cod_adicional = ln_cod_adicional;
-                
+
                     COMMIT;
-                
+
                     pku_ss_make_contrato.usp_calcula_costofinal (ag_cod_contrato);
-                
-                
+
+
                     usp_print
                        ('
                      <script language="javascript">
@@ -4621,13 +4622,13 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
                                   thisform.submit();
                      </script>'
                        );
-                
-               
-                 
+
+
+
                  --aqui termina el registrar
-              
+
            end if;
-      
+
 
    end ;
 
@@ -4905,7 +4906,7 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
       ctipoinstrumento              ref_cursor;
       -- Combos
       lv_combo_tipoinstrumento      varchar2(4000);
-      
+
       -- variables de los datos del upload--jgarciaf
       ln_NCOD_DOC                    NUMBER;-----jgarciaf
       lv_DOC_URL                     VARCHAR2(250);----jgarciaf
@@ -5054,7 +5055,7 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
 
 
  -- datos del upload del contrato
-   
+
    REG_PROCESOS.PKU_GESTOR_CONT_UTILES_2.P_last_upload_reduccion( session__cod_contrato, session__N_CONVOCA, ln_NCOD_DOC,lv_DOC_URL,lv_FEC_UPLOAD ,lv_USER_UPLOAD,lv_FEC_APROB ,lv_EXT_TIPO_FILE,lv_ICON_TIPO_FILE, lv_DOC_OBS,ag_cod_adicional);
 
 ---jgarciaf
@@ -5082,16 +5083,16 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
            <td class=c2>'||lv_combo_tipoinstrumento||'<input size=12 class="form-control" name="ag_nro_doc_adicional" value="'|| ad_nro_doc_adicional|| '" onblur="ValidarString(this, ''Nmero de Documento'');" /></td>
            <td class=c3>Documento autorizado por la Entidad</td>
         </tr>
-        
-        
-        <tr align=center> <td colspan="4" align=center>'|| case when lv_DOC_URL is not null then '<br><a target=_blank href="DownloadFileServlet?fileName='||lv_DOC_URL||'">
+
+
+        <tr align=center> <td colspan="4" align=center>'|| case when lv_DOC_URL is not null then '<br><a target=_blank href="'||url_azure_app||lv_DOC_URL||'">
                     <img src="'||lv_ICON_TIPO_FILE||'" border="0" width="25" height="25"/></a>'end || case when lv_FEC_UPLOAD is not null then ' Registrado el '||lv_FEC_UPLOAD end||
                     '<input type="hidden" name="pfiletoupload_file1" value=""/>
         </td>
         </tr>
-      
-       
-        
+
+
+
         <tr>
            <td class=c1>Fecha del Documento autorizado por la Entidad</td>
            <td class=c2>
@@ -5212,7 +5213,7 @@ PROCEDURE usp_registra_calendario(ag_trama_calendario varchar2)
 
 
    // graba las modificaciones realizadas a la Reduccion
-   
+
    function grabarRed(pagina){
    if(thisform.ag_concepto==null){
           thisform.ag_concepto_adicional.value=""

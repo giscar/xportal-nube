@@ -1,13 +1,12 @@
-set scan off;
 CREATE OR REPLACE PACKAGE                "PKU_GESTOR_CONT_UTILES_2" 
   IS
   type ref_cursor is ref cursor;
-  
+
    function f_cClasesGarantia return ref_cursor;  
    function f_cClaseGarRazon( ag_clase number ) return ref_cursor;
 
    FUNCTION f_get_tipo_validos( ag_n_convoca NUMBER)    RETURN NUMBER ;
-   
+
 /*******************************************************************************
 / Procedimiento : f_list_contratos
 / Proposito :    Contratos , complementarios o prorrogas relacionados a un contrato original
@@ -26,7 +25,7 @@ function f_get_anhos_v3(pv_select varchar, gv_entidad VARCHAR2) return varchar;
 --------------------------------------------------------------------------------
    FUNCTION f_getcodobjeto (ag_n_convoca IN NUMBER)
       RETURN NUMBER;  
-   
+
  /*******************************************************************************
 / Procedimiento : f_ctipo_causa
 / Proposito :
@@ -222,7 +221,7 @@ procedure f_postor_paq_obra(ag_n_propuesta VARCHAR2, ag_n_convoca number);
 / Darwin Rodriguez    11-11-2013 17:08  Version Inicial
 /******************************************************************************/
   function f_get_monedas_item (ag_nconvoca varchar2) return ref_cursor;
-  
+
 /*******************************************************************************
 / Procedimiento : f_op_contrato
 / Proposito :  monedas
@@ -320,7 +319,7 @@ ag_descripcion out varchar2);
 /******************************************************************************/
 
   function f_nom_sancion(ag_cod_sancion number) return varchar2;
-  
+
 /*******************************************************************************
 / Procedimiento : P_Mail_ConvocatoriaDoc
 / Proposito :xo
@@ -409,7 +408,7 @@ PROCEDURE P_last_upload_contrato(
           AG_EXT_TIPO_FILE  OUT VARCHAR2,
           AG_ICON_TIPO_FILE OUT VARCHAR2,
           AG_DOC_OBS        OUT VARCHAR2 );
-          
+
 
 
 /*******************************************************************************
@@ -458,7 +457,7 @@ lv_id_adi                   NUMBER
 
 
 /*  INICIO  ALEXANDER*/
-  
+
    PROCEDURE p_insUploadprorroga(
 ag_n_convoca       reg_procesos.convocatoria_doc.n_convoca%type,
 ag_fec_aprob       reg_procesos.convocatoria_doc.fec_aprob%type,
@@ -472,7 +471,7 @@ ag_ruta_file               varchar2,
 ag_cod_contrato            varchar2,
 lv_id_prorroga                    NUMBER
 );
-  
+
 /* FIN ALEXANDER*/
 
 /*******************************************************************************
@@ -496,7 +495,7 @@ PROCEDURE P_last_upload_adicional(
           AG_ICON_TIPO_FILE OUT VARCHAR2,
           AG_DOC_OBS        OUT VARCHAR2,
            ag_cod_adicional         NUMBER
-         
+
 );
 
 
@@ -557,7 +556,7 @@ PROCEDURE   usp_XmlItemsNewContrato(
          ag_n_propuesta           VARCHAR2, 
          ag_n_convoca              NUMBER,       
          ag_cod_consucode          VARCHAR2 );
-         
+
 
 
 /*******************************************************************************
@@ -638,7 +637,7 @@ function f_cMiembros_postor(ag_n_propuesta varchar2) return ref_cursor;
      ag_COD_NU_SEG     OUT   VARCHAR2,
      ag_DES_NU_SEG     OUT   VARCHAR2
    );
-   
+
 /*******************************************************************************
 / Procedimiento : f_getXmlItemsManContrato
 / Proposito :    
@@ -658,27 +657,27 @@ function f_getXmlItemsManContrato(
 --- CONTRATOS
 --------------------------------------------------------------------------------
  -- Obtiene el indicador de publicacion del contrato
-   
+
  FUNCTION f_get_indPubContrato (ag_cod_contrato IN NUMBER) RETURN NUMBER;         
 
 ------------------------------------------------------------------------------------------------------------------------
 ----- RESOLUCIONES   
 ------------------------------------------------------------------------------------------------------------------------
- 
+
  -- Valida si ya se registro una resolucion de tipo total
  FUNCTION f_valida_resolucionTotal(ag_n_cod_contrato number) RETURN BOOLEAN;
- 
+
  FUNCTION f_ctipo_resolucion(tipo_operacion number) return ref_cursor;
- 
+
 ------------------------------------------------------------------------------------------------------------------------
 ----- ADELANTOS   
 ------------------------------------------------------------------------------------------------------------------------
 
  FUNCTION f_get_topeadelanto(ag_cod_tipo_adelanto NUMBER, ag_codobjeto number) RETURN NUMBER;
- 
+
  FUNCTION f_get_MontoAdelanto(AG_N_COD_CONTRATO NUMBER,ag_cod_tipo_adelanto NUMBER, ag_n_adelanto number default null, ag_adelanto_actual number default null) RETURN NUMBER;
 
-               
+
 
 ------------------------------------------------------------------------------------------------------------------------
 ----- PRORROGAS ------ COMPLEMENTARIOS   
@@ -687,12 +686,12 @@ function f_getXmlItemsManContrato(
          ag_n_contrato            NUMBER,
          ag_ind_com_pro           NUMBER
        ) return VARCHAR2;
- 
+
  FUNCTION f_getXmlItemsComPro(
          ag_n_contrato            NUMBER,
          ag_cod_Adicional         NUMBER ) 
          return VARCHAR2;
-         
+
  FUNCTION f_valida_operaciones(
          ag_codobjeto             NUMBER, 
          ag_tipocontrato          NUMBER 
@@ -712,7 +711,7 @@ function f_getXmlItemsManContrato(
          ag_cod_contrato IN NUMBER, 
          ag_cod_operacion NUMBER)
          return NUMBER;
-                     
+
  FUNCTION f_devuelve_num_proc(
          proctipo NUMBER,
          gv_entidad varchar2,
@@ -725,7 +724,7 @@ function f_getXmlItemsManContrato(
 ------------------------------------------------------------------------------------------------------------------------
 
   FUNCTION f_get_sum_monto_adicional(ag_ncodcontrato number) RETURN NUMBER;
-  
+
   FUNCTION f_get_sum_monto_reajustes(ag_ncodcontrato number) RETURN NUMBER;
 
   FUNCTION f_get_sum_monto_gastos(ag_ncodcontrato number)    RETURN NUMBER;
@@ -746,13 +745,13 @@ FUNCTION f_getXmlCalContrato(
 
 FUNCTION f_get_exo_causas_con(ag_n_convoca number) 
          RETURN NUMBER;
-         
+
 FUNCTION f_get_anhos(pv_select varchar, gv_entidad VARCHAR2) 
          return varchar;         
 
 FUNCTION f_get_fecha_fin_amp(ag_cod_contrato varchar2) 
      RETURN  date;
-     
+
 FUNCTION F_VALIDA_FERIADO (AG_FECHA IN DATE)
       RETURN NUMBER;
 
@@ -762,25 +761,25 @@ FUNCTION f_get_fechafin_vig(ag_cod_contrato IN NUMBER,ag_cod_operacion number) R
 ------------------------------------------------------------------------------------------------------------------------
 ------ REAJUSTES -------    
 ------------------------------------------------------------------------------------------------------------------------
- 
+
 procedure f_getXmlItemsReajuste_sel(
          ag_n_contrato            NUMBER,
          ag_tipo_reajuste         VARCHAR2
        ) ;
-                  
+
 FUNCTION f_getXmlItemsReajuste(
          ag_cod_Contrato          NUMBER,
          ag_cod_Reajuste          NUMBER ) RETURN VARCHAR2;
-         
+
 ------------------------------------------------------------------------------------------------------------------------
 ------ CODIGO PRESUPUESTAL  -------    
 ------------------------------------------------------------------------------------------------------------------------         
 FUNCTION f_getXmlItemsCodPresu_sel(
-         
+
        anho_entidad        varchar2, 
        ag_n_convoca        varchar2, 
        ag_codconsucode     varchar2 ) RETURN VARCHAR2;        
-       
+
 FUNCTION f_getXmlItemsCodPresu(
        anho_entidad        varchar2, 
        ag_codconsucode     varchar2,
@@ -825,7 +824,7 @@ function f_get_monto_CC (tipo number, propuesta number,convocatoria  number, ite
 
  FUNCTION f_getXmlCalAdionReduc(
          ag_id_operacion            NUMBER ) RETURN VARCHAR2;
-         
+
  FUNCTION f_getXmlItemsAdionReducSel(
          ag_n_contrato            NUMBER,
          ag_entidad_sel           VARCHAR2,
@@ -840,7 +839,7 @@ function f_get_monto_CC (tipo number, propuesta number,convocatoria  number, ite
          ln_cod_obj               NUMBER, 
          t_tipo_consultoria       NUMBER,
          n_entidad_autoriza     NUMBER) return VARCHAR2;     
-                               
+
     PROCEDURE   usp_XmlItemsNewContrato_v3(
          ag_n_propuesta            VARCHAR2,
          ag_n_convoca              number,
@@ -858,12 +857,13 @@ PROCEDURE   usp_XmlItemsNewContrato2(
          ag_n_propuesta            VARCHAR2,
          ag_n_convoca              NUMBER,
          ag_cod_consucode          VARCHAR2 );
-         
+
 FUNCTION f_get_tipo_validos_v3( ag_n_convoca NUMBER)
    RETURN NUMBER;
 
 
 END;
+
 /
 
 
@@ -1056,7 +1056,7 @@ is
   select distinct anhoentidad  from reg_procesos.convocatorias where codconsucode = lpad(trim(gv_entidad),6,'0')
   union
   select distinct eue_anho anhoentidad   from REG_PROCESOS.convocatoria_item_plan b where eue_codigo = gv_entidad and eue_anho >= 1995;
-  
+
 
 begin
 
@@ -1071,13 +1071,13 @@ function f_get_anhos_v3(pv_select varchar, gv_entidad VARCHAR2) return varchar
 is
     lv_rtn varchar(32000):= null;  
     cursor c_anhos is
-    
+
   --  SELECT distinct c_anocon anhoentidad
   --  FROM PRO.TBL_ACT_expediente@AIXSEACE e
   --  where e.n_id_organ = lpad(gv_entidad,6,'0')
   --  union
   --  select distinct eue_anho anhoentidad   from REG_PROCESOS.convocatoria_item_plan b where eue_codigo = lpad(gv_entidad,6,'0') and eue_anho >= 1995;
-    
+
   -- Formato 1209_OP_SEACE2_CON 
   -- MAMP 28/04/2015 
   -- No se visualiza el proceso en la consola de contratos
@@ -1283,7 +1283,7 @@ BEGIN
                   reg_procesos.f_get_min_n_convoca(ag_n_convoca),
                   '901',
                   ag_cod_tipo_file,
-                  ag_ruta_file ||ag_doc_nombre ,
+                  ag_ruta_file ||'/'||ag_doc_nombre ,
                   ag_doc_nombre,
                   sysdate,
                   session__userid,
@@ -1295,14 +1295,14 @@ BEGIN
                   lv_id_adi,
                   NULL);
 
-    
+
      END IF;
 END;
 
 
 --inicio alex
 
-   
+
      /*******************************************************************************
 / Procedimiento : p_insUploadprorroga
 / Proposito :xo
@@ -1369,11 +1369,11 @@ BEGIN
                   NULL,
                    lv_id_prorroga);
 
-    
+
      END IF;
 END;
 
-   
+
 
 --fin alex
 
@@ -1440,7 +1440,7 @@ END;
 
 
 --inicio aramirez
-     
+
        /*******************************************************************************
 / Procedimiento : f_get_last_upload_PRORROGA
 / Proposito     : Obtiene el ultimo archivo del Adicional del contrato
@@ -1506,7 +1506,7 @@ END;
 
 
 --inicio aramirez
-     
+
        /*******************************************************************************
 / Procedimiento : f_get_last_upload_complementario
 / Proposito     : Obtiene el ultimo archivo del Adicional del contrato
@@ -1607,7 +1607,7 @@ IS
 BEGIN
 
         ln_cont := 0;
-         
+
  --  SELECT COUNT(1) INTO ln_cont FROM REG_PROCESOS.Convocatoria_Doc WHERE N_CONVOCA = ag_n_convoca AND N_COD_CONTRATO = ag_cod_contrato;
 
    IF ln_cont = 0  THEN
@@ -1632,7 +1632,7 @@ BEGIN
                   reg_procesos.f_get_min_n_convoca(ag_n_convoca),
                   '900',
                   ag_cod_tipo_file,
-                  ag_ruta_file ||ag_doc_nombre ,
+                  ag_ruta_file||'/'||ag_doc_nombre ,
                   ag_doc_nombre,
                   sysdate,
                   session__userid,
@@ -1643,7 +1643,7 @@ BEGIN
                   ag_cod_contrato,
                   lv_id_redu,
                   null);
-                    
+
 
      END IF;
 END;
@@ -1679,7 +1679,7 @@ IS
 BEGIN
 
         ln_cont := 0;
-         
+
  --  SELECT COUNT(1) INTO ln_cont FROM REG_PROCESOS.Convocatoria_Doc WHERE N_CONVOCA = ag_n_convoca AND N_COD_CONTRATO = ag_cod_contrato;
 
    IF ln_cont = 0  THEN
@@ -1715,7 +1715,7 @@ BEGIN
                   ag_cod_contrato,
                   null,
                   lv_id_redu);
-                    
+
 
      END IF;
 END;
@@ -1902,7 +1902,7 @@ FUNCTION f_get_tipo_validos_v3( ag_n_convoca NUMBER)
    RETURN NUMBER IS
      ln_cont NUMBER;
    BEGIN
-  
+
 
         select count(1)  cont into ln_cont
         from convocatorias  cc
@@ -2016,16 +2016,16 @@ where co.n_cod_contrato = ag_cod_contrato ;*/
         lv_rtn varchar(50):= '';
         vc_cant number;
 
-    
+
 
     cursor items_contrato ( vc_cod_contrato number ) is
         select trim(to_char(c.proc_item, '99999999')) proc_item
         from reg_procesos.item_contrato c
         where  c.n_cod_contrato = vc_cod_contrato
         order by proc_item;
-    
+
     begin
-    
+
     for item in items_contrato ( ag_cod_contrato ) loop
         lv_rtn := lv_rtn||item.proc_item;
         if( to_number(pku_procesos_comun.f_maxitems(ag_cod_contrato)) != to_number(item.proc_item) ) then
@@ -2046,20 +2046,20 @@ where co.n_cod_contrato = ag_cod_contrato ;*/
    begin
       -- De acuerdo a Memorando 1093-2014/SDP se debe agregar Contrato Complementario x Item(s)
       IF ag_cod_operacion = 6 THEN
-      
+
           select count(1) INTO LN_CONT from (
           select c1.n_convoca,c1.proc_item from reg_procesos.item_contrato c1 where n_cod_contrato in (ag_cod_contrato)
           minus
           select c2.n_convoca,c2.proc_item from reg_procesos.item_contrato c2 where c2.n_cod_contrato in (select cn.n_cod_contrato from reg_procesos.contrato cn where cn.n_cod_contrato_de_renovac=ag_cod_contrato));
-          
+
           IF LN_CONT > 0 THEN
              RETURN 0;
           ELSE
              RETURN 1;
           END IF;
-          
+
      ELSE
-     
+
       select count(1) INTO LN_CONT
         from reg_procesos.contrato c
       inner join reg_procesos.contrato co
@@ -2785,7 +2785,7 @@ begin
     select count(1) into esObrasPaquete from reg_procesos.convocatorias c 
     inner join item_convoca ic on ic.n_convoca=c.n_convoca and ic.cod_tipo_detalle_bien=5
     where c.n_convoca = ag_n_convoca and c.codobjeto =3 and ic.proc_item=ag_proc_item;
-    
+
 /*    select count(1) into montovalida from reg_procesos.item_convoca_detalle icd 
     where icd.n_convoca = ag_n_convoca and icd.proc_item=ag_proc_item and icd.nivel5 not in (
     select nvl(nivel5,0) from reg_procesos.item_contrato where n_convoca = ag_n_convoca and proc_item=ag_proc_item); 
@@ -2797,7 +2797,7 @@ begin
     if esObrasPaquete = 1 and montoValida = 0 then
        return -1; 
     end if;
-   
+
     select nvl(sum(monto),0) into montoSuma from reg_procesos.item_contrato where n_convoca =ag_n_convoca and proc_item=ag_proc_item;
 
     return montoSuma;
@@ -2820,17 +2820,17 @@ is
   mensaje varchar2(500);
 
 begin
-      
+
         select count(*) into cantidad from reg_procesos.item_convoca_detalle where n_convoca in (
         select n_convoca from reg_procesos.convocatorias where n_convoca = ag_n_convoca and codobjeto =3) and proc_item in (
         select proc_item from reg_procesos.items_bp where n_propuesta=ag_n_propuesta and n_buenapro in (select n_buenapro from reg_procesos.buena_pro where n_convoca = ag_n_convoca));
-    
+
    if  cantidad > 0 then
      usp_print('<script language=javascript> 
                         alert("Este proveedor cuenta con Ítem Paquete adjudicado, de acuerdo al RLCE cada componente del Ítem Paquete debe tener un contrato independiente, para efectuar ello debe seleccionar el botón ¿Agregar Nuevo Ítem al contrato");
                 </script>');
    end if;
- 
+
 end;
 /*******************************************************************************
 / Procedimiento : f_cTipodeCambio
@@ -3480,7 +3480,7 @@ IS
        ict.proc_item,
      --replace(icv.descripcion,'&','') descripcion,
        REG_PROCESOS.F_GESTOR_REEMPLAZAR_TILDES(icv.descripcion) descripcion,
-       
+
        icv.dep_codigo,
        icv.pro_codigo, icv.dis_codigo, dep.dep_desc,
        pro.pro_desc, dis.dis_desc, unm.unm_desc,unm.unm_codigo,
@@ -3525,17 +3525,17 @@ IS
 BEGIN
 
    ln_min_n_convoca  := REG_PROCESOS.f_get_min_n_convoca(ag_n_convoca);
-   
+
 
    SELECT C.CODCONSUCODE, C.ANHOENTIDAD INTO ln_codconsucode,ln_anhoentidad FROM REG_PROCESOS.CONTRATO C WHERE C.N_COD_CONTRATO = session_COD_CONTRATO;
 
  usp_print('
     <script language="javascript">
-    
-   
+
+
      function PintarLista()
     {
-     
+
         var stable = "";
         var tipo="readonly";
         var color = "";
@@ -3573,21 +3573,21 @@ BEGIN
        stable = stable + "<td align=center width=15%><input name=ag_ubigeo       readonly=true  size = 25 style=''font-size : 1.0em;''></input></td>";
         stable = stable + "<td align=center width=10%><input name=ag_unidad       readonly=true  size = 5  style=''font-size : 1.0em;''></td>";
         stable = stable + "<td align=center width=5%><input name=ag_cantidad  id=ag_cantidad   "+tipo+"  size = 5 onkeyup=''validarInputNumDecimal(this)'' onblur=''validarFormInputNumDecimal(this); this.value = redondear(this.value, 2)''  style=''font-size : 1.0em;''></td>";
-      
+
         stable = stable + "<td align=center width=10%><input name=ag_monto  id=ag_monto     "+tipo+" onkeyup=''validarInputNumDecimal(this)'' onblur=''validarFormInputNumDecimal(this) ; this.value = redondear(this.value, 2)'' size = 10 style=''font-size : 1.0em;''></input></td>";
-        
-        
+
+
         ');
 
 
       usp_print('stable = stable + "</tr></thead> ";
-              
+
         for (var i=0; i< v_lista.length; i++)
         {
             if (v_lista[i].nro_item != "" )
             {
                 color = "";
-                              
+
                 stable = stable + "<tr " + color + ">";
                 stable = stable + "<td><img src=img/eliminar.gif onclick=''EliminarElemento("+i+")'') />";
                 stable = stable + "<input name=ag_unidad_codigo type=hidden value="+v_lista[i].cod_unidad+">&nbsp;</input>";
@@ -3604,23 +3604,23 @@ BEGIN
                 stable = stable + "<td align=left><font size=1>"+v_lista[i].cantidad+"</font></td>";
                 stable = stable + "<td align=left><font size=1>"+v_lista[i].monto+"</font></td>";
                 stable = stable + "</tr>";
-                
+
             }
        }
        stable = stable + "</table>";
        EscribirHTML("divLista", stable);
     }
-    
-    
+
+
     </script>
-    
+
     ');
 
 
    ln_fila        := 1;
 
- 
- 
+
+
 
  IF session_COD_CONTRATO is not null THEN
 
@@ -3642,19 +3642,19 @@ BEGIN
             v_lista[v_lista.length-1].cantidad = "'||xrow.cantidad||'";
             v_lista[v_lista.length-1].monto = "'||replace(xrow.monto, ',', '.')||'";
             v_lista[v_lista.length-1].nivel5 = "";
-            
+
             ');
-            
+
 
  END LOOP;
  usp_print('
             PintarLista();
         </script>');
-        
+
  END IF;
 
- 
- 
+
+
 
 END;
 
@@ -3708,14 +3708,14 @@ IS
         /*fin*/   
       FROM reg_procesos.item_contrato ict left join t_tipo_sist_cont  tsc on ict.cod_sc = tsc.sc_codigo
        left join t_tipo_modcont tmc on ict.cod_mc = tmc.codmodcnt
-       
+
        LEFT JOIN  
           (select distinct nvl(i.c_dsitem,i.c_dcubso) item_paq_desc ,i.n_id_item cod_item,trim(substr(i.c_ccubso,9, 8)) nivel5
           from pro.tbl_act_item@AIXSEACE i
           inner join pro.tbl_act_expediente@AIXSEACE e on i.n_id_expede=e.n_id_expede
           where i.n_id_item in (select n_id_item from reg_procesos.item_contrato where n_cod_contrato in (p_n_cod_contrato)) and e.c_tipobj=64 and i.n_id_padre is not null) ipaq
           ON IPAQ.cod_item=ict.n_id_item,
-       
+
            reg_procesos.item_convoca icv,
            sease.dep_ubigeo dep,
            sease.prov_ubigeo pro,
@@ -3730,7 +3730,7 @@ IS
                          select max(f_registro) from reg_procesos.item_convoca_estado ice2 where ice2.n_convoca_src  = icei.n_convoca_src and ice2.proc_item = icei.proc_item
                        )
            )ice
-           
+
      WHERE ict.n_cod_contrato = p_n_cod_contrato
        AND ict.n_convoca = icv.n_convoca
        AND ict.proc_item = icv.proc_item
@@ -3745,7 +3745,7 @@ IS
        AND ice.proc_item = ict.proc_item
   ORDER BY ict.proc_item;
 
-  
+
 
 BEGIN
 
@@ -3757,8 +3757,8 @@ BEGIN
 
    usp_print('
     <script language="javascript">
-    
-   
+
+
      function PintarLista3()
     {
         var stable = "";
@@ -3769,11 +3769,11 @@ BEGIN
         v_style = "font-size : 0.9em;";
         v_style2 = "font-size : 0.7em;";
         var fecharegistro = "'||fecha_registro||'" ;
-		
+
          if (thisform.ag_tipo_modalidad.value != 0 ){
         tipo = "";
         }
-        
+
         stable = stable + "<table border=0  align=center class=''table table-striped table-bordered table-hover dataTable no-footer'' cellpadding=3 cellspacing=0>";
         stable = stable + "<thead> <tr style=''background-color: #BDBDBD;color:#111111''>";
         stable = stable + "<td align=center  width=5%>&nbsp;</td>";
@@ -3815,18 +3815,18 @@ BEGIN
         /*  Fin 085-2018-SGFS  tchacon */
        stable = stable + "<td align=left width=5%><input name=ag_sis_des        readonly=true  size =25   style=''font-size : 0.9em;''></input></td>";
       stable = stable + "<td align=left width=5%><input name=ag_mod_des        readonly=true  size=25   style=''font-size : 0.9em;''></input></td>";
-        
+
         ');
 
 
  usp_print('stable = stable + "</tr></thead> ";
-              
+
         for (var i=0; i< v_lista3.length; i++)
         {
             if (v_lista3[i].nro_item != "" )
             {
                 color = "";
-                              
+
                 stable = stable + "<tr " + color + ">";
                 stable = stable + "<td width=5%><img src=img/eliminar.gif onclick=''EliminarElemento3("+i+")'') />";
                 /*stable = stable + "<input name=ag_unidad_codigo type=hidden value="+v_lista3[i].cod_unidad+">&nbsp;</input>";
@@ -3849,16 +3849,16 @@ BEGIN
                 stable = stable + "<td align=left width=5%><font size=1>"+v_lista3[i].sc_des+"</font></td>";
                 stable = stable + "<td align=left width=5%><font size=1>"+v_lista3[i].mc_des+"</font></td>";
                 stable = stable + "</tr>";
-                
+
             }
        }
        stable = stable + "</table>";
        EscribirHTML("divLista", stable);
     }
-    
-    
+
+
     </script>
-    
+
     ');
 
 
@@ -3872,9 +3872,9 @@ usp_print('
        usp_print('
             v_lista3[v_lista3.length] = new InitLista3();
             v_lista3[v_lista3.length-1].nro_item = "'||xrow.proc_item||'";
-            
+
         v_lista3[v_lista3.length-1].descripcion = "'||REG_PROCESOS.F_GESTOR_REEMPLAZAR_TILDES(xrow.descripcion)||'";
-                        
+
             v_lista3[v_lista3.length-1].itempaq = "'|| case when LENGTH(xrow.item_paq_desc)>0 then xrow.item_paq_desc else '-' end||'";
             v_lista3[v_lista3.length-1].f_bp = "'||xrow.f_bp_cons||'"
             v_lista3[v_lista3.length-1].des_ubi = "'||xrow.ubigeo||'";
@@ -3888,10 +3888,10 @@ usp_print('
             v_lista3[v_lista3.length-1].sc_des = "'||xrow.sc_descripcion||'";
             v_lista3[v_lista3.length-1].mc = "'||xrow.cod_mc||'";
             v_lista3[v_lista3.length-1].mc_des = "'||xrow.desmodcnt||'";
-            
-           
-      
-            
+
+
+
+
             ');
 
  END LOOP;
@@ -3932,7 +3932,7 @@ lv_trama_items          VARCHAR2(32767);
            itc.proc_item,
            --replace(replace(replace(itc.descripcion,chr(13),chr(32)),chr(10),chr(32)),'&','') descripcion,
            REG_PROCESOS.F_GESTOR_REEMPLAZAR_TILDES(itc.descripcion) descripcion,
-           
+
            i.cant_adjudicada cantidad,
            i.monto_adjudicado monto,
            suma.suma_cant,suma.suma_monto,
@@ -4113,7 +4113,7 @@ is
            itc.proc_item,
            --replace(replace(replace(itc.descripcion,chr(13),chr(32)),chr(10),chr(32)),'&','') descripcion,
            REG_PROCESOS.F_GESTOR_REEMPLAZAR_TILDES(itc.descripcion) descripcion,     
-           
+
            i.cant_adjudicada cantidad,
            i.monto_adjudicado monto,
            suma.suma_cant,suma.suma_monto,
@@ -4214,8 +4214,8 @@ begin
 
   usp_print('
     <script language="javascript">
-    
-   
+
+
      function PintarLista()
     {
         var stable = "";
@@ -4225,7 +4225,7 @@ begin
         v_bgcolor = "#ECE9D8";
         v_style = "font-size : 0.9em;";
         v_style2 = "font-size : 0.7em;";
-        
+
         if (thisform.ag_tipo_modalidad.value != 0 ){
         tipo = "";
         }
@@ -4257,19 +4257,19 @@ begin
         stable = stable + "<td align=center width=10%><font size=1><input name=ag_unidad       readonly=true  size = 5  /></font></td>";
         stable = stable + "<td align=center width=5%><font size=1><input name=ag_cantidad id=ag_cantidad "+tipo+"  size = 5  onkeyup=''validarInputNumDecimal(this)'' onblur=''validarFormInputNumDecimal(this)'' /></font></td>";
          stable = stable + "<td align=center width=10%><font size=1><input name=ag_monto id=ag_monto "+tipo+" onkeyup=''validarInputNumDecimal(this)'' onblur=''validarFormInputNumDecimal(this)'' size = 10/></font></td>";
-        
-        
+
+
         ');
 
 
       usp_print(' stable = stable + "</tr></thead> ";
-              
+
         for (var i=0; i< v_lista.length; i++)
         {
             if (v_lista[i].nro_item != "" )
             {
                 color = "";
-                              
+
                 stable = stable + "<tr>";
                 stable = stable + "<td><img src=img/eliminar.gif onclick=''EliminarElemento("+i+")'') />";
                  stable = stable + "<input name=ag_unidad_codigo type=hidden value="+v_lista[i].cod_unidad+">&nbsp;</input>";
@@ -4286,20 +4286,20 @@ begin
                 stable = stable + "<td align=left><font size=1>"+v_lista[i].cantidad+"</font></td>";
                 stable = stable + "<td align=left><font size=1>"+v_lista[i].monto+"</font></td>";
                 stable = stable + "</tr>";
-                
-                
-                
+
+
+
             }
        }
        stable = stable + "</table>";
        EscribirHTML("divLista", stable);
     }
-    
-    
+
+
     </script>
-    
+
     ');
-    
+
    LN_CONVOCA_MAX    := REG_PROCESOS.F_GET_MAX_N_CONVOCA (ag_n_convoca);
    ln_min_n_convoca  := REG_PROCESOS.f_get_min_n_convoca(ag_n_convoca);
    ln_fila           := 1;
@@ -4314,10 +4314,10 @@ begin
   lv_trama_codpresup := lv_trama_codpresup ||'</root></xml>';
 
 
-  
+
 
  IF ag_n_propuesta is not null THEN
- 
+
      usp_print('
         <script language="javascript">');
         FOR xrow IN cItemsContratobp (ag_n_convoca,LN_CONVOCA_MAX,ag_cod_consucode,ln_min_n_convoca) LOOP
@@ -4334,16 +4334,16 @@ begin
             v_lista[v_lista.length-1].cantidad = "'||xrow.cantidad||'";
             v_lista[v_lista.length-1].monto = "'||replace(xrow.monto, ',', '.')||'";
             v_lista[v_lista.length-1].nivel5 = "";
-            
+
             ');
         end if;              
         end loop;
-        
+
         usp_print('
             PintarLista();
         </script>');
-      
-   
+
+
  END IF;
   ---------- Items -----------------------------
     ----------------------------------------------
@@ -4363,24 +4363,24 @@ is
   nro_ruc varchar2(20);
   id_consorcio number;
   nro_consorcio number;
-  
+
 begin
 
   select count(1) into esCompraCorp from pro.tbl_act_expediente@AIXSEACE 
   where n_id_expede in (select n_id_expede from pro.tbl_act_item@AIXSEACE 
   where n_id_item = item) and c_tipcom = 51; --(51 = Compra corporativa facultativa)
-  
+
   if escompracorp > 0 then
-  
+
         select n_id_item into nro_item
         from pro.tbl_act_item@AIXSEACE e
         inner join adm.tbl_adm_integracion_ent@AIXSEACE i on e.n_id_organ = i.n_id_organ
         where I.N_Id_Int_Entidad = lpad(trim(organ),6,'0') and e.n_id_grupo = item;
-        
+
         if tipo = 0 and nro_item is not null then
             return 1;
         end if;
-        
+
         select cv.ruc_postor, cv.cod_consorcio, cv.ind_consorcio into nro_ruc, nro_consorcio, id_consorcio from reg_procesos.convocatoria_propuesta cv where cv.n_propuesta = propuesta;
 
         if id_consorcio = 1 then
@@ -4388,7 +4388,7 @@ begin
            inner join pro.tbl_sel_propuesta@AIXSEACE p on p.n_id_reg_par = rp.n_id_reg_par and p.c_indcon='S'
            where rp.c_ruc in (select ruc_miembro from reg_procesos.consorcio_miembro cm where cm.cod_consorcio = nro_consorcio) and rp.n_id_pub_con =convocatoria and rp.c_intcon='N';
         end if;
-        
+
         select to_number(replace(di.c_canadj,'.',',')),to_number(replace(di.c_monadj,'.',',')) into cantadj, montadj from 
         pro.tbl_sel_reg_par@AIXSEACE rp 
         inner join pro.tbl_sel_propuesta@AIXSEACE p on rp.n_id_reg_par = p.n_id_reg_par
@@ -4398,20 +4398,20 @@ begin
         where
         rp.c_ruc=trim(nro_ruc) and rp.n_id_pub_con=convocatoria and dp.n_id_item=item and (o.c_estado='V' or di.n_id_bpro is not null)
         and di.n_id_item =nro_item;
-        
+
         if tipo = 1 then
            return montadj;
         else
            return cantadj;
         end if;
-      
+
   else if tipo = 0 then
         return 1;
        end if;
   end if;
-  
+
   return null;
-  
+
   exception
          when NO_DATA_FOUND then
             return null;
@@ -4438,8 +4438,8 @@ is
   ln_min_n_convoca              NUMBER;
 
   fecha_registro                 VARCHAR2(8);
-  
-        
+
+
  cursor cItemsContratobp(pn_nconvoca number, pn_nconvoca_max number, pg_codconsucode varchar2,pn_nconvoca_MIN number ) is
     SELECT c.anhoentidad,
            c.codconsucode,
@@ -4553,8 +4553,8 @@ begin
 
   Usp_Print('
     <script language="javascript">
-    
-   
+
+
      function PintarLista3()
     {
         var stable = "";
@@ -4565,7 +4565,7 @@ begin
         v_style = "font-size : 0.9em;";
         v_style2 = "font-size : 0.7em;";
 		var fecharegistro = "'||fecha_registro||'" ;
-        
+
          if (thisform.ag_tipo_modalidad.value != 0 ){
         tipo = "";
         }
@@ -4610,18 +4610,18 @@ begin
         /*  Fin 085-2018-SGFS  tchacon */
 		stable = stable + "<td align=center width=5%><input name=ag_sis_des    readonly=true  size = 25 style=''font-size : 0.7em;''/></td>";
         stable = stable + "<td align=center width=5%><input name=ag_mod_des        readonly=true  size = 25 style=''font-size : 0.7em;''/></td>";
-        
+
         ');
 
 
       usp_print('stable = stable + "</tr></thead> ";
-              
+
         for (var i=0; i< v_lista3.length; i++)
         {
             if (v_lista3[i].nro_item != "" )
             {
                 color = "";
-                              
+
                 stable = stable + "<tr " + color + ">";
                 stable = stable + "<td><img src=img/eliminar.gif onclick=''EliminarElemento3("+i+")'') />";
                 /*stable = stable + "<input name=ag_unidad_codigo type=hidden value="+v_lista3[i].cod_unidad+">&nbsp;</input>";
@@ -4643,18 +4643,18 @@ begin
                 stable = stable + "<td align=left><font size=1>"+v_lista3[i].monto+"</font></td>";
                 stable = stable + "<td align=left><font size=1>"+v_lista3[i].sc_des+"</font></td>";
                 stable = stable + "<td align=left><font size=1>"+v_lista3[i].mc_des+"</font></td>";
-               
+
                 stable = stable + "</tr>";
-                
+
             }
        }
        stable = stable + "</table>";
        EscribirHTML("divLista", stable);
     }
-    
-    
+
+
     </script>
-    
+
     ');
 
     ln_fila           := 1;
@@ -4669,7 +4669,7 @@ begin
   lv_trama_codpresup := lv_trama_codpresup ||'</root></xml>';
 
 
-  
+
 
  IF ag_n_propuesta is not null THEN
 
@@ -4677,7 +4677,7 @@ begin
         <script language="javascript">');
    FOR xrow IN cItemsContratobp (ag_n_convoca,ag_n_convoca,ag_cod_consucode,ag_n_convoca) LOOP
    if xrow.monto_max > 0 THEN
-             
+
           usp_print('
             v_lista3[v_lista3.length] = new InitLista3();
             v_lista3[v_lista3.length-1].nro_item = "'||xrow.proc_item||'";
@@ -4694,8 +4694,8 @@ begin
             v_lista3[v_lista3.length-1].sc_des = "'||xrow.sc_descripcion||'";
             v_lista3[v_lista3.length-1].mc = "'||xrow.cod_modalidad_alcance||'";
             v_lista3[v_lista3.length-1].mc_des = "'||xrow.desmodcnt||'";
-            
-            
+
+
             ');
 
       ln_fila := ln_fila + 1;
@@ -4707,13 +4707,13 @@ begin
   usp_print('
             PintarLista3();
         </script>');
-        
+
  END IF;
   ---------- Items -----------------------------
-  
+
    ----------------------------------------------
 
-  
+
   usp_print(lv_trama_codpresup);
 
 END;
@@ -5167,8 +5167,8 @@ BEGIN
    ln_fila        := 1;
   -- lv_trama_calendario := lv_trama_calendario ||'<xml id="xmlCalendario">';
    lv_trama_calendario := lv_trama_calendario ||'<root>';
-   
-   
+
+
    IF ag_cod_contrato is not null THEN
 
    FOR xrow IN cCalendario (ag_cod_contrato) LOOP
@@ -5193,7 +5193,7 @@ BEGIN
  -- lv_trama_calendario := lv_trama_calendario ||'</xml>';
 
  RETURN lv_trama_calendario;
- 
+
 
 
 END;
@@ -5552,7 +5552,7 @@ ln_ley number;
                                 and topes.cgr = n_entidad_autoriza
                                 AND i.proc_item      = aditems.PROC_ITEM (+)
 
-                              
+
                            ORDER BY i.proc_item
                          ) a) b;
 
@@ -5605,10 +5605,10 @@ ln_ley number;
       lv_trama_items := lv_trama_items ||'<monto></monto>';
       lv_trama_items := lv_trama_items ||'<copiar>NO</copiar>';
 
-     
+
       lv_trama_items := lv_trama_items ||'<chl><![CDATA[<input type=checkbox   name=pley  value='|| xrow.proc_item||' onclick=asignarLey(this) />]]></chl>';
       lv_trama_items := lv_trama_items ||'<ley>0</ley>';
-   
+
 
       lv_trama_items := lv_trama_items ||'</item>';
 
@@ -5877,11 +5877,11 @@ is
                  exit;
               end if;
           END LOOP;
-          
+
               if ln_igual = 0 then
                 lv_trama_items := lv_trama_items ||'<chkcc><![CDATA[<input type=checkbox name=chkObjs />]]></chkcc>';
               end if;
-          
+
        END IF;
       lv_trama_items := lv_trama_items ||'</item>';
 
@@ -5955,9 +5955,9 @@ PKU_GESTOR_CONT_FUNCIONES_JS_2. fXmlGeneral;
 
  usp_print('
         <script language="javascript">');
-        
+
  FOR xrow IN c_items_cont (ag_n_contrato) LOOP
-      
+
            usp_print('
             v_reajuste[v_reajuste.length] = new InitReajuste();
              v_reajuste[v_reajuste.length-1].mostrar = "";
@@ -5968,14 +5968,14 @@ PKU_GESTOR_CONT_FUNCIONES_JS_2. fXmlGeneral;
             v_reajuste[v_reajuste.length-1].mon = "'||TRIM(TO_CHAR (TO_NUMBER (xrow.monto),reg_procesos.pku_ss_constantes.gv_formato_dinero))||'"
             v_reajuste[v_reajuste.length-1].tir = "'||nvl(xrow.tipo_reajuste,0)||'";
             v_reajuste[v_reajuste.length-1].monto = "";
-                        
+
             ');
-      
-  
+
+
    END LOOP;
 
- 
-        
+
+
         usp_print('
             PintarReajuste();
         </script>');
