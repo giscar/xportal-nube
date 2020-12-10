@@ -76,7 +76,12 @@
 				
 				
 				function abrirVentanRevisionApelacion(ruta){
-					var url =ruta;
+					var n = ruta.search("particion1");
+					if(parseInt(n) > 0){
+						ruta = ruta.replace("documentos/", "");
+					}
+					console.log(n);
+					url = ruta;
 					window.open(url,null,'location=no,height=500,width=500,resizable=yes,scrollbars=yes');
 				}
 				
